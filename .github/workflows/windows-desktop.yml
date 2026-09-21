@@ -70,7 +70,7 @@ jobs:
       - name: Upload Windows desktop artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DUBL-Windows-Desktop
+          name: FURY-Windows-Desktop
           path: |
             desktopApp/build/compose/binaries/main/exe/*.exe
             desktopApp/build/compose/binaries/main/msi/*.msi
