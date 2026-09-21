@@ -10,7 +10,7 @@ They do not need Gradle, a JDK, Android Studio, or the Android SDK.
 
 ## Canonical release build
 
-`packaging/linux/build-appimage.sh` first builds the real Compose Desktop distributable (including its JVM runtime) and then converts it to an AppImage. `.github/workflows/linux-appimage.yml` runs this in CI for tags and manual dispatches.
+`packaging/linux/build-appimage.sh` first builds the real Compose Desktop distributable (including its JVM runtime) and then converts it to an AppImage. `.github/workflows/linux-appimage.yml` runs this for `main` pushes and manual dispatches. Production tags are built and published by `.github/workflows/release.yml`.
 
 ## Legacy portable fallback
 
