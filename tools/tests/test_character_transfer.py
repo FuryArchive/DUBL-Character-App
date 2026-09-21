@@ -4,13 +4,13 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
-CODEC = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/data/CharacterTransferCodec.kt"
-APP = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/application/DublApplication.kt"
-TRANSFER_APP = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/application/CharacterTransferApplication.kt"
-ANDROID_CONTROLLER = ROOT / "app/src/main/java/com/dubl/character/android/state/CharacterController.kt"
-ANDROID_SCREEN = ROOT / "app/src/main/java/com/dubl/character/android/ui/screens/CharactersScreen.kt"
-DESKTOP_STATE = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt"
-DESKTOP_SCREEN = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharactersScreen.kt"
+CODEC = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/data/CharacterTransferCodec.kt"
+APP = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/application/DublApplication.kt"
+TRANSFER_APP = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/application/CharacterTransferApplication.kt"
+ANDROID_CONTROLLER = ROOT / "app/src/main/java/com/furybook/android/state/CharacterController.kt"
+ANDROID_SCREEN = ROOT / "app/src/main/java/com/furybook/android/ui/screens/CharactersScreen.kt"
+DESKTOP_STATE = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt"
+DESKTOP_SCREEN = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt"
 WORKFLOW = ROOT / ".github/workflows/linux-appimage.yml"
 SHARED = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android"
 HARNESS = ROOT / "tools/tests/kotlin/CharacterTransferHarness.kt"

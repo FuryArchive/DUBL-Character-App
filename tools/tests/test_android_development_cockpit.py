@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-FEATS = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/FeatsScreen.kt').read_text(encoding='utf-8')
+FEATS = (ROOT / 'app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt').read_text(encoding='utf-8')
 
 
 def test_android_has_same_build_filters_and_plan_workflow():
