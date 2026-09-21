@@ -4,11 +4,11 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED_MODEL = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/model/DevelopmentAcquisition.kt"
-SHARED_APP = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/application/DevelopmentApplication.kt"
+SHARED_MODEL = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/model/DevelopmentAcquisition.kt"
+SHARED_APP = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/application/DevelopmentApplication.kt"
 HARNESS = ROOT / "tools/tests/kotlin/DevelopmentAcquisitionHarness.kt"
-ANDROID_CONTROLLER = ROOT / "app/src/main/java/com/dubl/character/android/state/CharacterController.kt"
-DESKTOP_STATE = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt"
+ANDROID_CONTROLLER = ROOT / "app/src/main/java/com/furybook/android/state/CharacterController.kt"
+DESKTOP_STATE = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt"
 
 
 def test_shared_planner_exposes_recursive_plan_choices_and_reverse_unlocks():

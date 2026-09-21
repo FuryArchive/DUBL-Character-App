@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens'
+SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens'
 PRIMITIVES = SCREENS / 'UiPrimitives.kt'
 
 
