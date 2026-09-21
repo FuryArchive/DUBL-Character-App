@@ -5,8 +5,8 @@
 Normal pushes do not create GitHub Releases.
 
 - `android-ci.yml` builds `FURY-Android-dev.apk` on `main`/PRs.
-- `linux-appimage.yml` builds and smoke-tests the Compose Linux AppImage on `main` or manual dispatch.
-- `windows-desktop.yml` builds the Compose Windows EXE/MSI on `main` or manual dispatch.
+- `linux-appimage.yml` runs the parity/compile/package/smoke gate on `main`, pull requests, or manual dispatch.
+- `windows-desktop.yml` builds and verifies the Compose Windows EXE/MSI on `main`, pull requests, or manual dispatch.
 
 The development Android application ID remains `com.dubl.character.android.dev`. The repository debug keystore is intentionally public and is never used for production releases.
 
