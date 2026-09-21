@@ -1,10 +1,10 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.AttributeValue
-import com.dubl.character.android.model.DublCharacter
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.AttributeValue
+import com.furybook.dubl.model.DublCharacter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -1,13 +1,13 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.AttributeValue
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.KnownSpell
-import com.dubl.character.android.model.SpellCatalogEntry
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.AttributeValue
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.KnownSpell
+import com.furybook.dubl.model.SpellCatalogEntry
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -34,7 +34,7 @@ class CharacterSessionTest {
             name = "Очень длинное пользовательское умение",
             description = "Описание",
             attributes = listOf(AttributeId.INTELLIGENCE, AttributeId.PERCEPTION),
-            untrained = com.dubl.character.android.model.UntrainedRule.NO,
+            untrained = com.furybook.dubl.model.UntrainedRule.NO,
         )
         assertNotNull(skill)
         session.changeSkillRank(skill, 3)

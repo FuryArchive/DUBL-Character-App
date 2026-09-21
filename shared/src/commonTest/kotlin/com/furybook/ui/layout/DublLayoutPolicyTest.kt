@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.layout
+package com.furybook.ui.layout
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

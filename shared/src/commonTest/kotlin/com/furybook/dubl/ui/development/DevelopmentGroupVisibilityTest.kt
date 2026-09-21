@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.development
+package com.furybook.dubl.ui.development
 
 import kotlin.test.Test
 import kotlin.test.assertFalse

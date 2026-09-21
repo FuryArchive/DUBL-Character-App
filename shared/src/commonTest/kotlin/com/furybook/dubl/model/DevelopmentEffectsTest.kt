@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 import kotlin.test.assertEquals
 import kotlin.test.Test
