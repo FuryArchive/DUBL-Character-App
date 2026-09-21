@@ -1,12 +1,12 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.data.CharacterExtrasStore
-import com.dubl.character.android.data.CharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.state.CharacterExtrasSession
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.data.CharacterExtrasStore
+import com.furybook.dubl.data.CharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.state.CharacterExtrasSession
+import com.furybook.dubl.state.CharacterSession
 
 /**
  * The single public state-changing boundary for DUBL application behavior.

@@ -1,10 +1,10 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.SkillCategory
-import com.dubl.character.android.model.UntrainedRule
-import com.dubl.character.android.state.CharacterExtrasSession
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.SkillCategory
+import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.state.CharacterExtrasSession
+import com.furybook.dubl.state.CharacterSession
 
 class SkillsApplication internal constructor(
     private val session: CharacterSession,

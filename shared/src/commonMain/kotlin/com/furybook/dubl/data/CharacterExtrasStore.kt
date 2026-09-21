@@ -1,6 +1,6 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetExtras
 
 interface CharacterExtrasStore {
     fun load(characterId: String): CharacterSheetExtras

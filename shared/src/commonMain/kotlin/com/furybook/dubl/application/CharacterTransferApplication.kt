@@ -1,10 +1,10 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.data.CharacterTransferCodec
-import com.dubl.character.android.data.CharacterTransferDecodeResult
-import com.dubl.character.android.data.CharacterTransferRejectReason
-import com.dubl.character.android.state.CharacterExtrasSession
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.data.CharacterTransferCodec
+import com.furybook.dubl.data.CharacterTransferDecodeResult
+import com.furybook.dubl.data.CharacterTransferRejectReason
+import com.furybook.dubl.state.CharacterExtrasSession
+import com.furybook.dubl.state.CharacterSession
 
 sealed interface CharacterTransferImportResult {
     data class Imported(

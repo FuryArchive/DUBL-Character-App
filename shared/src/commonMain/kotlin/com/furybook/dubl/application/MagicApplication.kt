@@ -1,8 +1,8 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.model.KnownSpell
-import com.dubl.character.android.model.SpellCatalogEntry
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.model.KnownSpell
+import com.furybook.dubl.model.SpellCatalogEntry
+import com.furybook.dubl.state.CharacterSession
 
 class MagicApplication internal constructor(
     private val session: CharacterSession,

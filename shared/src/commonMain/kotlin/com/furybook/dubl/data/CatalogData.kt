@@ -1,21 +1,21 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.AbilityOption
-import com.dubl.character.android.model.ChiCatalog
-import com.dubl.character.android.model.ChiSchool
-import com.dubl.character.android.model.ChiTechnique
-import com.dubl.character.android.model.ConditionCatalog
-import com.dubl.character.android.model.ConditionDefinition
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.DevelopmentCostType
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.MagicEquipmentCatalog
-import com.dubl.character.android.model.RollContext
-import com.dubl.character.android.model.SkillEffectCatalog
-import com.dubl.character.android.model.SkillEffectDefinition
-import com.dubl.character.android.model.SkillEffectMode
-import com.dubl.character.android.model.SpellCatalogEntry
+import com.furybook.dubl.model.AbilityOption
+import com.furybook.dubl.model.ChiCatalog
+import com.furybook.dubl.model.ChiSchool
+import com.furybook.dubl.model.ChiTechnique
+import com.furybook.dubl.model.ConditionCatalog
+import com.furybook.dubl.model.ConditionDefinition
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.DevelopmentCostType
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.MagicEquipmentCatalog
+import com.furybook.dubl.model.RollContext
+import com.furybook.dubl.model.SkillEffectCatalog
+import com.furybook.dubl.model.SkillEffectDefinition
+import com.furybook.dubl.model.SkillEffectMode
+import com.furybook.dubl.model.SpellCatalogEntry
 
 
 fun parseConditionCatalog(raw: String): ConditionCatalog {

@@ -1,8 +1,8 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.GearItem
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.GearItem
+import com.furybook.dubl.state.CharacterSession
 
 class EquipmentApplication internal constructor(
     private val session: CharacterSession,

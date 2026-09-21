@@ -1,11 +1,11 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.state.CharacterExtrasSession
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.state.CharacterExtrasSession
 
 class SheetApplication internal constructor(
     private val extras: CharacterExtrasSession,

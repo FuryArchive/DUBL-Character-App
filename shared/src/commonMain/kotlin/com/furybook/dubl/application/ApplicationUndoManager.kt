@@ -1,4 +1,4 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
 /** One-step semantic undo owned by the shared application layer. */
 internal class ApplicationUndoManager {

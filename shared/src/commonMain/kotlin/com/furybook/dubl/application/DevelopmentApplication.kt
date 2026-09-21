@@ -1,11 +1,11 @@
-package com.dubl.character.android.application
+package com.furybook.dubl.application
 
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.DevelopmentAcquisitionPlanner
-import com.dubl.character.android.model.DevelopmentAcquisitionRequest
-import com.dubl.character.android.model.DevelopmentAcquisitionResult
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.DevelopmentAcquisitionPlanner
+import com.furybook.dubl.model.DevelopmentAcquisitionRequest
+import com.furybook.dubl.model.DevelopmentAcquisitionResult
+import com.furybook.dubl.state.CharacterSession
 
 class DevelopmentApplication internal constructor(
     private val session: CharacterSession,

@@ -1,4 +1,4 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 /**
  * Tiny platform-neutral JSON reader used for the canonical DUBL catalog payloads.

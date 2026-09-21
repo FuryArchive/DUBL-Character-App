@@ -1,14 +1,14 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.ConditionLocalDataCodec
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.DublRuleset
-import com.dubl.character.android.model.SheetGroupingRules
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.ConditionLocalDataCodec
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.DublRuleset
+import com.furybook.dubl.model.SheetGroupingRules
 
 enum class CharacterTransferRejectReason {
     INVALID_FILE,
