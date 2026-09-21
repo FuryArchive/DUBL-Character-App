@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.theme
+package com.furybook.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

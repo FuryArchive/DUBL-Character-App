@@ -1,7 +1,7 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.DublCharacter
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.DublCharacter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.layout
+package com.furybook.ui.layout
 
 enum class DublLayoutClass {
     COMPACT,
