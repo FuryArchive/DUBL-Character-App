@@ -1,6 +1,6 @@
-# Contributing to FURY
+# Contributing to Fury Book
 
-FURY is a cross-platform character manager whose executable behavior must stay aligned with the DUBL 3.69 source material and with the shared Android/Desktop application contract.
+Fury Book is a cross-platform tabletop character/rules companion. DUBL 3.69 is the currently shipped ruleset, whose executable behavior must stay aligned with its source material and the shared Android/Desktop application contract.
 
 ## Source-of-truth order
 
