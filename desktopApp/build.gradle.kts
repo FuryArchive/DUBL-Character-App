@@ -1,4 +1,6 @@
-val desktopVersion = providers.environmentVariable("DUBL_VERSION").orNull ?: "0.5.0"
+val desktopVersion = providers.environmentVariable("FURY_BOOK_VERSION").orNull
+    ?: providers.environmentVariable("DUBL_VERSION").orNull
+    ?: "0.5.0"
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -20,7 +22,7 @@ compose.desktop {
     application {
         mainClass = "com.dubl.character.desktop.MainKt"
         nativeDistributions {
-            packageName = "FURY"
+            packageName = "FuryBook"
             packageVersion = desktopVersion
             targetFormats(
                 org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb,
