@@ -1,0 +1,65 @@
+name: Bug report
+description: Report a reproducible problem in FURY
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - Linux Desktop
+        - Windows Desktop
+        - Shared / rules
+        - Packaging / CI
+        - Rulebook importer
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Problem
+      description: What is wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction
+      description: Give the shortest reliable sequence that reproduces the problem.
+      placeholder: |
+        1. Open ...
+        2. Change ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: FURY version / commit
+      placeholder: v0.5 or commit SHA
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs, screenshots or save details
+      description: Paste relevant logs or attach screenshots. Do not include secrets or private signing material.
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rule-related?
+      options:
+        - label: This may be a DUBL rules/content discrepancy rather than only a UI bug.
