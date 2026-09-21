@@ -3,12 +3,20 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
-val appVersionName = providers.environmentVariable("DUBL_VERSION_NAME").orNull ?: "0.5"
-val appVersionCode = providers.environmentVariable("DUBL_VERSION_CODE").orNull?.toIntOrNull() ?: 105000000
-val releaseKeystorePath = providers.environmentVariable("DUBL_KEYSTORE_PATH").orNull
-val releaseKeystorePassword = providers.environmentVariable("DUBL_KEYSTORE_PASSWORD").orNull
-val releaseKeyAlias = providers.environmentVariable("DUBL_KEY_ALIAS").orNull
-val releaseKeyPassword = providers.environmentVariable("DUBL_KEY_PASSWORD").orNull
+val appVersionName = providers.environmentVariable("FURY_BOOK_VERSION_NAME").orNull
+    ?: providers.environmentVariable("DUBL_VERSION_NAME").orNull
+    ?: "0.5"
+val appVersionCode = providers.environmentVariable("FURY_BOOK_VERSION_CODE").orNull?.toIntOrNull()
+    ?: providers.environmentVariable("DUBL_VERSION_CODE").orNull?.toIntOrNull()
+    ?: 105000000
+val releaseKeystorePath = providers.environmentVariable("FURY_BOOK_KEYSTORE_PATH").orNull
+    ?: providers.environmentVariable("DUBL_KEYSTORE_PATH").orNull
+val releaseKeystorePassword = providers.environmentVariable("FURY_BOOK_KEYSTORE_PASSWORD").orNull
+    ?: providers.environmentVariable("DUBL_KEYSTORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("FURY_BOOK_KEY_ALIAS").orNull
+    ?: providers.environmentVariable("DUBL_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("FURY_BOOK_KEY_PASSWORD").orNull
+    ?: providers.environmentVariable("DUBL_KEY_PASSWORD").orNull
 val hasReleaseSigning = listOf(
     releaseKeystorePath,
     releaseKeystorePassword,
@@ -26,7 +34,7 @@ android {
         targetSdk = 36
         versionCode = appVersionCode
         versionName = appVersionName
-        resValue("string", "app_name", "FURY")
+        resValue("string", "app_name", "Fury Book")
     }
 
     signingConfigs {
@@ -50,7 +58,7 @@ android {
         debug {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            resValue("string", "app_name", "FURY Dev")
+            resValue("string", "app_name", "Fury Book Dev")
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
@@ -69,7 +77,7 @@ android {
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
             isDebuggable = false
-            resValue("string", "app_name", "FURY Dev")
+            resValue("string", "app_name", "Fury Book Dev")
             signingConfig = signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
         }
