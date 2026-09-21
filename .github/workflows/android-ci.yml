@@ -31,17 +31,18 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v4
         with:
-          packages: "platform-tools platforms;android-36 build-tools;36.0.0"
+          packages: "platform-tools platforms;android-37.0 build-tools;37.0.0"
 
-      - name: Set up Gradle 9.6
+      - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v6
         with:
-          gradle-version: "9.6.0"
           cache-provider: basic
           cache-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
 
       - name: Test and build development APK
-        run: gradle --no-daemon --configuration-cache :app:testDebugUnitTest :app:assemblePreview
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon --configuration-cache :app:testDebugUnitTest :app:assemblePreview
 
       - name: Prepare APK
         run: |
