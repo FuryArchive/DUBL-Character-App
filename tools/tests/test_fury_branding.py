@@ -27,10 +27,12 @@ def test_desktop_window_and_distribution_are_fury_book_branded_with_custom_icon(
     gradle = text("desktopApp/build.gradle.kts")
     icon = ROOT / "desktopApp/src/main/resources/fury-icon.svg"
 
-    assert 'title = "FURY — DUBL 3.69"' in main
-    assert 'Text(\n            "FURY"' in main
+    assert 'title = "Fury Book — DUBL 3.69"' in main
+    assert 'Text(\n            "Fury Book"' in main
     assert 'painterResource("fury-icon.svg")' in main
-    assert 'packageName = "FURY"' in gradle
+    assert 'packageName = "FuryBook"' in gradle
+    assert 'FURY_BOOK_VERSION' in gradle
+    assert 'DUBL_VERSION' in gradle
     assert 'windows {' in gradle and 'fury-icon.ico' in gradle
     assert 'linux {' in gradle and 'fury-icon.png' in gradle
     assert icon.is_file()
@@ -47,6 +49,8 @@ def test_linux_appimage_uses_fury_book_name_and_icon_but_preserves_data_identity
     assert 'Fury-Book-${VERSION}-linux-${ARCH}.AppImage' in build
     assert 'Name=Fury Book' in build
     assert 'Comment=Fury Book tabletop RPG character and rules platform' in build
+    assert 'Exec=fury-book' in build
+    assert 'Icon=fury-book' in build
     assert 'dist/Fury-Book-${FURY_BOOK_DESKTOP_VERSION}-linux-x86_64.AppImage' in workflow
     assert 'name: Fury-Book-Linux-Desktop' in workflow
     assert 'resolve("dubl-character")' in store
@@ -59,6 +63,6 @@ def test_release_artifacts_use_fury_book_product_name_while_ruleset_identity_sta
 
     assert 'Fury-Book-Android-dev.apk' in android_ci
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Android.apk' in release
-    assert '--title "FURY $VERSION"' in release
+    assert '--title "Fury Book $VERSION"' in release
     assert 'const val ID = "dubl"' in ruleset
     assert 'const val VERSION = "3.69"' in ruleset
