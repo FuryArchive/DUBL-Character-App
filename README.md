@@ -142,7 +142,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing rules, catalogs, persist
 Useful engineering references:
 
 - [Architecture](docs/ARCHITECTURE.md)
-- [Desktop parity](docs/DESKTOP_0_2_PARITY.md)
+- [Documentation index](docs/README.md)
 - [GitHub workflow](docs/GITHUB_WORKFLOW.md)
 - [Current project status](docs/STATUS.md)
 - [Engineering handoff](HANDOFF.md)
