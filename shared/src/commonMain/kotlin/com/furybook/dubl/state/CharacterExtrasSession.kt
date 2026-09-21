@@ -1,7 +1,7 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.CharacterExtrasStore
-import com.dubl.character.android.model.*
+import com.furybook.dubl.data.CharacterExtrasStore
+import com.furybook.dubl.model.*
 
 internal class CharacterExtrasSession(
     private val store: CharacterExtrasStore,

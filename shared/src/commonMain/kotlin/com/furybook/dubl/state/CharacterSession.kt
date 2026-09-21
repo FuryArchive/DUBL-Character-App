@@ -1,25 +1,25 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.CharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterSkill
-import com.dubl.character.android.model.CustomResource
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.GearItem
-import com.dubl.character.android.model.KnownSpell
-import com.dubl.character.android.model.MagicEquipmentRules
-import com.dubl.character.android.model.MagicSchool
-import com.dubl.character.android.model.MagicSchoolCatalog
-import com.dubl.character.android.model.SpellCatalogEntry
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.normalizedLocalCopy
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.OwnedDevelopment
-import com.dubl.character.android.model.SkillCatalog
-import com.dubl.character.android.model.UntrainedRule
-import com.dubl.character.android.model.resolvedSkills
-import com.dubl.character.android.model.developmentRank
+import com.furybook.dubl.data.CharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterSkill
+import com.furybook.dubl.model.CustomResource
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.GearItem
+import com.furybook.dubl.model.KnownSpell
+import com.furybook.dubl.model.MagicEquipmentRules
+import com.furybook.dubl.model.MagicSchool
+import com.furybook.dubl.model.MagicSchoolCatalog
+import com.furybook.dubl.model.SpellCatalogEntry
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.normalizedLocalCopy
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.OwnedDevelopment
+import com.furybook.dubl.model.SkillCatalog
+import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.model.resolvedSkills
+import com.furybook.dubl.model.developmentRank
 
 internal class CharacterSession(
     private val store: CharacterStore,
@@ -95,7 +95,7 @@ internal class CharacterSession(
     fun changeChi(delta: Int) = updateActive { it.copy(chiCurrent = it.chiCurrent + delta) }
 
     fun setChiEnabled(enabled: Boolean) = updateActive { character ->
-        val automaticAccess = character.developmentRank(com.dubl.character.android.model.DevelopmentEffectIds.INTERNAL_CHI) > 0
+        val automaticAccess = character.developmentRank(com.furybook.dubl.model.DevelopmentEffectIds.INTERNAL_CHI) > 0
         if (!enabled && automaticAccess) {
             character
         } else if (!enabled) {
@@ -199,29 +199,29 @@ internal class CharacterSession(
     }
 
     fun setSkillNameOverride(skillId: String, name: String) = updateSkill(skillId) {
-        val canonical = com.dubl.character.android.model.SkillCatalog.definition(it.definitionId ?: skillId)?.name.orEmpty()
+        val canonical = com.furybook.dubl.model.SkillCatalog.definition(it.definitionId ?: skillId)?.name.orEmpty()
         val clean = name.trim().replace(Regex("\\s+"), " ")
         it.copy(name = clean.takeUnless { value -> value.isBlank() || value == canonical }.orEmpty())
     }
 
     fun setSkillDescriptionOverride(skillId: String, description: String) = updateSkill(skillId) {
-        val canonical = com.dubl.character.android.model.SkillCatalog.definition(it.definitionId ?: skillId)?.description.orEmpty()
+        val canonical = com.furybook.dubl.model.SkillCatalog.definition(it.definitionId ?: skillId)?.description.orEmpty()
         val clean = description.trim()
         it.copy(description = clean.takeUnless { value -> value == canonical }.orEmpty())
     }
 
-    fun setSkillCategoryOverride(skillId: String, category: com.dubl.character.android.model.SkillCategory?) = updateSkill(skillId) {
-        val canonical = com.dubl.character.android.model.SkillCatalog.definition(it.definitionId ?: skillId)?.category
+    fun setSkillCategoryOverride(skillId: String, category: com.furybook.dubl.model.SkillCategory?) = updateSkill(skillId) {
+        val canonical = com.furybook.dubl.model.SkillCatalog.definition(it.definitionId ?: skillId)?.category
         it.copy(categoryOverride = category.takeUnless { value -> value == canonical })
     }
 
-    fun setSkillUntrainedOverride(skillId: String, rule: com.dubl.character.android.model.UntrainedRule?) = updateSkill(skillId) {
-        val canonical = com.dubl.character.android.model.SkillCatalog.definition(it.definitionId ?: skillId)?.untrained
+    fun setSkillUntrainedOverride(skillId: String, rule: com.furybook.dubl.model.UntrainedRule?) = updateSkill(skillId) {
+        val canonical = com.furybook.dubl.model.SkillCatalog.definition(it.definitionId ?: skillId)?.untrained
         it.copy(untrainedOverride = rule.takeUnless { value -> value == canonical })
     }
 
     fun setSkillAutoOverrides(skillId: String, auto6: String?, auto12: String?) = updateSkill(skillId) {
-        val canonical = com.dubl.character.android.model.SkillCatalog.definition(it.definitionId ?: skillId)
+        val canonical = com.furybook.dubl.model.SkillCatalog.definition(it.definitionId ?: skillId)
         val clean6 = auto6?.trim()
         val clean12 = auto12?.trim()
         it.copy(

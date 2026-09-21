@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 enum class AttributeId(val title: String, val shortTitle: String) {
     STRENGTH("Сила", "СИЛ"),

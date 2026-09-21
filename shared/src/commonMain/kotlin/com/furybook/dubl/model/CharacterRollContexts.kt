@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 enum class RollContext(val title: String) {
     ATTRIBUTE("Проверка характеристики"),

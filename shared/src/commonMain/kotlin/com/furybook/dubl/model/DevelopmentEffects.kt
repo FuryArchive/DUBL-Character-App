@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 object DevelopmentEffectIds {
     const val INCREDIBLE_HEALTH = "feat_c8e0271c9bd8bb91"
