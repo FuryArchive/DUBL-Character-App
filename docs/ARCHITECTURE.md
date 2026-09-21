@@ -1,38 +1,70 @@
 # Architecture
 
-## Source of truth
+## Authority and source of truth
 
-Android 0.6.2 remains the behavioral reference. The executable source of truth is the shared Kotlin rules/application layer plus the canonical shared catalog payloads; platform UIs must not reimplement formulas or catalog semantics.
+FURY separates **rule authority** from **implementation reference**.
+
+Authority order for DUBL behavior and canonical content:
+
+1. DUBL 3.69 rulebooks and approved module books
+2. explicit tracked interpretations in `rulesets/dubl-3.69/resolutions.json`
+3. shared executable rules/application contracts
+4. platform presentation behavior
+
+Android is the mature UX reference. It is not a rules authority when it conflicts with the books.
 
 ## Shared core
 
-`shared` contains the platform-independent character model, rules, roll engine, development/magic/equipment logic, the single canonical catalog payloads and parsers, application sessions, snapshot/extras codecs, persistence interfaces, responsive policy, theme tokens, and reusable Compose primitives. `commonMain` must not depend on Android or desktop APIs.
+`shared` contains the platform-independent character model, executable rules, roll engine, development/magic/equipment logic, canonical catalog payloads/parsers, persistence codecs/contracts, responsive policy, theme tokens, and reusable Compose primitives.
 
-`CharacterSession` is the primary mutation/application boundary. Android and desktop call the same session/rule APIs rather than maintaining separate formulas.
+`commonMain` must not depend on Android- or desktop-only APIs.
+
+### Application boundary
+
+`DublApplication` is the public state-changing boundary for both Android and Compose Desktop. It exposes focused capabilities for character/resources, skills, development/Chi, magic, equipment, transfer, and sheet extras/grouping.
+
+Raw sessions and repositories are implementation details. Platform adapters may observe state and call typed application operations, but platform UI must not own duplicate game formulas or arbitrary persistence mutations.
+
+Typed golden/parity scenarios protect cross-platform behavior. They are behavior locks, not substitutes for rulebook correctness: a verified rulebook correction may intentionally update a shared rule and its golden expectation once.
 
 ## Persistence
 
-`CharacterStore` is the character persistence boundary.
+`CharacterStore` and the shared codecs define the character persistence boundary.
 
-- Android uses its Android repository/SharedPreferences adapter with shared schema 9.
-- Desktop uses `DesktopCharacterStore` and `DesktopCharacterExtrasStore` under the user's local data directory with the same shared schema 9.
-- Each character persists `RulesetRef`; existing schema-7 saves migrate to canonical DUBL `dubl` / `3.69`.
-- Compose Desktop is wired to those real stores through `DesktopAppState`; it does not use `InMemoryCharacterStore` for the shipped workflow.
+- Android uses its platform repository/SharedPreferences adapter.
+- Desktop uses `DesktopCharacterStore` and `DesktopCharacterExtrasStore` under the user's local data directory.
+- Both platforms use `SnapshotCodec`; the current written snapshot schema is **11**.
+- Each character persists a `RulesetRef`; DUBL uses `dubl / 3.69`.
+- Portable character exchange uses `CharacterTransferCodec` format `dubl.character` version 1.
+- Older snapshots are handled through the shared compatibility/defaulting path rather than separate platform migrations.
+
+## Canonical catalogs and rulebook import
+
+Canonical runtime catalog payloads live under `shared/src/commonMain/resources`; Android and Desktop consume the same data and parsers.
+
+Rulebook DOCX files are development inputs, not runtime assets. The import pipeline preserves source provenance, diagnostics and unresolved ambiguity. Executable interpretation of ambiguous source material must be explicit in `rulesets/dubl-3.69/resolutions.json`.
+
+Generated full rulebook bundles belong under ignored `build/rulesets/dubl-3.69`. Only the compact control plane and promoted artifacts are tracked.
 
 ## Frontends
 
 ### Android
 
-Jetpack Compose mobile application. It remains the behavioral reference while consuming shared model/rules. Android catalog repositories are platform adapters only: assets are sourced from `shared/src/commonMain/resources` and parsed by common parsers.
+Jetpack Compose mobile application in `app`. Android owns mobile presentation, Android persistence adapters and platform services while delegating rules/application behavior to `shared`.
 
 ### Compose Desktop
 
-`desktopApp` is the primary desktop frontend. It exposes the six parity workflows through desktop-native responsive Compose layouts and uses the same shared sessions/catalogs/persistence semantics.
+`desktopApp` is the canonical desktop frontend. It uses desktop-native responsive Compose layouts over the same shared application, rules, catalogs and persistence semantics.
 
 ### Legacy portable frontend
 
-`packaging/linux/portable-src` is retained temporarily as a restricted-environment parity oracle/fallback. It is not the canonical release frontend and receives no new feature development. Remove it after a Compose AppImage is independently built and smoke-tested.
+`packaging/linux/portable-src` is a frozen restricted-environment fallback/parity oracle. It is not a canonical product frontend and receives no new features.
 
-## Release
+## Release architecture
 
-Linux releases are built from `desktopApp` with `packaging/linux/build-appimage.sh`. CI must run shared desktop tests and compile the Compose desktop application before packaging.
+- Android development builds: `.github/workflows/android-ci.yml`
+- Linux Compose AppImage: `.github/workflows/linux-appimage.yml`
+- Windows Compose EXE/MSI: `.github/workflows/windows-desktop.yml`
+- Unified production release: `.github/workflows/release.yml`
+
+The project uses the 9.7.0 Gradle bootstrap/wrapper contract and JVM 17. Platform CI must use the repository wrapper entrypoints rather than independently pinning a different Gradle version.

@@ -1,21 +1,45 @@
+# IDE / editor
 *.iml
+.idea/
+.vscode/
+.fleet/
+.DS_Store
+.directory
+
+# Gradle / Kotlin / Android
 .gradle/
 .gradle-cache/
+.kotlin/
 .android-home/
-.idea/
 local.properties
-.DS_Store
 /build/
 **/build/
 .externalNativeBuild/
 .cxx/
+out/
+**/out/
+
+# Local logs / JVM crash artifacts
+*.log
+hs_err_pid*
+replay_pid*
+
+# Signing / packaged artifacts
 *.jks
 *.keystore
-.private/
 *.apk
-/out/
-**/__pycache__/
+*.aab
+*.AppImage
+*.exe
+*.msi
+.private/
 !ci/dubl-debug.keystore
+
+# Python tooling
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
 # Local rulebook source fixtures used by tools/rulebook; never runtime/package inputs.
 /Dубль All Stars 3.69 REWORK(1)(2).docx
 /sources/*.docx

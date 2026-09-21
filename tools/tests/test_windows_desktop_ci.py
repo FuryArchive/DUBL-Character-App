@@ -26,6 +26,11 @@ def test_windows_desktop_ci_builds_on_main_push():
     assert 'java-version: "17"' in text or "java-version: '17'" in text
 
 
+def test_desktop_ci_runs_on_pull_requests_before_merge():
+    assert 'pull_request:' in read(WINDOWS_WORKFLOW)
+    assert 'pull_request:' in read(LINUX_WORKFLOW)
+
+
 def test_windows_desktop_ci_uses_project_wrapper_and_runs_shared_gate():
     text = read(WINDOWS_WORKFLOW)
     assert '.\\gradlew.bat' in text

@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased — Development screen performance
+## Unreleased
+
+### Development screen performance
 
 - Retained Android development preparation across navigation instead of rebuilding the effective catalog and index on every visit.
 - Made requirement availability lazy and memoized so closed groups do not trigger catalog-wide rule evaluation.
@@ -8,6 +10,15 @@
 - Made regular, special, martial-art, and Chi groups collapsed by default on both platforms; search temporarily reveals matching groups without changing manual expansion state.
 - Kept the Owned view immediately visible and uncollapsed.
 - Memoized Desktop availability and unlock-count calculations to prevent repeated work during recomposition and scrolling.
+
+### Repository maintenance
+
+- Reworked the repository landing page and contributor guidance around the current FURY/KMP architecture.
+- Added structured issue forms, a pull request template, a documentation index, and a living project-status document.
+- Removed the stale generated file inventory and obsolete duplicate Gradle bootstrap script.
+- Aligned Android and Windows CI/bootstrap paths on the repository Gradle 9.7.0 contract.
+- Added SHA-256 verification to the Windows Gradle bootstrap and expanded the version-matrix regression contract.
+- Corrected living architecture/persistence documentation to the current shared `DublApplication` boundary and snapshot schema 11.
 
 ## FURY 0.5 — unified product release
 

@@ -13,7 +13,8 @@ def read(path: Path) -> str:
 
 def test_development_summary_uses_full_character_economy():
     text = read(DEV)
-    assert 'CharacterEconomy.breakdown(character, state.developmentCatalog)' in text
+    assert 'val developmentCatalog = remember(character) { state.developmentCatalog }' in text
+    assert 'CharacterEconomy.breakdown(character, developmentCatalog)' in text
     assert 'economy.remainingXp' in text
     assert 'economy.abilityPointsRemaining' in text
     assert 'economy.chiXp' in text
