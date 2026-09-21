@@ -22,7 +22,7 @@ FURY keeps Android and Desktop on the same shared application/rules layer instea
 - Shared undo semantics and typed parity/golden scenarios
 - Android plus Compose Desktop frontends over shared Kotlin code
 
-Android and Desktop currently use schema-8 character persistence with explicit `dubl / 3.69` ruleset identity. Schema-7 saves migrate automatically.
+Android and Desktop currently write snapshot schema **11** with explicit `dubl / 3.69` ruleset identity. Older snapshots are decoded through the shared compatibility path; both platforms use the same codec.
 
 ## Architecture
 
@@ -144,7 +144,8 @@ Useful engineering references:
 - [Architecture](docs/ARCHITECTURE.md)
 - [Desktop parity](docs/DESKTOP_0_2_PARITY.md)
 - [GitHub workflow](docs/GITHUB_WORKFLOW.md)
-- [Current engineering handoff](HANDOFF.md)
+- [Current project status](docs/STATUS.md)
+- [Engineering handoff](HANDOFF.md)
 
 ## Scope
 
