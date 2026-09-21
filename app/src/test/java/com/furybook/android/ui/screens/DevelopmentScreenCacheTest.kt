@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.screens
+package com.furybook.android.ui.screens
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotSame

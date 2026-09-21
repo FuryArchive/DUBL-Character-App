@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.screens
+package com.furybook.android.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -45,26 +45,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dubl.character.android.data.DevelopmentCatalogRepository
-import com.dubl.character.android.data.SkillEffectCatalogRepository
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.ResolvedSkill
-import com.dubl.character.android.model.SkillCalculation
-import com.dubl.character.android.model.SkillCatalog
-import com.dubl.character.android.model.SkillCategory
-import com.dubl.character.android.model.SkillEffectRules
-import com.dubl.character.android.model.UntrainedRule
-import com.dubl.character.android.model.resolveSkill
-import com.dubl.character.android.model.resolvedSkills
-import com.dubl.character.android.model.skillCalculationOptions
-import com.dubl.character.android.model.skillXpSpent
-import com.dubl.character.android.state.CharacterController
-import com.dubl.character.android.ui.components.containSheetOverscroll
-import com.dubl.character.android.ui.components.DublCard
-import com.dubl.character.android.ui.components.DublScreenHeader
-import com.dubl.character.android.ui.theme.DublAccent
-import com.dubl.character.android.ui.theme.DublGold
+import com.furybook.dubl.data.DevelopmentCatalogRepository
+import com.furybook.dubl.data.SkillEffectCatalogRepository
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.ResolvedSkill
+import com.furybook.dubl.model.SkillCalculation
+import com.furybook.dubl.model.SkillCatalog
+import com.furybook.dubl.model.SkillCategory
+import com.furybook.dubl.model.SkillEffectRules
+import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.model.resolveSkill
+import com.furybook.dubl.model.resolvedSkills
+import com.furybook.dubl.model.skillCalculationOptions
+import com.furybook.dubl.model.skillXpSpent
+import com.furybook.dubl.state.CharacterController
+import com.furybook.ui.components.containSheetOverscroll
+import com.furybook.ui.components.DublCard
+import com.furybook.ui.components.DublScreenHeader
+import com.furybook.ui.theme.DublAccent
+import com.furybook.ui.theme.DublGold
 
 @Composable
 fun SkillsScreen(controller: CharacterController) {

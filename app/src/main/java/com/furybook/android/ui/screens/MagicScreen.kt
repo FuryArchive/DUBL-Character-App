@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.screens
+package com.furybook.android.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -44,24 +44,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.data.MagicEquipmentCatalogRepository
-import com.dubl.character.android.model.KnownSpell
-import com.dubl.character.android.model.MagicEquipmentRules
-import com.dubl.character.android.model.MagicSchool
-import com.dubl.character.android.model.MagicSchoolCatalog
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.SpellCatalogEntry
-import com.dubl.character.android.state.CharacterController
-import com.dubl.character.android.ui.components.containSheetOverscroll
-import com.dubl.character.android.ui.components.DublCard
-import com.dubl.character.android.ui.components.DublScreenHeader
-import com.dubl.character.android.ui.components.DublSwitch
-import com.dubl.character.android.ui.theme.DublAccentSoft
-import com.dubl.character.android.ui.theme.DublFocus
-import com.dubl.character.android.ui.theme.DublGold
-import com.dubl.character.android.ui.theme.DublMana
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.android.ui.theme.DublSurfaceRaised
+import com.furybook.dubl.data.MagicEquipmentCatalogRepository
+import com.furybook.dubl.model.KnownSpell
+import com.furybook.dubl.model.MagicEquipmentRules
+import com.furybook.dubl.model.MagicSchool
+import com.furybook.dubl.model.MagicSchoolCatalog
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.SpellCatalogEntry
+import com.furybook.dubl.state.CharacterController
+import com.furybook.ui.components.containSheetOverscroll
+import com.furybook.ui.components.DublCard
+import com.furybook.ui.components.DublScreenHeader
+import com.furybook.ui.components.DublSwitch
+import com.furybook.ui.theme.DublAccentSoft
+import com.furybook.ui.theme.DublFocus
+import com.furybook.ui.theme.DublGold
+import com.furybook.ui.theme.DublMana
+import com.furybook.ui.theme.DublMuted
+import com.furybook.ui.theme.DublSurfaceRaised
 import java.util.UUID
 
 @Composable

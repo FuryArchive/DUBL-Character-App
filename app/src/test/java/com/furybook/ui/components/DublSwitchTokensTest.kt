@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.components
+package com.furybook.ui.components
 
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
