@@ -1,6 +1,6 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.AppSnapshot
+import com.furybook.dubl.model.AppSnapshot
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path

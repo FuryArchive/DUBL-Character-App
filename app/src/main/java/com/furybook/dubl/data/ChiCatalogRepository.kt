@@ -1,7 +1,7 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 import android.content.Context
-import com.dubl.character.android.model.ChiCatalog
+import com.furybook.dubl.model.ChiCatalog
 
 class ChiCatalogRepository(context: Context) {
     private val appContext = context.applicationContext

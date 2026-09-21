@@ -1,16 +1,16 @@
-package com.dubl.character.desktop.data
+package com.furybook.desktop.data
 
-import com.dubl.character.android.data.parseChiCatalog
-import com.dubl.character.android.data.parseConditionCatalog
-import com.dubl.character.android.data.parseDevelopmentCatalog
-import com.dubl.character.android.data.parseMagicEquipmentCatalog
-import com.dubl.character.android.data.mergeDevelopmentCatalogs
-import com.dubl.character.android.data.parseSkillEffectCatalog
-import com.dubl.character.android.model.ChiCatalog
-import com.dubl.character.android.model.ConditionCatalog
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.MagicEquipmentCatalog
-import com.dubl.character.android.model.SkillEffectCatalog
+import com.furybook.dubl.data.parseChiCatalog
+import com.furybook.dubl.data.parseConditionCatalog
+import com.furybook.dubl.data.parseDevelopmentCatalog
+import com.furybook.dubl.data.parseMagicEquipmentCatalog
+import com.furybook.dubl.data.mergeDevelopmentCatalogs
+import com.furybook.dubl.data.parseSkillEffectCatalog
+import com.furybook.dubl.model.ChiCatalog
+import com.furybook.dubl.model.ConditionCatalog
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.MagicEquipmentCatalog
+import com.furybook.dubl.model.SkillEffectCatalog
 import java.io.InputStream
 
 class DesktopCatalogLoader(

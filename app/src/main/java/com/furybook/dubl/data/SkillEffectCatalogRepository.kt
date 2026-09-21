@@ -1,7 +1,7 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 import android.content.Context
-import com.dubl.character.android.model.SkillEffectCatalog
+import com.furybook.dubl.model.SkillEffectCatalog
 
 class SkillEffectCatalogRepository(private val context: Context) {
     fun load(): SkillEffectCatalog {

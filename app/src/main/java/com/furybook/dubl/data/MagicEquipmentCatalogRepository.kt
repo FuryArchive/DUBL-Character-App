@@ -1,7 +1,7 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 import android.content.Context
-import com.dubl.character.android.model.MagicEquipmentCatalog
+import com.furybook.dubl.model.MagicEquipmentCatalog
 
 class MagicEquipmentCatalogRepository(private val context: Context) {
     fun load(): MagicEquipmentCatalog {

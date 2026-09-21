@@ -1,28 +1,28 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dubl.character.android.application.DublApplication
-import com.dubl.character.android.application.CharacterTransferImportResult
-import com.dubl.character.android.data.CharacterRepository
-import com.dubl.character.android.data.CharacterSheetExtrasRepository
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.DevelopmentAcquisitionRequest
-import com.dubl.character.android.model.DevelopmentAcquisitionResult
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.GearItem
-import com.dubl.character.android.model.KnownSpell
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.model.SpellCatalogEntry
-import com.dubl.character.android.model.UntrainedRule
+import com.furybook.dubl.application.DublApplication
+import com.furybook.dubl.application.CharacterTransferImportResult
+import com.furybook.dubl.data.CharacterRepository
+import com.furybook.dubl.data.CharacterSheetExtrasRepository
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.DevelopmentAcquisitionRequest
+import com.furybook.dubl.model.DevelopmentAcquisitionResult
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.GearItem
+import com.furybook.dubl.model.KnownSpell
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.model.SpellCatalogEntry
+import com.furybook.dubl.model.UntrainedRule
 import java.util.UUID
 
 /** Android observable adapter over the shared application boundary. */
@@ -88,7 +88,7 @@ class CharacterController(
     fun setSkillFormulaNote(skillId: String, note: String) = sync { application.skills.setFormulaNote(skillId, note) }
     fun setSkillNameOverride(skillId: String, name: String) = sync { application.skills.setNameOverride(skillId, name) }
     fun setSkillDescriptionOverride(skillId: String, description: String) = sync { application.skills.setDescriptionOverride(skillId, description) }
-    fun setSkillCategoryOverride(skillId: String, category: com.dubl.character.android.model.SkillCategory?) = sync { application.skills.setCategoryOverride(skillId, category) }
+    fun setSkillCategoryOverride(skillId: String, category: com.furybook.dubl.model.SkillCategory?) = sync { application.skills.setCategoryOverride(skillId, category) }
     fun setSkillUntrainedOverride(skillId: String, rule: UntrainedRule?) = sync { application.skills.setUntrainedOverride(skillId, rule) }
     fun setSkillAutoOverrides(skillId: String, auto6: String?, auto12: String?) = sync { application.skills.setAutoOverrides(skillId, auto6, auto12) }
     fun resetSkillDefinitionOverrides(skillId: String) = sync { application.skills.resetDefinitionOverrides(skillId) }

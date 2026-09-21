@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui
+package com.furybook.android.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -40,20 +40,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.dubl.character.android.data.CharacterRepository
-import com.dubl.character.android.data.CharacterSheetExtrasRepository
-import com.dubl.character.android.state.CharacterController
-import com.dubl.character.android.ui.components.dismissKeyboardOnPointerDown
-import com.dubl.character.android.ui.screens.CharactersScreen
-import com.dubl.character.android.ui.screens.EquipmentScreen
-import com.dubl.character.android.ui.screens.FeatsScreen
-import com.dubl.character.android.ui.screens.MagicScreen
-import com.dubl.character.android.ui.screens.OverviewScreen
-import com.dubl.character.android.ui.screens.SkillsScreen
-import com.dubl.character.android.ui.theme.DublAccentSoft
-import com.dubl.character.android.ui.theme.DublFocus
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.android.ui.theme.DublSurfaceInset
+import com.furybook.dubl.data.CharacterRepository
+import com.furybook.dubl.data.CharacterSheetExtrasRepository
+import com.furybook.dubl.state.CharacterController
+import com.furybook.ui.components.dismissKeyboardOnPointerDown
+import com.furybook.android.ui.screens.CharactersScreen
+import com.furybook.android.ui.screens.EquipmentScreen
+import com.furybook.android.ui.screens.FeatsScreen
+import com.furybook.android.ui.screens.MagicScreen
+import com.furybook.android.ui.screens.OverviewScreen
+import com.furybook.android.ui.screens.SkillsScreen
+import com.furybook.ui.theme.DublAccentSoft
+import com.furybook.ui.theme.DublFocus
+import com.furybook.ui.theme.DublMuted
+import com.furybook.ui.theme.DublSurfaceInset
 
 private enum class AppSection(val label: String) {
     OVERVIEW("Лист"),

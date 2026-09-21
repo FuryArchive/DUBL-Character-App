@@ -1,13 +1,13 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.ConditionLocalDataCodec
-import com.dubl.character.android.model.CharacterNoteDataCodec
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.model.SheetGroupingRules
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.ConditionLocalDataCodec
+import com.furybook.dubl.model.CharacterNoteDataCodec
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.model.SheetGroupingRules
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path

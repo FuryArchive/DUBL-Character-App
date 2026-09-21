@@ -1,8 +1,8 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 import android.content.Context
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.DublCharacter
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.DublCharacter
 import java.util.UUID
 
 class CharacterRepository(context: Context) : CharacterStore {

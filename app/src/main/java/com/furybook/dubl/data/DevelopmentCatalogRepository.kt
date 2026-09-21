@@ -1,7 +1,7 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
 import android.content.Context
-import com.dubl.character.android.model.DevelopmentCatalog
+import com.furybook.dubl.model.DevelopmentCatalog
 
 class DevelopmentCatalogRepository(context: Context) {
     private val appContext = context.applicationContext
