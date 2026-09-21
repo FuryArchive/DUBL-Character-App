@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.components
+package com.furybook.ui.components
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

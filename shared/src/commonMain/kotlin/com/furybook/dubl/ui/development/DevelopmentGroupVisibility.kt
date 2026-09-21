@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.development
+package com.furybook.dubl.ui.development
 
 /**
  * Manual expansion is deliberately independent from search. Search may reveal

@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 /** Generated from the validated DUBL 3.69 rulebook bundle. Do not edit by hand. */
 internal object GeneratedSkillCatalog {

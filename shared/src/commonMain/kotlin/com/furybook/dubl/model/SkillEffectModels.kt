@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 enum class SkillEffectMode {
     AUTO_BONUS,

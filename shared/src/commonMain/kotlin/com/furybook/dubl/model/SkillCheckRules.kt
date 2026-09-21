@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 /** Pure DUBL 3.69 rules used by skill-check workflows on every platform. */
 object SkillCheckRules {

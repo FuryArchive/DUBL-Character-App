@@ -1,4 +1,4 @@
-package com.dubl.character.android.model
+package com.furybook.dubl.model
 
 /** UI-only grouping. Categories do not change DUBL rules. */
 enum class SkillCategory(val title: String) {
