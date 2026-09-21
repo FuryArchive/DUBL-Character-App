@@ -1,71 +1,91 @@
-# FURY
+# Fury Book
 
-**Cross-platform tabletop character manager for DUBL 3.69, built with Kotlin Multiplatform and Compose.**
+**Cross-platform tabletop character and rules companion built with Kotlin Multiplatform and Compose.**
 
 [![Android CI](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/android-ci.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/android-ci.yml)
 [![Linux Desktop](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/linux-appimage.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/linux-appimage.yml)
 [![Windows Desktop](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/windows-desktop.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/windows-desktop.yml)
 
-FURY keeps Android and Desktop on the same shared application/rules layer instead of reimplementing game logic per platform. The **DUBL 3.69 rulebooks are authoritative for rules and canonical content**. Android is the mature UX reference, but it does not override the books.
+**Fury Book is the product. DUBL 3.69 is the currently shipped ruleset.**
 
-> Status: active development. The current public product line is **FURY 0.5**.
+The application keeps Android and Desktop on the same shared application/rules layer instead of reimplementing game logic per platform. For DUBL behavior and canonical content, the DUBL 3.69 rulebooks remain authoritative; Android is a mature UX reference, not a rules authority.
 
-## What is implemented
+> Status: active development. Current product line: **Fury Book 0.5**.
 
-- Character sheet, identity, XP and creation economy
-- Derived stats, resources, conditions and quick checks
-- Skills, ranks, modifiers, specialization and rule-aware rolls
-- Development trees, prerequisites, martial arts and Chi
-- Magic, mana, schools and spellbook management
-- Equipment, carrying state, load and burden
-- Multiple characters with persistent local storage
-- Shared undo semantics and typed parity/golden scenarios
-- Android plus Compose Desktop frontends over shared Kotlin code
+## Current capabilities
 
-Android and Desktop currently write snapshot schema **11** with explicit `dubl / 3.69` ruleset identity. Older snapshots are decoded through the shared compatibility path; both platforms use the same codec.
+The shipped DUBL 3.69 integration includes:
+
+- character identity, XP and creation economy;
+- derived stats, resources, conditions and quick checks;
+- skills, ranks, modifiers, specialization and rule-aware rolls;
+- development trees, prerequisites, martial arts and Chi;
+- magic, mana, schools and spellbook management;
+- equipment, carrying state, load and burden;
+- multiple local characters;
+- shared undo semantics and typed Android/Desktop parity scenarios;
+- Android and Compose Desktop frontends over shared Kotlin code.
+
+Android and Desktop currently write snapshot schema **11** with explicit `dubl / 3.69` ruleset identity. Older snapshots are decoded through the shared compatibility path.
+
+## Product vs. ruleset identity
+
+Fury Book branding is intentionally separate from DUBL compatibility identifiers.
+
+Current compatibility identifiers that remain unchanged:
+
+- Android application ID: `com.dubl.character.android`;
+- DUBL ruleset identity: `dubl / 3.69`;
+- portable character transfer format: `dubl.character` version 1;
+- existing Desktop data directory identity: `dubl-character`;
+- existing `.dubl` character exchange files.
+
+Changing those is a migration task, not a branding task. Keeping them stable preserves upgrades and local data while Fury Book becomes the user-facing product name.
 
 ## Architecture
 
 ```text
-┌─────────────────┐      ┌────────────────────┐
-│ Android / app   │      │ Desktop / desktopApp│
-└────────┬────────┘      └─────────┬──────────┘
-         │                         │
-         └────────────┬────────────┘
+┌──────────────────┐      ┌─────────────────────┐
+│ Android / app    │      │ Desktop / desktopApp│
+└────────┬─────────┘      └─────────┬───────────┘
+         │                          │
+         └────────────┬─────────────┘
                       ▼
-             ┌─────────────────┐
-             │ shared          │
-             │ application     │
-             │ rules           │
-             │ persistence     │
-             │ catalogs        │
-             └─────────────────┘
+             ┌──────────────────┐
+             │ shared           │
+             │ application      │
+             │ rules            │
+             │ persistence      │
+             │ catalogs         │
+             └──────────────────┘
                       │
                       ▼
-             DUBL 3.69 rulebooks
+             DUBL 3.69 ruleset
              + audited imports
 ```
 
-The shared application boundary is `DublApplication`. Platform code observes state and invokes typed application operations; executable game formulas should not be duplicated in UI code.
+The current DUBL application boundary is `DublApplication`. Platform code observes state and invokes typed application operations; executable game formulas must not be duplicated in UI code.
+
+Fury Book is being structured so additional rulesets can be integrated without turning platform UI into rules code. Today, DUBL 3.69 remains the only fully implemented ruleset.
 
 ### Repository layout
 
 | Path | Purpose |
 | --- | --- |
 | `shared/` | KMP model, rules, application layer, codecs, catalogs, shared UI primitives |
-| `app/` | Android application and Android-specific persistence/UI |
-| `desktopApp/` | Compose Desktop application |
-| `rulesets/dubl-3.69/` | tracked ruleset config, resolutions, baseline and promoted generated artifacts |
-| `tools/rulebook/` | rulebook import / validation tooling |
+| `app/` | Android frontend and Android-specific adapters |
+| `desktopApp/` | Compose Desktop frontend |
+| `rulesets/dubl-3.69/` | DUBL ruleset config, resolutions, baseline and promoted generated artifacts |
+| `tools/rulebook/` | DUBL rulebook import / validation tooling |
 | `packaging/linux/` | canonical Linux AppImage packaging |
-| `docs/` | architecture, parity, audits and engineering notes |
+| `docs/` | living architecture/status docs and historical reports |
 | `ci/` | CI-only signing/test fixtures |
 
 `packaging/linux/portable-src` is legacy fallback/oracle code and is not the canonical desktop implementation.
 
 ## Build and verify
 
-Project toolchain:
+Toolchain:
 
 - Kotlin 2.4.20
 - Compose Multiplatform 1.12.0
@@ -74,14 +94,14 @@ Project toolchain:
 - JVM toolchain 17
 - Android compileSdk 37 / targetSdk 36
 
-### Shared + Desktop
+Shared + Desktop:
 
 ```bash
 ./gradlew :shared:desktopTest :desktopApp:compileKotlin
 ./gradlew :desktopApp:run
 ```
 
-### Android
+Android:
 
 ```bash
 ./gradlew :app:testDebugUnitTest :app:assembleDebug
@@ -89,11 +109,11 @@ Project toolchain:
 
 The platform workflows under `.github/workflows/` are the authoritative networked build gates.
 
-## Rulebook-first content pipeline
+## DUBL rulebook-first content pipeline
 
 The stock DUBL book and approved module books are development inputs, not runtime dependencies. Imported material is built into an auditable intermediate representation with provenance and diagnostics before promotion into executable catalogs.
 
-Current authoritative inputs:
+Current authoritative DUBL inputs:
 
 - `core` — DUBL 3.69 core rules
 - `melee` — Martial Arts / Chi module
@@ -114,26 +134,33 @@ python3 -m tools.rulebook.check_baseline build/rulesets/dubl-3.69 \
   --baseline rulesets/dubl-3.69/baseline.json
 ```
 
-Ambiguous or contradictory rules are resolved only through `rulesets/dubl-3.69/resolutions.json`; importers must not infer a ruling from existing platform behavior.
+Ambiguous or contradictory rules are resolved only through `rulesets/dubl-3.69/resolutions.json`.
 
 ## Releases
 
-FURY uses one product version and one Git tag for all shipped platforms.
+Fury Book uses one product version and one Git tag for all shipped platforms.
 
 Example:
 
 ```bash
-git tag -a v0.5 -m "FURY 0.5"
+git tag -a v0.5 -m "Fury Book 0.5"
 git push origin v0.5
 ```
 
-`.github/workflows/release.yml` validates the tag and builds the Android APK, Linux AppImage, and Windows packages into one GitHub Release.
+The unified release publishes:
+
+- `Fury-Book-<version>-Android.apk`
+- `Fury-Book-<version>-Linux-x86_64.AppImage`
+- `Fury-Book-<version>-Windows-x64.exe`
+- `Fury-Book-<version>-Windows-x64.msi`
 
 For Linux, the canonical packaging entrypoint is:
 
 ```bash
-DUBL_VERSION=0.5.0 packaging/linux/build-appimage.sh
+FURY_BOOK_VERSION=0.5.0 packaging/linux/build-appimage.sh
 ```
+
+The legacy `DUBL_VERSION` environment variable remains accepted as a temporary local compatibility fallback.
 
 ## Contributing
 
@@ -147,8 +174,8 @@ Useful engineering references:
 - [Current project status](docs/STATUS.md)
 - [Engineering handoff](HANDOFF.md)
 
-## Scope
+## Current scope
 
-Current priorities are DUBL 3.69 correctness, Android/Desktop parity, shared application behavior, persistence compatibility, performance, and release reliability.
+Current priorities are DUBL 3.69 correctness, Android/Desktop parity, shared application behavior, persistence compatibility, performance, release reliability, and separating product-level Fury Book architecture from ruleset-specific DUBL implementation details.
 
 Web/Wasm, server accounts and sync are intentionally out of scope for the current milestone.
