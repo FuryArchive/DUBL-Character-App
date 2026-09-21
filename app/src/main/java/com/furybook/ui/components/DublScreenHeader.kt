@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.components
+package com.furybook.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.ui.theme.DublAccentStrong
-import com.dubl.character.android.ui.theme.DublMuted
+import com.furybook.ui.theme.DublAccentStrong
+import com.furybook.ui.theme.DublMuted
 
 @Composable
 fun DublScreenHeader(

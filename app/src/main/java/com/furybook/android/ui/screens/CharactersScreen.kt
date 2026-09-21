@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.screens
+package com.furybook.android.ui.screens
 
 import android.content.Context
 import android.net.Uri
@@ -29,11 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.application.CharacterTransferImportResult
-import com.dubl.character.android.data.CharacterTransferRejectReason
-import com.dubl.character.android.state.CharacterController
-import com.dubl.character.android.ui.components.DublCard
-import com.dubl.character.android.ui.components.DublScreenHeader
+import com.furybook.dubl.application.CharacterTransferImportResult
+import com.furybook.dubl.data.CharacterTransferRejectReason
+import com.furybook.dubl.state.CharacterController
+import com.furybook.ui.components.DublCard
+import com.furybook.ui.components.DublScreenHeader
 import java.nio.charset.StandardCharsets
 
 private const val TRANSFER_EXTENSION = ".dubl"

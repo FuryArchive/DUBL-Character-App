@@ -1,14 +1,14 @@
-package com.dubl.character.android.ui.components
+package com.furybook.ui.components
 
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.dubl.character.android.ui.theme.DublAccent
-import com.dubl.character.android.ui.theme.DublBorder
-import com.dubl.character.android.ui.theme.DublSurfaceRaised
-import com.dubl.character.android.ui.theme.DublText
+import com.furybook.ui.theme.DublAccent
+import com.furybook.ui.theme.DublBorder
+import com.furybook.ui.theme.DublSurfaceRaised
+import com.furybook.ui.theme.DublText
 
 object DublSwitchTokens {
     val checkedThumb: Color = DublText

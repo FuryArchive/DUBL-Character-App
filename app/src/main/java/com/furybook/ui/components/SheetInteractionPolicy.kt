@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.components
+package com.furybook.ui.components
 
 internal fun sheetContentOverscrollToConsume(
     availableY: Float,

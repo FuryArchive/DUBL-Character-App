@@ -1,4 +1,4 @@
-package com.dubl.character.android.ui.screens
+package com.furybook.android.ui.screens
 
 internal class RetainedPreparationCache<K, V>(
     private val maximumEntries: Int,
