@@ -29,7 +29,7 @@ def test_desktop_condition_overrides_and_custom_conditions_round_trip():
 
 
 def test_android_extras_repository_persists_condition_overlay():
-    text = (ROOT / "app/src/main/java/com/dubl/character/android/data/CharacterSheetExtrasRepository.kt").read_text()
+    text = (ROOT / "app/src/main/java/com/furybook/android/data/CharacterSheetExtrasRepository.kt").read_text()
     assert "condition_overrides" in text
     assert "custom_conditions" in text
     assert "conditionOverrides" in text

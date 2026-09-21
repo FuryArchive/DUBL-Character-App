@@ -1,8 +1,8 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-ANDROID = ROOT / "app/src/main/java/com/dubl/character/android/ui/screens/OverviewScreen.kt"
-DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt"
+ANDROID = ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt"
+DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt"
 
 
 def test_android_conditions_expose_local_override_reset_and_custom_creation():

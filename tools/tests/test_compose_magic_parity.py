@@ -1,5 +1,5 @@
 from pathlib import Path
-MAGIC = (Path(__file__).resolve().parents[2] / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
+MAGIC = (Path(__file__).resolve().parents[2] / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
 
 
 def test_magic_defaults_to_hiding_unlearned_schools_and_can_add_school():

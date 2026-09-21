@@ -1,8 +1,8 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
-MAGIC = (ROOT/'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
-GEAR = (ROOT/'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/EquipmentScreen.kt').read_text(encoding='utf-8')
-SKILLS = (ROOT/'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/SkillsScreen.kt').read_text(encoding='utf-8')
+MAGIC = (ROOT/'desktopApp/src/main/kotlin/com/furybook/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
+GEAR = (ROOT/'desktopApp/src/main/kotlin/com/furybook/desktop/screens/EquipmentScreen.kt').read_text(encoding='utf-8')
+SKILLS = (ROOT/'desktopApp/src/main/kotlin/com/furybook/desktop/screens/SkillsScreen.kt').read_text(encoding='utf-8')
 
 
 def test_magic_destructive_actions_require_confirmation():

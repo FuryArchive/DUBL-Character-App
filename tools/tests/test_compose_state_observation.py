@@ -1,10 +1,10 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-STATE = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt'
+STATE = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt'
 UI_FILES = [
-    ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt',
-    *sorted((ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens').glob('*.kt')),
+    ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt',
+    *sorted((ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens').glob('*.kt')),
 ]
 
 
