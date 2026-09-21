@@ -38,4 +38,4 @@ def test_gradle_distribution_is_checksum_pinned_in_wrapper_and_bootstrap():
     assert checksum in GRADLEW
     assert checksum in GRADLEW_BAT
     assert 'sha256sum -c -' in GRADLEW
-    assert 'Get-FileHash -Algorithm SHA256' in GRADLEW_BAT
+    assert 'System.Security.Cryptography.SHA256' in GRADLEW_BAT
