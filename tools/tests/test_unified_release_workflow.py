@@ -12,17 +12,17 @@ def text(path: Path) -> str:
     return path.read_text(encoding='utf-8')
 
 
-def test_v_tag_drives_one_fury_release_workflow_for_all_platforms():
+def test_v_tag_drives_one_fury_book_release_workflow_for_all_platforms():
     workflow = text(RELEASE)
-    assert 'name: FURY Release' in workflow
+    assert 'name: Fury Book Release' in workflow
     assert "- 'v*.*'" in workflow or '- "v*.*"' in workflow
     for job in ('validate:', 'android:', 'linux:', 'windows:', 'publish:'):
         assert job in workflow
-    assert 'FURY-${{ needs.validate.outputs.version }}-Android.apk' in workflow
-    assert 'FURY-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage' in workflow
-    assert 'FURY-${{ needs.validate.outputs.version }}-Windows-x64.exe' in workflow
-    assert 'FURY-${{ needs.validate.outputs.version }}-Windows-x64.msi' in workflow
-    assert '--title "FURY $VERSION"' in workflow
+    assert 'Fury-Book-${{ needs.validate.outputs.version }}-Android.apk' in workflow
+    assert 'Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage' in workflow
+    assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.exe' in workflow
+    assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.msi' in workflow
+    assert '--title "Fury Book $VERSION"' in workflow
 
 
 def test_release_workflow_installs_the_versioned_android_17_sdk_package():
@@ -35,8 +35,8 @@ def test_release_workflow_installs_the_versioned_android_17_sdk_package():
 def test_release_workflow_normalizes_public_0_5_for_native_desktop_packages():
     workflow = text(RELEASE)
     assert 'NATIVE_VERSION="${VERSION}.0"' in workflow
-    assert 'DUBL_VERSION: ${{ needs.validate.outputs.native_version }}' in workflow
-    assert 'DUBL_VERSION_NAME: ${{ needs.validate.outputs.version }}' in workflow
+    assert 'FURY_BOOK_VERSION: ${{ needs.validate.outputs.native_version }}' in workflow
+    assert 'FURY_BOOK_VERSION_NAME: ${{ needs.validate.outputs.version }}' in workflow
     assert '100000000 +' in workflow
 
 
@@ -49,7 +49,7 @@ def test_legacy_android_release_no_longer_publishes_tag_releases():
     assert 'tags:' not in workflow
 
 
-def test_local_fallback_versions_are_fury_0_5_line():
+def test_local_fallback_versions_are_fury_book_0_5_line():
     app = text(APP_BUILD)
     desktop = text(DESKTOP_BUILD)
     assert '?: "0.5"' in app

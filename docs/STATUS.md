@@ -2,15 +2,17 @@
 
 Last refreshed: 2026-09-22
 
-This is the living status document for the repository. Historical milestone reports and design plans remain useful context but must not override current code, tests, tracked resolutions or the DUBL rulebooks.
+This is the living status document for Fury Book. Historical milestone reports may contain older product names and are not current branding or architecture authority.
 
 ## Product
 
-- Product: **FURY**
+- Product: **Fury Book**
 - Current public product line: **0.5**
-- Canonical ruleset: **DUBL 3.69**
+- Currently shipped ruleset: **DUBL 3.69**
 - Frontends: Android + Compose Desktop (Linux/Windows)
 - Web/Wasm, accounts and sync: out of current scope
+
+Fury Book is the product shell and cross-platform application. DUBL is the current ruleset integration.
 
 ## Shared foundation
 
@@ -18,45 +20,52 @@ Android and Desktop use the same Kotlin Multiplatform model/rules/application la
 
 Current hard boundaries:
 
-- `DublApplication` is the public state-changing application boundary.
-- canonical runtime catalogs live in shared resources.
+- `DublApplication` is the public state-changing boundary for the current DUBL integration.
+- canonical DUBL runtime catalogs live in shared resources.
 - executable formulas belong in shared rules, not platform UI.
-- typed shared golden/parity scenarios protect platform behavior.
-- local user overrides are separate from immutable canonical ruleset data.
+- typed shared golden/parity scenarios protect Android/Desktop behavior.
+- local user overrides remain separate from immutable canonical ruleset data.
 
-## Persistence and transfer
+## Compatibility identities
 
+Branding changes do not migrate stored data or package identities.
+
+Kept stable intentionally:
+
+- Android application ID: `com.dubl.character.android`
 - current snapshot schema: **11**
-- ruleset identity: `dubl / 3.69`
+- DUBL ruleset identity: `dubl / 3.69`
 - transfer format: `dubl.character` version **1**
-- Android and Desktop share snapshot/transfer codecs.
-- portable transfer deliberately excludes platform-local portrait paths/URIs.
+- Desktop local data identity: `dubl-character`
 
-## Rulebook-first pipeline
+Product-facing names, installers, launchers and release artifacts use **Fury Book**.
 
-The tracked ruleset control plane lives in `rulesets/dubl-3.69`.
+## DUBL rulebook-first pipeline
+
+The tracked DUBL ruleset control plane lives in `rulesets/dubl-3.69`.
 
 The importer:
 
-- extracts deterministic source IR from the approved books
-- preserves source-qualified provenance
-- surfaces ambiguity/conflicts as diagnostics
-- requires explicit tracked resolutions for executable interpretations
-- keeps full generated bundles under ignored `build/rulesets/dubl-3.69`
+- extracts deterministic source IR from approved books;
+- preserves source-qualified provenance;
+- surfaces ambiguity/conflicts as diagnostics;
+- requires explicit tracked resolutions for executable interpretations;
+- keeps full generated bundles under ignored `build/rulesets/dubl-3.69`.
 
-Do not infer a rule from current UI behavior when the rulebook source is ambiguous.
+Do not infer a DUBL rule from current UI behavior when the rulebook source is ambiguous.
 
 ## Active implementation priorities
 
 1. DUBL 3.69 correctness and domain promotion
 2. Android/Desktop parity through shared application contracts
-3. Development-screen performance and interaction polish
+3. product/ruleset separation needed for future Fury Book rulesets
 4. persistence / transfer compatibility
-5. reliable Android, Linux and Windows release gates
+5. performance and interaction polish
+6. reliable Android, Linux and Windows release gates
 
 ## Legacy / historical material
 
-The following are retained for context, not as current implementation authority:
+These remain historical context, not current implementation or branding authority:
 
 - `docs/KMP_FOUNDATION_REPORT.md`
 - `docs/DESKTOP_0_2_PARITY.md`

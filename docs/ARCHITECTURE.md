@@ -2,9 +2,9 @@
 
 ## Authority and source of truth
 
-FURY separates **rule authority** from **implementation reference**.
+Fury Book separates **product identity**, **ruleset authority**, and **implementation reference**.
 
-Authority order for DUBL behavior and canonical content:
+For the currently shipped DUBL integration, authority order for behavior and canonical content:
 
 1. DUBL 3.69 rulebooks and approved module books
 2. explicit tracked interpretations in `rulesets/dubl-3.69/resolutions.json`
@@ -12,6 +12,12 @@ Authority order for DUBL behavior and canonical content:
 4. platform presentation behavior
 
 Android is the mature UX reference. It is not a rules authority when it conflicts with the books.
+
+## Product / ruleset boundary
+
+**Fury Book** is the user-facing product and cross-platform shell. **DUBL 3.69** is the currently implemented ruleset. Existing DUBL package names, ruleset IDs, transfer IDs and data-directory names are compatibility identities and are not renamed as part of product branding.
+
+The current executable application boundary is still DUBL-specific (`DublApplication`). Future ruleset work should introduce explicit ruleset composition/adapter boundaries rather than renaming DUBL internals in-place or moving formulas into platform UI.
 
 ## Shared core
 

@@ -131,36 +131,36 @@ jobs:
             VERSION="${VERSION:-0.5.0}"
           fi
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid desktop version: $VERSION" >&2; exit 1; }
-          echo "DUBL_DESKTOP_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "FURY_BOOK_DESKTOP_VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Build Compose Desktop AppImage
         run: |
           chmod +x gradlew packaging/linux/build-appimage.sh
-          DUBL_VERSION="$DUBL_DESKTOP_VERSION" packaging/linux/build-appimage.sh
+          FURY_BOOK_VERSION="$FURY_BOOK_DESKTOP_VERSION" packaging/linux/build-appimage.sh
 
       - name: Smoke-test Compose AppImage
         shell: bash
         run: |
           set -euo pipefail
-          APPIMAGE="dist/FURY-${DUBL_DESKTOP_VERSION}-linux-x86_64.AppImage"
+          APPIMAGE="dist/Fury-Book-${FURY_BOOK_DESKTOP_VERSION}-linux-x86_64.AppImage"
           [[ -x "$APPIMAGE" ]] || { echo "Missing executable AppImage: $APPIMAGE" >&2; exit 1; }
           SMOKE_HOME="$(mktemp -d)"
           trap 'rm -rf "$SMOKE_HOME"' EXIT
           set +e
-          HOME="$SMOKE_HOME" APPIMAGE_EXTRACT_AND_RUN=1 timeout 8s xvfb-run -a "$APPIMAGE" >"$RUNNER_TEMP/dubl-compose-smoke.out" 2>"$RUNNER_TEMP/dubl-compose-smoke.err"
+          HOME="$SMOKE_HOME" APPIMAGE_EXTRACT_AND_RUN=1 timeout 8s xvfb-run -a "$APPIMAGE" >"$RUNNER_TEMP/fury-book-compose-smoke.out" 2>"$RUNNER_TEMP/fury-book-compose-smoke.err"
           STATUS=$?
           set -e
           if [[ "$STATUS" -ne 124 ]]; then
             echo "Compose AppImage exited during smoke test with status $STATUS" >&2
-            cat "$RUNNER_TEMP/dubl-compose-smoke.out" || true
-            cat "$RUNNER_TEMP/dubl-compose-smoke.err" || true
+            cat "$RUNNER_TEMP/fury-book-compose-smoke.out" || true
+            cat "$RUNNER_TEMP/fury-book-compose-smoke.err" || true
             exit 1
           fi
 
       - name: Upload Linux desktop artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FURY-Linux-Desktop
+          name: Fury-Book-Linux-Desktop
           path: |
             dist/*.AppImage
             dist/*.AppImage.sha256

@@ -51,12 +51,12 @@ jobs:
           if ($version -notmatch '^\d+\.\d+\.\d+$') {
             throw "Invalid desktop version: $version"
           }
-          "DUBL_DESKTOP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "FURY_BOOK_DESKTOP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Test, compile, and package Windows desktop
         shell: pwsh
         run: |
-          $env:DUBL_VERSION = $env:DUBL_DESKTOP_VERSION
+          $env:FURY_BOOK_VERSION = $env:FURY_BOOK_DESKTOP_VERSION
           .\gradlew.bat --no-daemon :shared:desktopTest :desktopApp:compileKotlin :desktopApp:packageExe :desktopApp:packageMsi --stacktrace
 
       - name: Verify Windows packages
@@ -72,7 +72,7 @@ jobs:
       - name: Upload Windows desktop artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: FURY-Windows-Desktop
+          name: Fury-Book-Windows-Desktop
           path: |
             desktopApp/build/compose/binaries/main/exe/*.exe
             desktopApp/build/compose/binaries/main/msi/*.msi

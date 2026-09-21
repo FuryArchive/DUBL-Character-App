@@ -1,4 +1,4 @@
-# FURY engineering handoff
+# Fury Book engineering handoff
 
 This file is intentionally short. It is a navigation and invariant sheet, not an execution log.
 
@@ -25,8 +25,8 @@ Historical migration reports and implementation plans are useful context, but th
 
 ## Current compatibility boundaries
 
-- Product line: FURY 0.5 development
-- Ruleset identity: `dubl / 3.69`
+- Product line: Fury Book 0.5 development
+- Current ruleset identity: `dubl / 3.69`
 - Character snapshot schema: `SnapshotCodec.SCHEMA = 11`
 - Portable character transfer format: `dubl.character`, version 1
 - JVM toolchain: 17
@@ -48,6 +48,8 @@ GitHub Actions remains the authoritative networked build/release environment.
 ## Current engineering direction
 
 The immediate focus is:
+
+- keeping Fury Book product identity separate from DUBL compatibility internals
 
 - DUBL 3.69 correctness and audited rulebook promotion
 - Android/Desktop behavior parity through shared application contracts

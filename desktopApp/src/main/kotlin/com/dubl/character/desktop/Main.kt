@@ -77,7 +77,7 @@ internal enum class DesktopSection(val label: String) {
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "FURY — DUBL 3.69",
+        title = "Fury Book — DUBL 3.69",
         icon = painterResource("fury-icon.svg"),
     ) {
         DublTheme { DesktopVisualTheme { DesktopApp() } }
@@ -154,7 +154,7 @@ private fun DesktopRail(
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
-            "FURY",
+            "Fury Book",
             style = MaterialTheme.typography.headlineMedium,
             color = DesktopAccent,
             fontWeight = FontWeight.Bold,

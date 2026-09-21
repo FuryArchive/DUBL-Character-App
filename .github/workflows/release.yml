@@ -1,4 +1,4 @@
-name: FURY Release
+name: Fury Book Release
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: fury-release-${{ github.ref }}
+  group: fury-book-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
             NATIVE_VERSION="$VERSION"
           fi
 
-          # FURY uses a new high range so 0.5 can still upgrade older Android
+          # Fury Book uses a high range so 0.5 can still upgrade older Android
           # builds whose legacy DUBL versionCode reached 6002000.
           VERSION_CODE=$((100000000 + 10#$MAJOR * 100000000 + 10#$MINOR * 1000000 + 10#$PATCH * 1000))
 
@@ -52,8 +52,8 @@ jobs:
     needs: validate
     runs-on: ubuntu-latest
     env:
-      DUBL_VERSION_NAME: ${{ needs.validate.outputs.version }}
-      DUBL_VERSION_CODE: ${{ needs.validate.outputs.version_code }}
+      FURY_BOOK_VERSION_NAME: ${{ needs.validate.outputs.version }}
+      FURY_BOOK_VERSION_CODE: ${{ needs.validate.outputs.version_code }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -87,13 +87,13 @@ jobs:
           for name in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
             [[ -n "${!name:-}" ]] || { echo "Missing GitHub secret: $name" >&2; exit 1; }
           done
-          KEYSTORE="$RUNNER_TEMP/fury-android-release.jks"
+          KEYSTORE="$RUNNER_TEMP/fury-book-android-release.jks"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
           chmod 600 "$KEYSTORE"
-          echo "DUBL_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
-          echo "DUBL_KEYSTORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
-          echo "DUBL_KEY_ALIAS=$ANDROID_KEY_ALIAS" >> "$GITHUB_ENV"
-          echo "DUBL_KEY_PASSWORD=$ANDROID_KEY_PASSWORD" >> "$GITHUB_ENV"
+          echo "FURY_BOOK_KEYSTORE_PATH=$KEYSTORE" >> "$GITHUB_ENV"
+          echo "FURY_BOOK_KEYSTORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD" >> "$GITHUB_ENV"
+          echo "FURY_BOOK_KEY_ALIAS=$ANDROID_KEY_ALIAS" >> "$GITHUB_ENV"
+          echo "FURY_BOOK_KEY_PASSWORD=$ANDROID_KEY_PASSWORD" >> "$GITHUB_ENV"
 
       - name: Test and build signed Android APK
         run: |
@@ -108,20 +108,20 @@ jobs:
           [[ -f "$APK" ]] || { echo "Signed release APK not found" >&2; exit 1; }
           "$ANDROID_SDK_ROOT/build-tools/37.0.0/apksigner" verify --verbose --print-certs "$APK"
           mkdir -p out
-          cp "$APK" "out/FURY-${{ needs.validate.outputs.version }}-Android.apk"
+          cp "$APK" "out/Fury-Book-${{ needs.validate.outputs.version }}-Android.apk"
 
       - name: Upload Android release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fury-release-android
-          path: out/FURY-${{ needs.validate.outputs.version }}-Android.apk
+          name: fury-book-release-android
+          path: out/Fury-Book-${{ needs.validate.outputs.version }}-Android.apk
           if-no-files-found: error
 
   linux:
     needs: validate
     runs-on: ubuntu-latest
     env:
-      DUBL_VERSION: ${{ needs.validate.outputs.native_version }}
+      FURY_BOOK_VERSION: ${{ needs.validate.outputs.native_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -161,10 +161,10 @@ jobs:
           set -euo pipefail
           chmod +x packaging/linux/build-appimage.sh
           packaging/linux/build-appimage.sh
-          SOURCE="dist/FURY-${DUBL_VERSION}-linux-x86_64.AppImage"
+          SOURCE="dist/Fury-Book-${FURY_BOOK_VERSION}-linux-x86_64.AppImage"
           [[ -x "$SOURCE" ]] || { echo "Missing AppImage: $SOURCE" >&2; exit 1; }
           mkdir -p out
-          TARGET="out/FURY-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage"
+          TARGET="out/Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage"
           mv "$SOURCE" "$TARGET"
           sha256sum "$TARGET" > "$TARGET.sha256"
 
@@ -172,34 +172,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          APPIMAGE="out/FURY-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage"
+          APPIMAGE="out/Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage"
           SMOKE_HOME="$(mktemp -d)"
           trap 'rm -rf "$SMOKE_HOME"' EXIT
           set +e
-          HOME="$SMOKE_HOME" APPIMAGE_EXTRACT_AND_RUN=1 timeout 8s xvfb-run -a "$APPIMAGE" >"$RUNNER_TEMP/fury-compose-smoke.out" 2>"$RUNNER_TEMP/fury-compose-smoke.err"
+          HOME="$SMOKE_HOME" APPIMAGE_EXTRACT_AND_RUN=1 timeout 8s xvfb-run -a "$APPIMAGE" >"$RUNNER_TEMP/fury-book-compose-smoke.out" 2>"$RUNNER_TEMP/fury-book-compose-smoke.err"
           STATUS=$?
           set -e
           if [[ "$STATUS" -ne 124 ]]; then
-            echo "FURY AppImage exited during smoke test with status $STATUS" >&2
-            cat "$RUNNER_TEMP/fury-compose-smoke.out" || true
-            cat "$RUNNER_TEMP/fury-compose-smoke.err" || true
+            echo "Fury Book AppImage exited during smoke test with status $STATUS" >&2
+            cat "$RUNNER_TEMP/fury-book-compose-smoke.out" || true
+            cat "$RUNNER_TEMP/fury-book-compose-smoke.err" || true
             exit 1
           fi
 
       - name: Upload Linux release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: fury-release-linux
+          name: fury-book-release-linux
           path: |
-            out/FURY-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage
-            out/FURY-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage.sha256
+            out/Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage
+            out/Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage.sha256
           if-no-files-found: error
 
   windows:
     needs: validate
     runs-on: windows-latest
     env:
-      DUBL_VERSION: ${{ needs.validate.outputs.native_version }}
+      FURY_BOOK_VERSION: ${{ needs.validate.outputs.native_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -229,16 +229,16 @@ jobs:
           $msi = Get-ChildItem 'desktopApp/build/compose/binaries/main/msi/*.msi' -ErrorAction Stop | Select-Object -First 1
           if (-not $exe) { throw 'Windows EXE package was not produced.' }
           if (-not $msi) { throw 'Windows MSI package was not produced.' }
-          Copy-Item $exe.FullName 'out/FURY-${{ needs.validate.outputs.version }}-Windows-x64.exe'
-          Copy-Item $msi.FullName 'out/FURY-${{ needs.validate.outputs.version }}-Windows-x64.msi'
+          Copy-Item $exe.FullName 'out/Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.exe'
+          Copy-Item $msi.FullName 'out/Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.msi'
 
       - name: Upload Windows release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: fury-release-windows
+          name: fury-book-release-windows
           path: |
-            out/FURY-${{ needs.validate.outputs.version }}-Windows-x64.exe
-            out/FURY-${{ needs.validate.outputs.version }}-Windows-x64.msi
+            out/Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.exe
+            out/Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.msi
           if-no-files-found: error
 
   publish:
@@ -248,7 +248,7 @@ jobs:
       - name: Download release artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: fury-release-*
+          pattern: fury-book-release-*
           path: release
           merge-multiple: true
 
@@ -269,6 +269,6 @@ jobs:
           else
             gh release create "$TAG" "${FILES[@]}" \
               --verify-tag \
-              --title "FURY $VERSION" \
+              --title "Fury Book $VERSION" \
               --generate-notes
           fi
