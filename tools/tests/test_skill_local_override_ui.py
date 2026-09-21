@@ -1,9 +1,9 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-ANDROID = ROOT / "app/src/main/java/com/dubl/character/android/ui/screens/SkillsScreen.kt"
-DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/SkillsScreen.kt"
-CONTROLLER = ROOT / "app/src/main/java/com/dubl/character/android/state/CharacterController.kt"
+ANDROID = ROOT / "app/src/main/java/com/furybook/android/ui/screens/SkillsScreen.kt"
+DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/SkillsScreen.kt"
+CONTROLLER = ROOT / "app/src/main/java/com/furybook/android/state/CharacterController.kt"
 
 
 def test_android_skill_settings_exposes_local_override_and_reset():
