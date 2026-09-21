@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Fury Book rebrand
+
+- Promoted **Fury Book** to the product/platform name while keeping DUBL 3.69 as the current ruleset identity.
+- Renamed Android app labels, Desktop window/distribution names, Linux launcher metadata, CI artifacts, release artifacts, and GitHub Release titles to Fury Book.
+- Introduced product-level `FURY_BOOK_*` build variables with legacy `DUBL_VERSION*` fallbacks for local compatibility.
+- Preserved Android application IDs, `dubl / 3.69` ruleset identity, `dubl.character` transfer format, `.dubl` files, and existing desktop data identity to avoid a branding-induced data migration.
+- Updated living documentation to distinguish Fury Book platform architecture from DUBL-specific implementation details.
+
+
 ### Development screen performance
 
 - Retained Android development preparation across navigation instead of rebuilding the effective catalog and index on every visit.
