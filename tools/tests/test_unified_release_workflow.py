@@ -22,7 +22,7 @@ def test_v_tag_drives_one_fury_book_release_workflow_for_all_platforms():
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage' in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.exe' in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.msi' in workflow
-    assert '--title "FURY $VERSION"' in workflow
+    assert '--title "Fury Book $VERSION"' in workflow
 
 
 def test_release_workflow_installs_the_versioned_android_17_sdk_package():
