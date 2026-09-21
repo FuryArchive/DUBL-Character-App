@@ -21,7 +21,7 @@ if not exist "%HOME_DIR%\bin\gradle.bat" (
     "Invoke-WebRequest -Uri '%URL%' -OutFile '%ZIP%';" ^
     "$sha=[System.Security.Cryptography.SHA256]::Create();" ^
     "$stream=[System.IO.File]::OpenRead('%ZIP%');" ^
-    "try { $actual=[System.Convert]::ToHexString($sha.ComputeHash($stream)).ToLowerInvariant() } finally { $stream.Dispose(); $sha.Dispose() };" ^
+    "try { $actual=[System.BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '').ToLowerInvariant() } finally { $stream.Dispose(); $sha.Dispose() };" ^
     "if ($actual -ne '%SHA256%') { throw ('Gradle SHA-256 mismatch: ' + $actual) };" ^
     "Expand-Archive -Path '%ZIP%' -DestinationPath '%BASE%' -Force"
 
