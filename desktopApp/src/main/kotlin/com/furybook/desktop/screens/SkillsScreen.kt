@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -41,18 +41,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.ResolvedSkill
-import com.dubl.character.android.model.SkillCatalog
-import com.dubl.character.android.model.SkillCategory
-import com.dubl.character.android.model.SkillEffectRules
-import com.dubl.character.android.model.UntrainedRule
-import com.dubl.character.android.model.resolvedSkills
-import com.dubl.character.android.model.skillCalculation
-import com.dubl.character.android.model.skillNextRankCost
-import com.dubl.character.android.model.skillXpSpent
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.desktop.DesktopAppState
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.ResolvedSkill
+import com.furybook.dubl.model.SkillCatalog
+import com.furybook.dubl.model.SkillCategory
+import com.furybook.dubl.model.SkillEffectRules
+import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.model.resolvedSkills
+import com.furybook.dubl.model.skillCalculation
+import com.furybook.dubl.model.skillNextRankCost
+import com.furybook.dubl.model.skillXpSpent
+import com.furybook.ui.theme.DublMuted
+import com.furybook.desktop.DesktopAppState
 
 @Composable
 fun SkillsScreen(state: DesktopAppState, modifier: Modifier = Modifier) {

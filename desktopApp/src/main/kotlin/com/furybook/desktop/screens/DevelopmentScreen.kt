@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,35 +42,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.model.AbilityOption
-import com.dubl.character.android.model.CharacterEconomy
-import com.dubl.character.android.model.CharacterEconomyBreakdown
-import com.dubl.character.android.model.ChiRules
-import com.dubl.character.android.model.DevelopmentAcquisitionChoice
-import com.dubl.character.android.model.DevelopmentAcquisitionPlan
-import com.dubl.character.android.model.DevelopmentAcquisitionPlanner
-import com.dubl.character.android.model.DevelopmentAcquisitionRequest
-import com.dubl.character.android.model.DevelopmentAcquisitionStep
-import com.dubl.character.android.model.DevelopmentAcquisitionTarget
-import com.dubl.character.android.model.DevelopmentCostType
-import com.dubl.character.android.model.DevelopmentEffectIds
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.DevelopmentEntryKind
-import com.dubl.character.android.model.DevelopmentProgress
-import com.dubl.character.android.model.DevelopmentRules
-import com.dubl.character.android.model.DevelopmentScreenIndex
-import com.dubl.character.android.model.IndexedDevelopmentEntry
-import com.dubl.character.android.model.MagicEquipmentRules
-import com.dubl.character.android.model.OwnedDevelopment
-import com.dubl.character.android.model.RequirementCheck
-import com.dubl.character.android.model.RequirementStatus
-import com.dubl.character.android.model.developmentNormalize
-import com.dubl.character.android.model.developmentRank
-import com.dubl.character.android.ui.theme.DublFocus
-import com.dubl.character.android.ui.theme.DublGold
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.android.ui.development.DevelopmentGroupVisibility
-import com.dubl.character.desktop.DesktopAppState
+import com.furybook.dubl.model.AbilityOption
+import com.furybook.dubl.model.CharacterEconomy
+import com.furybook.dubl.model.CharacterEconomyBreakdown
+import com.furybook.dubl.model.ChiRules
+import com.furybook.dubl.model.DevelopmentAcquisitionChoice
+import com.furybook.dubl.model.DevelopmentAcquisitionPlan
+import com.furybook.dubl.model.DevelopmentAcquisitionPlanner
+import com.furybook.dubl.model.DevelopmentAcquisitionRequest
+import com.furybook.dubl.model.DevelopmentAcquisitionStep
+import com.furybook.dubl.model.DevelopmentAcquisitionTarget
+import com.furybook.dubl.model.DevelopmentCostType
+import com.furybook.dubl.model.DevelopmentEffectIds
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.DevelopmentEntryKind
+import com.furybook.dubl.model.DevelopmentProgress
+import com.furybook.dubl.model.DevelopmentRules
+import com.furybook.dubl.model.DevelopmentScreenIndex
+import com.furybook.dubl.model.IndexedDevelopmentEntry
+import com.furybook.dubl.model.MagicEquipmentRules
+import com.furybook.dubl.model.OwnedDevelopment
+import com.furybook.dubl.model.RequirementCheck
+import com.furybook.dubl.model.RequirementStatus
+import com.furybook.dubl.model.developmentNormalize
+import com.furybook.dubl.model.developmentRank
+import com.furybook.ui.theme.DublFocus
+import com.furybook.ui.theme.DublGold
+import com.furybook.ui.theme.DublMuted
+import com.furybook.dubl.ui.development.DevelopmentGroupVisibility
+import com.furybook.desktop.DesktopAppState
 
 private enum class DevelopmentTab(val title: String) {
     REGULAR("Обычные"), SPECIAL("Спец. ветки"), MARTIAL("Боевые искусства"), CHI("ЦИ"), OWNED("Взято")
@@ -109,7 +109,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val planner = remember(character, developmentCatalog) { DevelopmentAcquisitionPlanner(character, developmentCatalog) }
     val chiRules = remember(character, developmentCatalog) { ChiRules(character, developmentCatalog) }
     val economy = remember(character, developmentCatalog) { CharacterEconomy.breakdown(character, developmentCatalog) }
-    val availabilityById = remember(character, developmentCatalog) { mutableMapOf<String, com.dubl.character.android.model.DevelopmentAvailability>() }
+    val availabilityById = remember(character, developmentCatalog) { mutableMapOf<String, com.furybook.dubl.model.DevelopmentAvailability>() }
     val unlockCountById = remember(character, developmentCatalog) { mutableMapOf<String, Int>() }
 
     fun availabilityFor(entry: DevelopmentEntry) =

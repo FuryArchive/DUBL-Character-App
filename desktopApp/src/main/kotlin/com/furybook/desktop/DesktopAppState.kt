@@ -1,14 +1,14 @@
-package com.dubl.character.desktop
+package com.furybook.desktop
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dubl.character.android.application.DublApplication
-import com.dubl.character.android.application.CharacterTransferImportResult
-import com.dubl.character.android.data.DesktopCharacterExtrasStore
-import com.dubl.character.android.data.DesktopCharacterStore
-import com.dubl.character.android.model.*
-import com.dubl.character.desktop.data.DesktopCatalogLoader
+import com.furybook.dubl.application.DublApplication
+import com.furybook.dubl.application.CharacterTransferImportResult
+import com.furybook.dubl.data.DesktopCharacterExtrasStore
+import com.furybook.dubl.data.DesktopCharacterStore
+import com.furybook.dubl.model.*
+import com.furybook.desktop.data.DesktopCatalogLoader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption

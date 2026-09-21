@@ -1,4 +1,4 @@
-package com.dubl.character.desktop
+package com.furybook.desktop
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -42,28 +42,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.dubl.character.android.ui.layout.DublLayoutClass
-import com.dubl.character.android.ui.layout.layoutClassForWidth
-import com.dubl.character.android.ui.theme.DublTheme
-import com.dubl.character.desktop.screens.CharacterSheetScreen
-import com.dubl.character.desktop.screens.CharactersScreen
-import com.dubl.character.desktop.screens.DevelopmentScreen
-import com.dubl.character.desktop.screens.DesktopIcon
-import com.dubl.character.desktop.screens.DesktopIconKind
-import com.dubl.character.desktop.screens.DesktopAccent
-import com.dubl.character.desktop.screens.DesktopAccentSoft
-import com.dubl.character.desktop.screens.DesktopBackground
-import com.dubl.character.desktop.screens.DesktopBorder
-import com.dubl.character.desktop.screens.DesktopGold
-import com.dubl.character.desktop.screens.DesktopMuted
-import com.dubl.character.desktop.screens.DesktopSurface
-import com.dubl.character.desktop.screens.DesktopSurfaceInset
-import com.dubl.character.desktop.screens.DesktopSurfaceRaised
-import com.dubl.character.desktop.screens.DesktopText
-import com.dubl.character.desktop.screens.EquipmentScreen
-import com.dubl.character.desktop.screens.FuryMotion
-import com.dubl.character.desktop.screens.MagicScreen
-import com.dubl.character.desktop.screens.SkillsScreen
+import com.furybook.ui.layout.DublLayoutClass
+import com.furybook.ui.layout.layoutClassForWidth
+import com.furybook.ui.theme.DublTheme
+import com.furybook.desktop.screens.CharacterSheetScreen
+import com.furybook.desktop.screens.CharactersScreen
+import com.furybook.desktop.screens.DevelopmentScreen
+import com.furybook.desktop.screens.DesktopIcon
+import com.furybook.desktop.screens.DesktopIconKind
+import com.furybook.desktop.screens.DesktopAccent
+import com.furybook.desktop.screens.DesktopAccentSoft
+import com.furybook.desktop.screens.DesktopBackground
+import com.furybook.desktop.screens.DesktopBorder
+import com.furybook.desktop.screens.DesktopGold
+import com.furybook.desktop.screens.DesktopMuted
+import com.furybook.desktop.screens.DesktopSurface
+import com.furybook.desktop.screens.DesktopSurfaceInset
+import com.furybook.desktop.screens.DesktopSurfaceRaised
+import com.furybook.desktop.screens.DesktopText
+import com.furybook.desktop.screens.EquipmentScreen
+import com.furybook.desktop.screens.FuryMotion
+import com.furybook.desktop.screens.MagicScreen
+import com.furybook.desktop.screens.SkillsScreen
 
 internal enum class DesktopSection(val label: String) {
     SHEET("Лист"),

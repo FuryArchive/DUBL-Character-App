@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,13 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.model.GearCatalogEntry
-import com.dubl.character.android.model.GearItem
-import com.dubl.character.android.model.MagicEquipmentRules
-import com.dubl.character.android.ui.theme.DublFocus
-import com.dubl.character.android.ui.theme.DublGold
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.desktop.DesktopAppState
+import com.furybook.dubl.model.GearCatalogEntry
+import com.furybook.dubl.model.GearItem
+import com.furybook.dubl.model.MagicEquipmentRules
+import com.furybook.ui.theme.DublFocus
+import com.furybook.ui.theme.DublGold
+import com.furybook.ui.theme.DublMuted
+import com.furybook.desktop.DesktopAppState
 
 private enum class EquipmentTab(val title: String) { INVENTORY("Инвентарь"), CATALOG("Каталог") }
 

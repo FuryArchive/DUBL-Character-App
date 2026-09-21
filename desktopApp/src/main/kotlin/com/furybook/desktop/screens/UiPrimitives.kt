@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState

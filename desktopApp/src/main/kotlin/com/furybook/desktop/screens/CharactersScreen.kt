@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.application.CharacterTransferImportResult
-import com.dubl.character.android.data.CharacterTransferRejectReason
-import com.dubl.character.android.ui.theme.DublFocus
-import com.dubl.character.android.ui.theme.DublMuted
-import com.dubl.character.desktop.DesktopAppState
+import com.furybook.dubl.application.CharacterTransferImportResult
+import com.furybook.dubl.data.CharacterTransferRejectReason
+import com.furybook.ui.theme.DublFocus
+import com.furybook.ui.theme.DublMuted
+import com.furybook.desktop.DesktopAppState
 import java.awt.FileDialog
 import java.awt.Frame
 import java.nio.charset.StandardCharsets

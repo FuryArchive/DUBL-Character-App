@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -70,29 +70,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterEconomy
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterNote
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.CustomCondition
-import com.dubl.character.android.model.CustomResource
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.DevelopmentProgress
-import com.dubl.character.android.model.DevelopmentRules
-import com.dubl.character.android.model.DevelopmentSheetSectionType
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.RollContext
-import com.dubl.character.android.model.ResolvedSkill
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.model.SheetGroupingRules
-import com.dubl.character.android.model.SkillCategory
-import com.dubl.character.android.model.SkillEffectRules
-import com.dubl.character.android.model.resolvedSkills
-import com.dubl.character.android.model.displayNotes
-import com.dubl.character.android.model.skillCalculationForRoll
-import com.dubl.character.desktop.DesktopAppState
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterEconomy
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterNote
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.CustomCondition
+import com.furybook.dubl.model.CustomResource
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.DevelopmentProgress
+import com.furybook.dubl.model.DevelopmentRules
+import com.furybook.dubl.model.DevelopmentSheetSectionType
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.RollContext
+import com.furybook.dubl.model.ResolvedSkill
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.model.SheetGroupingRules
+import com.furybook.dubl.model.SkillCategory
+import com.furybook.dubl.model.SkillEffectRules
+import com.furybook.dubl.model.resolvedSkills
+import com.furybook.dubl.model.displayNotes
+import com.furybook.dubl.model.skillCalculationForRoll
+import com.furybook.desktop.DesktopAppState
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
@@ -379,7 +379,7 @@ private fun CharacterHero(
     state: DesktopAppState,
     character: DublCharacter,
     extras: CharacterSheetExtras,
-    economy: com.dubl.character.android.model.CharacterEconomyBreakdown,
+    economy: com.furybook.dubl.model.CharacterEconomyBreakdown,
     effectiveConditions: Set<CharacterConditionId>,
     compact: Boolean,
     wide: Boolean,
@@ -537,7 +537,7 @@ private fun HeroPortrait(state: DesktopAppState, extras: CharacterSheetExtras) {
 @Composable
 private fun HeroIdentity(
     character: DublCharacter,
-    economy: com.dubl.character.android.model.CharacterEconomyBreakdown,
+    economy: com.furybook.dubl.model.CharacterEconomyBreakdown,
     onEditIdentity: () -> Unit,
     onEconomy: () -> Unit,
 ) {
@@ -1144,7 +1144,7 @@ private fun DevelopmentBranchConnector(modifier: Modifier = Modifier) {
 
 @Composable
 private fun DevelopmentTreeRow(
-    item: com.dubl.character.android.model.DevelopmentSheetItem,
+    item: com.furybook.dubl.model.DevelopmentSheetItem,
     displayDepth: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -2361,7 +2361,7 @@ private fun DraggableGroupingItem(
     }
 }
 
-private fun defaultSkillGroups(skills: List<com.dubl.character.android.model.ResolvedSkill>): List<SheetGroup> = SkillCategory.entries.mapNotNull { category ->
+private fun defaultSkillGroups(skills: List<com.furybook.dubl.model.ResolvedSkill>): List<SheetGroup> = SkillCategory.entries.mapNotNull { category ->
     skills.filter { it.category == category }.map { it.id }.takeIf { it.isNotEmpty() }?.let { SheetGroup("skills:${category.name}", category.title, it) }
 }
 

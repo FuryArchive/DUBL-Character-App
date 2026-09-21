@@ -1,4 +1,4 @@
-package com.dubl.character.desktop.screens
+package com.furybook.desktop.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,26 +20,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.ResolvedSkill
-import com.dubl.character.android.model.RollMode
-import com.dubl.character.android.model.RollResult
-import com.dubl.character.android.model.RollContext
-import com.dubl.character.android.model.SkillEffectCatalog
-import com.dubl.character.android.model.SkillEffectRules
-import com.dubl.character.android.model.allowedAttributes
-import com.dubl.character.android.model.allowedSkillIds
-import com.dubl.character.android.model.compareRollToTarget
-import com.dubl.character.android.model.developmentNormalize
-import com.dubl.character.android.model.resolveSkill
-import com.dubl.character.android.model.rollCheck
-import com.dubl.character.android.model.rollFollowUp
-import com.dubl.character.android.model.rollPreset
-import com.dubl.character.android.model.skillCalculationForRoll
-import com.dubl.character.android.model.selectedTotals
-import com.dubl.character.android.ui.theme.DublMuted
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.ResolvedSkill
+import com.furybook.dubl.model.RollMode
+import com.furybook.dubl.model.RollResult
+import com.furybook.dubl.model.RollContext
+import com.furybook.dubl.model.SkillEffectCatalog
+import com.furybook.dubl.model.SkillEffectRules
+import com.furybook.dubl.model.allowedAttributes
+import com.furybook.dubl.model.allowedSkillIds
+import com.furybook.dubl.model.compareRollToTarget
+import com.furybook.dubl.model.developmentNormalize
+import com.furybook.dubl.model.resolveSkill
+import com.furybook.dubl.model.rollCheck
+import com.furybook.dubl.model.rollFollowUp
+import com.furybook.dubl.model.rollPreset
+import com.furybook.dubl.model.skillCalculationForRoll
+import com.furybook.dubl.model.selectedTotals
+import com.furybook.ui.theme.DublMuted
 
 @Composable
 fun SkillAttributeChoiceDialog(
