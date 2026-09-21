@@ -7,9 +7,9 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = ROOT / "shared" / "src" / "commonMain" / "kotlin"
 SESSION = SHARED / "com/dubl/character/android/state/CharacterSheetSession.kt"
-DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt"
-APP_STATE = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt"
-SHEET = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt"
+DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt"
+APP_STATE = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt"
+SHEET = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt"
 PORTABLE = ROOT / "packaging/linux/portable-src/com/dubl/character/portable/Main.kt"
 HARNESS = ROOT / "tools/tests/kotlin/CharacterSheetSessionHarness.kt"
 

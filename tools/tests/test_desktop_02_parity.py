@@ -2,8 +2,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CONTROLLER = ROOT / 'app/src/main/java/com/dubl/character/android/state/CharacterController.kt'
-SESSION = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/state/CharacterSession.kt'
+CONTROLLER = ROOT / 'app/src/main/java/com/furybook/android/state/CharacterController.kt'
+SESSION = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/state/CharacterSession.kt'
 APPLICATION = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/application'
 
 

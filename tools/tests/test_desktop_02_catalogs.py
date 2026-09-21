@@ -38,7 +38,7 @@ class Desktop02CatalogsTest(unittest.TestCase):
         self.assertEqual(len(effects['effects']), 283)
 
     def test_common_parser_source_exists(self):
-        parser = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/data/CatalogData.kt'
+        parser = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/data/CatalogData.kt'
         self.assertTrue(parser.exists())
         text = parser.read_text()
         for symbol in ['parseConditionCatalog', 'parseDevelopmentCatalog', 'parseChiCatalog', 'parseMagicEquipmentCatalog', 'parseSkillEffectCatalog']:
