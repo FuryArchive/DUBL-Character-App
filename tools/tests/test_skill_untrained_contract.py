@@ -11,7 +11,7 @@ HARNESS = ROOT / "tools/tests/kotlin/SkillUnspecifiedHarness.kt"
 def test_unspecified_untrained_rule_is_non_executable_but_learned_skill_works():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / "skill-unspecified.jar"
         compiled = subprocess.run(
