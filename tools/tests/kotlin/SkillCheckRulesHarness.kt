@@ -1,4 +1,4 @@
-import com.dubl.character.android.model.SkillCheckRules
+import com.furybook.dubl.model.SkillCheckRules
 
 fun main() {
     check(SkillCheckRules.synergyCombinedRank(5, 3) == 7)
