@@ -48,6 +48,34 @@ jobs:
           echo "native_version=$NATIVE_VERSION" >> "$GITHUB_OUTPUT"
           echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
+  content-pack:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate DUBL FCP contract
+        run: python3 -m pytest -q tools/tests/test_fcp_contract.py
+
+      - name: Build DUBL FCP
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          python3 -m tools.fcp.build_fcp \
+            --source shared/src/commonMain/resources/fcp/dubl-3.69 \
+            --output "out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp"
+
+      - name: Upload DUBL FCP release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fury-book-release-fcp
+          path: |
+            out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp
+            out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp.sha256
+          if-no-files-found: error
+
   android:
     needs: validate
     runs-on: ubuntu-latest
@@ -242,7 +270,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: [validate, android, linux, windows]
+    needs: [validate, content-pack, android, linux, windows]
     runs-on: ubuntu-latest
     steps:
       - name: Download release artifacts
@@ -263,7 +291,7 @@ jobs:
           TAG="v$VERSION"
           shopt -s nullglob
           FILES=(release/*)
-          [[ ${#FILES[@]} -ge 5 ]] || { echo "Expected release artifacts are missing" >&2; ls -la release || true; exit 1; }
+          [[ ${#FILES[@]} -ge 7 ]] || { echo "Expected release artifacts are missing" >&2; ls -la release || true; exit 1; }
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "${FILES[@]}" --clobber
           else
