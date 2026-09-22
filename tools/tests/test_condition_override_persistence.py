@@ -14,6 +14,7 @@ def test_desktop_condition_overrides_and_custom_conditions_round_trip():
     assert kotlinc is not None
     sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += sorted((SHARED / "com/furybook/dubl/data").glob("*.kt"))
+    sources += [SHARED / "com/furybook/core/json/MiniJson.kt"]
     sources += [
         DESKTOP / "com/furybook/dubl/data/DesktopCharacterStore.kt",
         DESKTOP / "com/furybook/dubl/data/DesktopCharacterExtrasStore.kt",

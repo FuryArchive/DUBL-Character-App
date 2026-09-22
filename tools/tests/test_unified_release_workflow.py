@@ -16,12 +16,13 @@ def test_v_tag_drives_one_fury_book_release_workflow_for_all_platforms():
     workflow = text(RELEASE)
     assert 'name: Fury Book Release' in workflow
     assert "- 'v*.*'" in workflow or '- "v*.*"' in workflow
-    for job in ('validate:', 'android:', 'linux:', 'windows:', 'publish:'):
+    for job in ('validate:', 'content-pack:', 'android:', 'linux:', 'windows:', 'publish:'):
         assert job in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Android.apk' in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Linux-x86_64.AppImage' in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.exe' in workflow
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Windows-x64.msi' in workflow
+    assert 'Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp' in workflow
     assert '--title "Fury Book $VERSION"' in workflow
 
 
@@ -68,3 +69,11 @@ def test_release_workflow_invokes_apksigner_from_installed_build_tools():
 def test_publish_job_tells_github_cli_which_repository_to_use_without_checkout():
     workflow = text(RELEASE)
     assert 'GH_REPO: ${{ github.repository }}' in workflow
+
+
+def test_release_workflow_builds_and_publishes_dubl_fcp():
+    workflow = text(RELEASE)
+    assert 'python3 -m tools.fcp.build_fcp' in workflow
+    assert '--source shared/src/commonMain/resources/fcp/dubl-3.69' in workflow
+    assert 'fury-book-release-fcp' in workflow
+    assert 'needs: [validate, content-pack, android, linux, windows]' in workflow

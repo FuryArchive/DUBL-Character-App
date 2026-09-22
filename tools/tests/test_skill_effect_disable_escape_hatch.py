@@ -13,6 +13,7 @@ def test_skill_effect_automation_can_be_disabled_per_character_and_persists():
     assert kotlinc is not None
     sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += sorted((SHARED / "com/furybook/dubl/data").glob("*.kt"))
+    sources += [SHARED / "com/furybook/core/json/MiniJson.kt"]
     sources += [SHARED / "com/furybook/dubl/state/CharacterSession.kt", HARNESS]
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / "skill-effect-disable.jar"

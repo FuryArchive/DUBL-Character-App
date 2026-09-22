@@ -106,7 +106,7 @@ def build_ruleset(source_or_sources: Path | dict[str, Path], repo_root: Path, ou
     }
     _write(source_index, output_dir / "source/source_index.json")
     domains: dict[str, dict] = {}
-    shared = repo_root / "shared/src/commonMain/resources"
+    shared = repo_root / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     for domain, (input_name, output_name, list_keys) in DOMAIN_FILES.items():
         if domain in {"chi", "magic_equipment", "skill_effects"} and domain_config.get(domain, {}).get("status") == "source_generated":
             continue
@@ -116,7 +116,7 @@ def build_ruleset(source_or_sources: Path | dict[str, Path], repo_root: Path, ou
         all_diagnostics.extend(diagnostics)
         domains[domain] = domain_meta(domain, {
             "status": "bootstrap_mirror",
-            "input": f"shared/src/commonMain/resources/{input_name}",
+            "input": f"shared/src/commonMain/resources/fcp/dubl-3.69/content/{input_name}",
             "output": f"content/{output_name}",
             "coverage": coverage,
         })

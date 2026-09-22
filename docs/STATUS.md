@@ -23,7 +23,7 @@ Current hard boundaries:
 - Namespace ownership: shared DUBL code is `com.furybook.dubl.*`, shared product UI is `com.furybook.ui.*`, and platform code is isolated under `com.furybook.android.*` / `com.furybook.desktop.*`.
 
 - `DublApplication` is the public state-changing boundary for the current DUBL integration.
-- canonical DUBL runtime catalogs live in shared resources.
+- canonical DUBL runtime catalogs live inside the bundled `dubl-3.69` Fury Content Pack.
 - executable formulas belong in shared rules, not platform UI.
 - typed shared golden/parity scenarios protect Android/Desktop behavior.
 - local user overrides remain separate from immutable canonical ruleset data.

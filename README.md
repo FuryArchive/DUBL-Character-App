@@ -2,9 +2,9 @@
 
 **Cross-platform tabletop character and rules companion built with Kotlin Multiplatform and Compose.**
 
-[![Android CI](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/android-ci.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/android-ci.yml)
-[![Linux Desktop](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/linux-appimage.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/linux-appimage.yml)
-[![Windows Desktop](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/windows-desktop.yml/badge.svg?branch=main)](https://github.com/FuryArchive/DUBL-Character-App/actions/workflows/windows-desktop.yml)
+[![Android CI](https://github.com/FuryArchive/Fury-Book/actions/workflows/android-ci.yml/badge.svg?branch=main)](https://github.com/FuryArchive/Fury-Book/actions/workflows/android-ci.yml)
+[![Linux Desktop](https://github.com/FuryArchive/Fury-Book/actions/workflows/linux-appimage.yml/badge.svg?branch=main)](https://github.com/FuryArchive/Fury-Book/actions/workflows/linux-appimage.yml)
+[![Windows Desktop](https://github.com/FuryArchive/Fury-Book/actions/workflows/windows-desktop.yml/badge.svg?branch=main)](https://github.com/FuryArchive/Fury-Book/actions/workflows/windows-desktop.yml)
 
 **Fury Book is the product. DUBL 3.69 is the currently shipped ruleset.**
 
@@ -56,7 +56,7 @@ Changing those is a migration task, not a branding task. Keeping them stable pre
              │ application      │
              │ rules            │
              │ persistence      │
-             │ catalogs         │
+             │ content/FCP      │
              └──────────────────┘
                       │
                       ▼
@@ -72,11 +72,12 @@ Fury Book is being structured so additional rulesets can be integrated without t
 
 | Path | Purpose |
 | --- | --- |
-| `shared/` | KMP model, rules, application layer, codecs, catalogs, shared UI primitives |
+| `shared/` | KMP model, rules, application layer, codecs, Fury Content Pack runtime, shared UI primitives |
 | `app/` | Android frontend and Android-specific adapters |
 | `desktopApp/` | Compose Desktop frontend |
 | `rulesets/dubl-3.69/` | DUBL ruleset config, resolutions, baseline and promoted generated artifacts |
 | `tools/rulebook/` | DUBL rulebook import / validation tooling |
+| `tools/fcp/` | Fury Content Pack validation/build tooling |
 | `packaging/linux/` | canonical Linux AppImage packaging |
 | `docs/` | living architecture/status docs and historical reports |
 | `ci/` | CI-only signing/test fixtures |
@@ -108,6 +109,22 @@ Android:
 ```
 
 The platform workflows under `.github/workflows/` are the authoritative networked build gates.
+
+## Fury Content Packs
+
+Fury Book separates executable rules engines from declarative ruleset content. The built-in DUBL 3.69 content is stored as an unpacked Fury Content Pack under:
+
+`shared/src/commonMain/resources/fcp/dubl-3.69/`
+
+Build the distributable pack with:
+
+```bash
+python3 -m tools.fcp.build_fcp \
+  --source shared/src/commonMain/resources/fcp/dubl-3.69 \
+  --output dist/fcp/dubl-3.69.fcp
+```
+
+Android and Desktop both load the same manifest-driven pack. See [FCP format](docs/FCP.md).
 
 ## DUBL rulebook-first content pipeline
 
@@ -153,6 +170,7 @@ The unified release publishes:
 - `Fury-Book-<version>-Linux-x86_64.AppImage`
 - `Fury-Book-<version>-Windows-x64.exe`
 - `Fury-Book-<version>-Windows-x64.msi`
+- `Fury-Book-<version>-DUBL-3.69.fcp`
 
 For Linux, the canonical packaging entrypoint is:
 

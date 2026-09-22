@@ -4,7 +4,7 @@ from pathlib import Path
 from tools.rulebook.import_skill_effects import import_skill_effects
 
 ROOT = Path(__file__).resolve().parents[2]
-RES = ROOT / "shared/src/commonMain/resources"
+RES = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
 BINDINGS = ROOT / "rulesets/dubl-3.69/bindings/skill_effects.json"
 DEV_LAYERS = [
     "development_regular_catalog.json",

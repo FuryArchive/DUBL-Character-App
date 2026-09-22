@@ -25,7 +25,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/conditions_catalog.json"
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/conditions_catalog.json"
     },
     "development": {
       "status": "bootstrap_mirror",
@@ -39,7 +39,7 @@
       "sources": [
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/chi_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/chi_catalog.json",
       "note": "Chi schools and techniques are generated together with Chi development from one Master of Melee Raw IR pass."
     },
     "magic_equipment": {
@@ -48,7 +48,7 @@
         "core",
         "archmage"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/magic_equipment_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/magic_equipment_catalog.json",
       "note": "Core spell cards and gear tables are generated from DUBL 3.69; approved Archmage additions are generated from the Archmage module. Conflicting duplicate spell cards remain incomplete and locally overridable."
     },
     "skill_effects": {
@@ -57,7 +57,7 @@
         "core",
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/skill_effects_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/skill_effects_catalog.json",
       "note": "Rule text/provenance comes from source-generated Development entries; mode/targets/toggle semantics are tracked application annotations, not rulebook authority."
     },
     "skills": {
@@ -65,7 +65,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/skills_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/skills_catalog.json",
       "compiledArtifact": {
         "type": "skill_catalog_kotlin",
         "path": "shared/src/commonMain/kotlin/com/dubl/character/android/model/GeneratedSkillCatalog.kt"
@@ -77,7 +77,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_regular_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_regular_catalog.json",
       "note": "Regular Development mechanics are generated from DUBL 3.69. Bindings contain only stable/structural metadata and explicit compatibility fallbacks for fields absent from the source."
     },
     "development_special": {
@@ -85,7 +85,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_special_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_special_catalog.json",
       "note": "Special-branch child mechanics are generated from DUBL 3.69; bindings retain stable/structural metadata and explicit fallbacks for source omissions."
     },
     "development_ability_roots": {
@@ -93,7 +93,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_ability_roots_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_ability_roots_catalog.json",
       "note": "Root ability-access nodes are generated from DUBL 3.69 ability source tables. Empty template fields and draft sources remain incomplete and locally overridable."
     },
     "development_martial": {
@@ -101,7 +101,7 @@
       "sources": [
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_martial_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_martial_catalog.json",
       "note": "Martial Arts styles and techniques are generated from the Master of Melee module Raw IR."
     },
     "development_chi": {
@@ -109,7 +109,7 @@
       "sources": [
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_chi_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_chi_catalog.json",
       "note": "Chi progression/development entries are generated from the Master of Melee module."
     },
     "development_magic": {
@@ -117,7 +117,7 @@
       "sources": [
         "core"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/development_magic_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_magic_catalog.json",
       "note": "Magic Development skills are generated from the core DUBL 3.69 Magic/Magical Skills section."
     }
   },

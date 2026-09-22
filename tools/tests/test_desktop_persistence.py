@@ -11,7 +11,7 @@ class DesktopPersistenceTest(unittest.TestCase):
         sources += [
             SHARED/'com/furybook/dubl/data/CharacterStore.kt',
             SHARED/'com/furybook/dubl/data/CharacterExtrasStore.kt',
-            SHARED/'com/furybook/dubl/data/MiniJson.kt',
+            SHARED/'com/furybook/core/json/MiniJson.kt',
             SHARED/'com/furybook/dubl/data/SnapshotCodec.kt',
             DESKTOP_DIR/'DesktopCharacterStore.kt',
             DESKTOP_DIR/'DesktopCharacterExtrasStore.kt',

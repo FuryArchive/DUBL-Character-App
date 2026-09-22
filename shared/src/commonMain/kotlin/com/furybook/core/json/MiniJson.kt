@@ -1,10 +1,10 @@
-package com.furybook.dubl.data
+package com.furybook.core.json
 
 /**
- * Tiny platform-neutral JSON reader used for the canonical DUBL catalog payloads.
+ * Tiny platform-neutral JSON reader used by Fury Book core formats and ruleset payloads.
  *
  * It deliberately supports only JSON primitives/arrays/objects and has no platform
- * dependencies, keeping the canonical catalog parsing available to Android, Desktop,
+ * dependencies, keeping manifest/catalog parsing available to Android, Desktop,
  * tests, and any future frontend without introducing a second interpretation layer.
  */
 internal sealed interface JsonValue {

@@ -44,6 +44,14 @@ Raw sessions and repositories are implementation details. Platform adapters may 
 
 Typed golden/parity scenarios protect cross-platform behavior. They are behavior locks, not substitutes for rulebook correctness: a verified rulebook correction may intentionally update a shared rule and its golden expectation once.
 
+## Fury Content Packs
+
+Fury Book separates executable rules from declarative content. `.fcp` is the product-level content container: a deterministic ZIP with `manifest.json`, typed ordered entries and checksums. Format-level code is owned by `com.furybook.content` and must not depend on DUBL.
+
+DUBL 3.69 is the first native FCP-backed ruleset. Its engine remains in `com.furybook.dubl.*`; its canonical promoted catalogs live in the bundled `dubl-3.69` FCP. `GeneratedSkillCatalog.kt` is a compiled projection of pack-owned skill JSON, not a separate content authority.
+
+See `docs/FCP.md`.
+
 ## Persistence
 
 `CharacterStore` and the shared codecs define the character persistence boundary.
@@ -57,7 +65,7 @@ Typed golden/parity scenarios protect cross-platform behavior. They are behavior
 
 ## Canonical catalogs and rulebook import
 
-Canonical runtime catalog payloads live under `shared/src/commonMain/resources`; Android and Desktop consume the same data and parsers.
+Canonical runtime content is packaged as Fury Content Packs. The bundled DUBL pack lives unpacked under `shared/src/commonMain/resources/fcp/dubl-3.69/`; Android and Desktop consume it through the same `FcpContentPack` / `DublFcpCatalogLoader` boundary.
 
 Rulebook DOCX files are development inputs, not runtime assets. The import pipeline preserves source provenance, diagnostics and unresolved ambiguity. Executable interpretation of ambiguous source material must be explicit in `rulesets/dubl-3.69/resolutions.json`.
 

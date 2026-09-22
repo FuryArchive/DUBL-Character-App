@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-RES = ROOT / "shared/src/commonMain/resources"
+RES = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
 CONFIG = ROOT / "rulesets/dubl-3.69/config.json"
 
 

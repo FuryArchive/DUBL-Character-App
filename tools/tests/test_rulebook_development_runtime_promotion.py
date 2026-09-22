@@ -2,9 +2,11 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / "shared/src/commonMain/resources"
+SHARED = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
+FCP_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/manifest.json"
 CONFIG = ROOT / "rulesets/dubl-3.69/config.json"
 CATALOG_DATA = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/data/CatalogData.kt"
+DUBL_FCP_LOADER = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublFcpCatalogLoader.kt"
 ANDROID_REPO = ROOT / "app/src/main/java/com/furybook/android/data/DevelopmentCatalogRepository.kt"
 DESKTOP_LOADER = ROOT / "shared/src/desktopMain/kotlin/com/furybook/desktop/data/DesktopCatalogLoader.kt"
 
@@ -29,7 +31,7 @@ def test_all_development_domains_are_source_generated_and_bootstrap_is_empty():
         meta = config["domains"][domain]
         assert meta["status"] == "source_generated"
         assert meta["sources"] == [source]
-        assert meta["runtimeArtifact"] == f"shared/src/commonMain/resources/{filename}"
+        assert meta["runtimeArtifact"] == f"shared/src/commonMain/resources/fcp/dubl-3.69/content/{filename}"
         catalog = _catalog(filename)
         assert len(catalog["entries"]) == expected_count
         total += expected_count
@@ -101,22 +103,28 @@ def test_chi_catalog_itself_is_promoted_from_melee_rulebook():
     meta = config["domains"]["chi"]
     assert meta["status"] == "source_generated"
     assert meta["sources"] == ["melee"]
-    assert meta["runtimeArtifact"] == "shared/src/commonMain/resources/chi_catalog.json"
+    assert meta["runtimeArtifact"] == "shared/src/commonMain/resources/fcp/dubl-3.69/content/chi_catalog.json"
     chi = _catalog("chi_catalog.json")
     assert len(chi["schools"]) == 9
     assert len(chi["techniques"]) == 68
 
 
-def test_android_and_desktop_load_exact_same_seven_development_layers():
+def test_android_and_desktop_load_same_manifest_ordered_development_layers():
     parser = CATALOG_DATA.read_text(encoding="utf-8")
+    loader = DUBL_FCP_LOADER.read_text(encoding="utf-8")
     android = ANDROID_REPO.read_text(encoding="utf-8")
     desktop = DESKTOP_LOADER.read_text(encoding="utf-8")
-    assert "fun mergeDevelopmentCatalogs" in parser
+    manifest = json.loads(FCP_MANIFEST.read_text(encoding="utf-8"))
 
-    for _, filename, _, _ in LAYERS:
-        assert f'"{filename}"' in android
-        assert f'read("{filename}")' in desktop
-    assert '"development_catalog.json"' in android
-    assert 'read("development_catalog.json")' in desktop
-    assert "mergeDevelopmentCatalogs(regular, special, roots, martial, chi, magic, bootstrap)" in android
-    assert 'parseDevelopmentCatalog(read("development_magic_catalog.json"))' in desktop
+    assert "fun mergeDevelopmentCatalogs" in parser
+    development = [
+        entry["path"].removeprefix("content/")
+        for entry in sorted(manifest["entries"], key=lambda item: (item["order"], item["path"]))
+        if entry["kind"] == "dubl.development"
+    ]
+    assert development == [filename for _, filename, _, _ in LAYERS] + ["development_catalog.json"]
+    assert 'pack.readAll("dubl.development")' in loader
+    assert "map(::parseDevelopmentCatalog)" in loader
+    assert "AndroidDublFcp.loader(appContext).loadDevelopment()" in android
+    assert "DublFcp.open(" in desktop
+    assert "fcp.loadDevelopment()" in desktop
