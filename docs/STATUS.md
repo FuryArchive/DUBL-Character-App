@@ -20,6 +20,8 @@ Android and Desktop use the same Kotlin Multiplatform model/rules/application la
 
 Current hard boundaries:
 
+- Namespace ownership: shared DUBL code is `com.furybook.dubl.*`, shared product UI is `com.furybook.ui.*`, and platform code is isolated under `com.furybook.android.*` / `com.furybook.desktop.*`.
+
 - `DublApplication` is the public state-changing boundary for the current DUBL integration.
 - canonical DUBL runtime catalogs live in shared resources.
 - executable formulas belong in shared rules, not platform UI.
