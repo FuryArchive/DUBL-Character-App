@@ -1,6 +1,6 @@
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.*
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.*
+import com.furybook.dubl.state.CharacterSession
 
 fun main() {
     val initial = DublCharacter(
