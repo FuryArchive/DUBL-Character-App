@@ -1,4 +1,4 @@
-import com.dubl.character.android.model.*
+import com.furybook.dubl.model.*
 
 fun main() {
     val unresolved = DevelopmentEntry(
