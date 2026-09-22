@@ -1,5 +1,6 @@
 package com.furybook.dubl.data
 
+import com.furybook.core.json.*
 import com.furybook.dubl.model.AppSnapshot
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
