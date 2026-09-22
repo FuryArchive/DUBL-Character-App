@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/fcp/dubl-3.69/content"
-FCP_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/fcp/dubl-3.69/manifest.json"
+SHARED = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
+FCP_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/manifest.json"
 CONFIG = ROOT / "rulesets/dubl-3.69/config.json"
 CATALOG_DATA = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/data/CatalogData.kt"
 DUBL_FCP_LOADER = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublFcpCatalogLoader.kt"
