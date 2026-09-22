@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / 'shared/src/commonMain/resources'
+SHARED = ROOT / 'shared/src/commonMain/resources/fcp/dubl-3.69/content'
 DEV_LAYERS = {
     'development_regular_catalog.json': 287,
     'development_special_catalog.json': 304,
