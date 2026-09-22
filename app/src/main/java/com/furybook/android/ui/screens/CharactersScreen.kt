@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.CharacterTransferRejectReason
-import com.furybook.dubl.state.CharacterController
+import com.furybook.android.state.CharacterController
 import com.furybook.ui.components.DublCard
-import com.furybook.ui.components.DublScreenHeader
+import com.furybook.android.ui.components.DublScreenHeader
 import java.nio.charset.StandardCharsets
 
 private const val TRANSFER_EXTENSION = ".dubl"
