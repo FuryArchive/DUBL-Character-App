@@ -33,6 +33,7 @@ Historical migration reports and implementation plans are useful context, but th
 - Gradle bootstrap/wrapper version: 9.7.0
 - Android compileSdk: 37
 - Android targetSdk: 36
+- Source namespace ownership: `com.furybook.dubl.*` / `com.furybook.ui.*` / `com.furybook.android.*` / `com.furybook.desktop.*`
 
 Do not manually duplicate schema/version constants into behavior code; these values are listed here only as a current handoff snapshot.
 
