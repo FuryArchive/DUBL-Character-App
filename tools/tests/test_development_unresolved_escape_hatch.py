@@ -11,7 +11,7 @@ HARNESS = ROOT / "tools/tests/kotlin/DevelopmentUnresolvedEscapeHarness.kt"
 def test_incomplete_development_entries_can_be_force_added_instead_of_hard_locked():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [HARNESS]
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / "development-unresolved.jar"
