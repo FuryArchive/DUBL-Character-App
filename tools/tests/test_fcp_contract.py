@@ -72,3 +72,12 @@ def test_fcp_builder_is_deterministic_and_contains_checksums():
             for path in expected - {"checksums.sha256"}:
                 digest = hashlib.sha256(archive.read(path)).hexdigest()
                 assert f"{digest}  {path}\n" in checksums
+
+
+def test_generic_fcp_runtime_does_not_depend_on_dubl():
+    content_root = ROOT / "shared/src/commonMain/kotlin/com/furybook/content"
+    sources = list(content_root.rglob("*.kt"))
+    assert sources
+    for path in sources:
+        source = path.read_text(encoding="utf-8")
+        assert "com.furybook.dubl" not in source, f"generic FCP layer depends on DUBL: {path}"
