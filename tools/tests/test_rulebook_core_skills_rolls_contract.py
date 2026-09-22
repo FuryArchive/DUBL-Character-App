@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
-MODEL = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/model'
+MODEL = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/model'
 CHARACTER = (MODEL / 'CharacterModels.kt').read_text(encoding='utf-8')
 SKILLS = (MODEL / 'SkillModels.kt').read_text(encoding='utf-8')
 ROLLS = (MODEL / 'CharacterRollContexts.kt').read_text(encoding='utf-8')
