@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android'
+SHARED = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl'
 APPLICATION = SHARED / 'application'
 STATE = SHARED / 'state'
 ANDROID_CONTROLLER = ROOT / 'app/src/main/java/com/furybook/android/state/CharacterController.kt'
