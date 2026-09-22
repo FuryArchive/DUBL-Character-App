@@ -1,6 +1,6 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.*
+import com.furybook.dubl.model.*
 
 fun main() {
     val skill = CharacterSkill(
