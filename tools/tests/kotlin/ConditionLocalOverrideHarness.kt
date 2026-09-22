@@ -1,8 +1,8 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.CharacterExtrasStore
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
+import com.furybook.dubl.data.CharacterExtrasStore
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
 
 private class MemoryExtrasStore : CharacterExtrasStore {
     private val data = mutableMapOf<String, CharacterSheetExtras>()
