@@ -11,9 +11,9 @@ HARNESS = ROOT / "tools/tests/kotlin/SkillEffectDisableHarness.kt"
 def test_skill_effect_automation_can_be_disabled_per_character_and_persists():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
-    sources += sorted((SHARED / "com/dubl/character/android/data").glob("*.kt"))
-    sources += [SHARED / "com/dubl/character/android/state/CharacterSession.kt", HARNESS]
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
+    sources += sorted((SHARED / "com/furybook/dubl/data").glob("*.kt"))
+    sources += [SHARED / "com/furybook/dubl/state/CharacterSession.kt", HARNESS]
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / "skill-effect-disable.jar"
         compiled = subprocess.run([kotlinc, *map(str, sources), "-include-runtime", "-d", str(jar)], cwd=ROOT, capture_output=True, text=True)
