@@ -3,17 +3,17 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DEV_REGULAR = ROOT / "shared/src/commonMain/resources/development_regular_catalog.json"
+DEV_REGULAR = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_regular_catalog.json"
 DEV_FILES = [
-    ROOT / "shared/src/commonMain/resources/development_regular_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_special_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_ability_roots_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_martial_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_chi_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_magic_catalog.json",
-    ROOT / "shared/src/commonMain/resources/development_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_regular_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_special_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_ability_roots_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_martial_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_chi_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_magic_catalog.json",
+    ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_catalog.json",
 ]
-MAGIC = ROOT / "shared/src/commonMain/resources/magic_equipment_catalog.json"
+MAGIC = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/magic_equipment_catalog.json"
 
 
 class Android06ContentTest(unittest.TestCase):
