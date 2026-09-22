@@ -1,5 +1,6 @@
 package com.furybook.dubl.data
 
+import com.furybook.core.json.*
 import com.furybook.dubl.model.AppSnapshot
 import com.furybook.dubl.model.DevelopmentEntry
 import com.furybook.dubl.model.DevelopmentCostType
