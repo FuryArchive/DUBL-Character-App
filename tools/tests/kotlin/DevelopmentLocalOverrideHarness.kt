@@ -1,4 +1,4 @@
-import com.dubl.character.android.model.*
+import com.furybook.dubl.model.*
 
 private fun canonicalEntry() = DevelopmentEntry(
     id = "feat-test",
