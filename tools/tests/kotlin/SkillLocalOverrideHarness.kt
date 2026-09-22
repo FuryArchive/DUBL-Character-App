@@ -1,13 +1,13 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.SkillCategory
-import com.dubl.character.android.model.UntrainedRule
-import com.dubl.character.android.model.resolveSkill
-import com.dubl.character.android.model.skillCalculation
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.SkillCategory
+import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.model.resolveSkill
+import com.furybook.dubl.model.skillCalculation
 
 fun main() {
     val initial = DublCharacter(id = "override")
