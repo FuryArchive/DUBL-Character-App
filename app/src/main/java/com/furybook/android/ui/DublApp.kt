@@ -40,10 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.furybook.dubl.data.CharacterRepository
-import com.furybook.dubl.data.CharacterSheetExtrasRepository
-import com.furybook.dubl.state.CharacterController
-import com.furybook.ui.components.dismissKeyboardOnPointerDown
+import com.furybook.android.data.CharacterRepository
+import com.furybook.android.data.CharacterSheetExtrasRepository
+import com.furybook.android.state.CharacterController
+import com.furybook.android.ui.components.dismissKeyboardOnPointerDown
 import com.furybook.android.ui.screens.CharactersScreen
 import com.furybook.android.ui.screens.EquipmentScreen
 import com.furybook.android.ui.screens.FeatsScreen
