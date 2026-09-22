@@ -12,7 +12,7 @@ ANDROID_SCREEN = ROOT / "app/src/main/java/com/furybook/android/ui/screens/Chara
 DESKTOP_STATE = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt"
 DESKTOP_SCREEN = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt"
 WORKFLOW = ROOT / ".github/workflows/linux-appimage.yml"
-SHARED = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android"
+SHARED = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl"
 HARNESS = ROOT / "tools/tests/kotlin/CharacterTransferHarness.kt"
 
 
