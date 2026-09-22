@@ -23,7 +23,7 @@ def test_build_ruleset_marks_bootstrap_mirror_and_surfaces_missing_and_ambiguous
     doc.save(source)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"version":"x","entries":[
         {"id":"a","name":"Alpha"},{"id":"d","name":"Dup"},{"id":"m","name":"Missing"}
@@ -55,7 +55,7 @@ def test_build_ruleset_uses_explicit_source_policy_for_supplement_entities(tmp_p
     archmage = tmp_path / "archmage.docx"
     d = Document(); d.add_heading("Arc Spell", 1); d.save(archmage)
 
-    repo = tmp_path / "repo"; shared = repo / "shared/src/commonMain/resources"; shared.mkdir(parents=True)
+    repo = tmp_path / "repo"; shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"; shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"entries":[
         {"id":"feat_core","name":"Shared Name","section":"Навыки"},
         {"id":"martial_technique_x","name":"Martial Move","section":"Боевые искусства"}
@@ -80,7 +80,7 @@ def test_build_ruleset_prefers_explicit_archmage_source_metadata_over_legacy_id_
     d = Document(); d.add_heading("Shared Spell", 1); d.save(archmage)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"entries": []}), encoding="utf-8")
     (shared / "chi_catalog.json").write_text(json.dumps({"schools": [], "techniques": []}), encoding="utf-8")
@@ -98,7 +98,7 @@ def test_build_ruleset_prefers_explicit_archmage_source_metadata_over_legacy_id_
 
 def test_build_ruleset_can_link_unique_inline_rule_name_for_bootstrap_domain(tmp_path: Path):
     core = tmp_path / "core.docx"; d=Document(); d.add_heading("Root",1); d.add_paragraph("Разряд 2 Ци — электрический удар"); d.save(core)
-    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources"; shared.mkdir(parents=True)
+    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources/fcp/dubl-3.69/content"; shared.mkdir(parents=True)
     (shared/"development_catalog.json").write_text(json.dumps({"entries":[]}),encoding="utf-8")
     (shared/"chi_catalog.json").write_text(json.dumps({"schools":[],"techniques":[]}),encoding="utf-8")
     (shared/"magic_equipment_catalog.json").write_text(json.dumps({"spells":[],"gear":[]}),encoding="utf-8")
@@ -110,7 +110,7 @@ def test_build_ruleset_can_link_unique_inline_rule_name_for_bootstrap_domain(tmp
 
 def test_build_ruleset_includes_source_diagnostics(tmp_path: Path):
     core=tmp_path/"core.docx"; d=Document(); d.add_heading("Draft",1); d.add_paragraph("Позже напишу ???"); d.save(core)
-    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources"; shared.mkdir(parents=True)
+    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources/fcp/dubl-3.69/content"; shared.mkdir(parents=True)
     (shared/"development_catalog.json").write_text(json.dumps({"entries":[]}),encoding="utf-8")
     (shared/"chi_catalog.json").write_text(json.dumps({"schools":[],"techniques":[]}),encoding="utf-8")
     (shared/"magic_equipment_catalog.json").write_text(json.dumps({"spells":[],"gear":[]}),encoding="utf-8")
@@ -121,7 +121,7 @@ def test_build_ruleset_includes_source_diagnostics(tmp_path: Path):
 
 def test_build_ruleset_generates_conditions_from_core_source(tmp_path: Path):
     core=tmp_path/"core.docx"; d=Document(); d.add_heading("Состояния и эффекты",1); d.add_heading("Слепота",4); d.add_paragraph("Не видит."); d.add_heading("Типы урона",2); d.save(core)
-    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources"; shared.mkdir(parents=True)
+    repo=tmp_path/"repo"; shared=repo/"shared/src/commonMain/resources/fcp/dubl-3.69/content"; shared.mkdir(parents=True)
     (shared/"development_catalog.json").write_text(json.dumps({"entries":[]}),encoding="utf-8")
     (shared/"chi_catalog.json").write_text(json.dumps({"schools":[],"techniques":[]}),encoding="utf-8")
     (shared/"magic_equipment_catalog.json").write_text(json.dumps({"spells":[],"gear":[]}),encoding="utf-8")
@@ -140,7 +140,7 @@ def test_build_ruleset_reports_missing_source_generated_section_as_error_diagnos
     d.save(core)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"entries": []}), encoding="utf-8")
     (shared / "chi_catalog.json").write_text(json.dumps({"schools": [], "techniques": []}), encoding="utf-8")
@@ -164,7 +164,7 @@ def test_build_ruleset_copies_tracked_explicit_resolutions_into_bundle(tmp_path:
     d = Document(); d.add_heading("Состояния и эффекты", 1); d.add_heading("Слепота", 4); d.add_paragraph("Не видит."); d.add_heading("Типы урона", 2); d.save(core)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"entries": []}), encoding="utf-8")
     (shared / "chi_catalog.json").write_text(json.dumps({"schools": [], "techniques": []}), encoding="utf-8")
@@ -187,7 +187,7 @@ def test_build_ruleset_carries_tracked_domain_runtime_artifact_into_manifest(tmp
     d = Document(); d.add_heading("Состояния и эффекты", 1); d.add_heading("Слепота", 4); d.add_paragraph("Не видит."); d.add_heading("Типы урона", 2); d.save(core)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     for name, payload in {
         "development_catalog.json": {"entries": []},
@@ -203,7 +203,7 @@ def test_build_ruleset_carries_tracked_domain_runtime_artifact_into_manifest(tmp
             "conditions": {
                 "status": "source_generated",
                 "sources": ["core"],
-                "runtimeArtifact": "shared/src/commonMain/resources/conditions_catalog.json",
+                "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/conditions_catalog.json",
                 "compiledArtifact": {
                     "type": "skill_catalog_kotlin",
                     "path": "shared/src/commonMain/kotlin/example.kt",
@@ -214,7 +214,7 @@ def test_build_ruleset_carries_tracked_domain_runtime_artifact_into_manifest(tmp
 
     out = tmp_path / "bundle"
     manifest = build_ruleset(core, repo, out)
-    assert manifest["domains"]["conditions"]["runtimeArtifact"] == "shared/src/commonMain/resources/conditions_catalog.json"
+    assert manifest["domains"]["conditions"]["runtimeArtifact"] == "shared/src/commonMain/resources/fcp/dubl-3.69/content/conditions_catalog.json"
     assert manifest["domains"]["conditions"]["compiledArtifact"] == {
         "type": "skill_catalog_kotlin",
         "path": "shared/src/commonMain/kotlin/example.kt",
@@ -241,7 +241,7 @@ def test_build_ruleset_emits_source_generated_skill_candidate_from_core_table_an
     d.save(core)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     for name, payload in {
         "development_catalog.json": {"entries": []},
@@ -285,7 +285,7 @@ def test_build_ruleset_emits_regular_development_candidate_and_runtime_drift(tmp
     d.save(core)
 
     repo = tmp_path / "repo"
-    shared = repo / "shared/src/commonMain/resources"
+    shared = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
     shared.mkdir(parents=True)
     (shared / "development_catalog.json").write_text(json.dumps({"entries": [{
         "id": "feat-swim", "name": "Плавание", "section": "Навыки", "category": "Атлетика",
