@@ -45,8 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.furybook.dubl.data.DevelopmentCatalogRepository
-import com.furybook.dubl.data.SkillEffectCatalogRepository
+import com.furybook.android.data.DevelopmentCatalogRepository
+import com.furybook.android.data.SkillEffectCatalogRepository
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.DublCharacter
 import com.furybook.dubl.model.ResolvedSkill
@@ -59,10 +59,10 @@ import com.furybook.dubl.model.resolveSkill
 import com.furybook.dubl.model.resolvedSkills
 import com.furybook.dubl.model.skillCalculationOptions
 import com.furybook.dubl.model.skillXpSpent
-import com.furybook.dubl.state.CharacterController
-import com.furybook.ui.components.containSheetOverscroll
+import com.furybook.android.state.CharacterController
+import com.furybook.android.ui.components.containSheetOverscroll
 import com.furybook.ui.components.DublCard
-import com.furybook.ui.components.DublScreenHeader
+import com.furybook.android.ui.components.DublScreenHeader
 import com.furybook.ui.theme.DublAccent
 import com.furybook.ui.theme.DublGold
 
