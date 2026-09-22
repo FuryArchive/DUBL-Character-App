@@ -1,9 +1,9 @@
-package com.dubl.character.android.data
+package com.furybook.dubl.data
 
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.ConditionLocalOverride
-import com.dubl.character.android.model.CustomCondition
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.ConditionLocalOverride
+import com.furybook.dubl.model.CustomCondition
 import java.nio.file.Files
 
 fun main() {
