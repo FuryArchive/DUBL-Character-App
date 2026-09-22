@@ -1,9 +1,9 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MAIN = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt'
-PRIMITIVES = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/UiPrimitives.kt'
-SHEET = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt'
+MAIN = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt'
+PRIMITIVES = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/UiPrimitives.kt'
+SHEET = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt'
 
 
 def read(path: Path) -> str:
@@ -128,12 +128,12 @@ def test_hero_metrics_expose_only_requested_quick_rolls():
     assert 'Metric(DesktopIconKind.SIZE, "Размер", character.size.toString(), null)' in metrics
 
 def test_notes_flow_through_shared_application_boundary_and_persistence():
-    extras = read(ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/model/CharacterSheetExtras.kt')
-    session = read(ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/state/CharacterExtrasSession.kt')
-    sheet_app = read(ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/application/SheetApplication.kt')
-    desktop_state = read(ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt')
-    desktop_store = read(ROOT / 'shared/src/desktopMain/kotlin/com/dubl/character/android/data/DesktopCharacterExtrasStore.kt')
-    android_store = read(ROOT / 'app/src/main/java/com/dubl/character/android/data/CharacterSheetExtrasRepository.kt')
+    extras = read(ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/model/CharacterSheetExtras.kt')
+    session = read(ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/state/CharacterExtrasSession.kt')
+    sheet_app = read(ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/application/SheetApplication.kt')
+    desktop_state = read(ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt')
+    desktop_store = read(ROOT / 'shared/src/desktopMain/kotlin/com/furybook/dubl/data/DesktopCharacterExtrasStore.kt')
+    android_store = read(ROOT / 'app/src/main/java/com/furybook/android/data/CharacterSheetExtrasRepository.kt')
     assert 'data class CharacterNote' in extras
     assert 'val noteEntries: List<CharacterNote> = emptyList()' in extras
     assert 'fun CharacterSheetExtras.displayNotes()' in extras
@@ -206,7 +206,7 @@ def test_grouping_manager_includes_rank_zero_visible_skills_and_keeps_tree_drag_
 
 
 def test_desktop_skills_screen_keeps_all_visible_default_and_hidden_restore_entrypoint():
-    skills = read(ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/SkillsScreen.kt')
+    skills = read(ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/SkillsScreen.kt')
     assert 'val skills = character.resolvedSkills().filter { skill ->' in skills
     assert '(!learnedOnly || skill.rank > 0)' in skills
     assert 'character.hiddenSkillIds.size' in skills

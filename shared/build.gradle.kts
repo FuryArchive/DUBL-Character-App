@@ -7,7 +7,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "com.dubl.character.shared"
+        namespace = "com.furybook.shared"
         compileSdk = 37
         minSdk = 26
         withHostTest {}

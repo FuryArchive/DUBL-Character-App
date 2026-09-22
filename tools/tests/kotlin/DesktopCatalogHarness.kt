@@ -1,4 +1,4 @@
-import com.dubl.character.desktop.data.DesktopCatalogLoader
+import com.furybook.desktop.data.DesktopCatalogLoader
 import java.net.URLClassLoader
 import java.nio.file.Path
 

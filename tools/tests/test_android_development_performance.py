@@ -1,11 +1,11 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-FEATS = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/FeatsScreen.kt').read_text(encoding='utf-8')
-APP = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/DublApp.kt').read_text(encoding='utf-8')
-DEV_REPO = (ROOT / 'app/src/main/java/com/dubl/character/android/data/DevelopmentCatalogRepository.kt').read_text(encoding='utf-8')
-CHI_REPO = (ROOT / 'app/src/main/java/com/dubl/character/android/data/ChiCatalogRepository.kt').read_text(encoding='utf-8')
-PLANNER = (ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/model/DevelopmentAcquisition.kt').read_text(encoding='utf-8')
+FEATS = (ROOT / 'app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt').read_text(encoding='utf-8')
+APP = (ROOT / 'app/src/main/java/com/furybook/android/ui/DublApp.kt').read_text(encoding='utf-8')
+DEV_REPO = (ROOT / 'app/src/main/java/com/furybook/android/data/DevelopmentCatalogRepository.kt').read_text(encoding='utf-8')
+CHI_REPO = (ROOT / 'app/src/main/java/com/furybook/android/data/ChiCatalogRepository.kt').read_text(encoding='utf-8')
+PLANNER = (ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/model/DevelopmentAcquisition.kt').read_text(encoding='utf-8')
 
 
 def test_default_android_development_browser_filters_off_main_thread():

@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SHARED_RESOURCES = ROOT / 'shared/src/commonMain/resources'
 ANDROID_ASSETS = ROOT / 'app/src/main/assets'
 APP_BUILD = ROOT / 'app/build.gradle.kts'
-ANDROID_DATA = ROOT / 'app/src/main/java/com/dubl/character/android/data'
+ANDROID_DATA = ROOT / 'app/src/main/java/com/furybook/android/data'
 
 CATALOGS = {
     'development_regular_catalog.json': ('entries', 287),

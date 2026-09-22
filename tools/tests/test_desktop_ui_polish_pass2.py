@@ -1,11 +1,11 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens'
+SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens'
 PRIMITIVES = SCREENS / 'UiPrimitives.kt'
 SHEET = SCREENS / 'CharacterSheetScreen.kt'
 ROLL = SCREENS / 'RollDialog.kt'
-MAIN = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt'
+MAIN = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt'
 
 
 def read(path: Path) -> str:

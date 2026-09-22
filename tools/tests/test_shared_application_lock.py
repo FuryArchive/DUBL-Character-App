@@ -1,14 +1,14 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android'
+SHARED = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl'
 APPLICATION = SHARED / 'application'
 STATE = SHARED / 'state'
-ANDROID_CONTROLLER = ROOT / 'app/src/main/java/com/dubl/character/android/state/CharacterController.kt'
-ANDROID_OVERVIEW = ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/OverviewScreen.kt'
-ANDROID_SKILLS = ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/SkillsScreen.kt'
-DESKTOP_STATE = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt'
-DESKTOP_SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens'
+ANDROID_CONTROLLER = ROOT / 'app/src/main/java/com/furybook/android/state/CharacterController.kt'
+ANDROID_OVERVIEW = ROOT / 'app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt'
+ANDROID_SKILLS = ROOT / 'app/src/main/java/com/furybook/android/ui/screens/SkillsScreen.kt'
+DESKTOP_STATE = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt'
+DESKTOP_SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens'
 
 CAPABILITY_FILES = {
     'DublApplication.kt': 'class DublApplication',

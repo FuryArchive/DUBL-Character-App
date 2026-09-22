@@ -74,7 +74,7 @@ class KmpUiFoundationTest(unittest.TestCase):
 
         app_root = ROOT / 'app' / 'src' / 'main'
         missing = []
-        prefix = 'import com.dubl.character.android.ui.theme.'
+        prefix = 'import com.furybook.ui.theme.'
         for path in app_root.rglob('*.kt'):
             for line in path.read_text(encoding='utf-8').splitlines():
                 if not line.startswith(prefix):

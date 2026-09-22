@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 GOLDEN_TEST = (
     ROOT
-    / "shared/src/commonTest/kotlin/com/dubl/character/android/application/SharedApplicationGoldenTest.kt"
+    / "shared/src/commonTest/kotlin/com/furybook/dubl/application/SharedApplicationGoldenTest.kt"
 )
 WORKFLOW = ROOT / ".github/workflows/linux-appimage.yml"
 

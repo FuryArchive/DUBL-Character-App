@@ -1,4 +1,4 @@
-import com.dubl.character.android.model.*
+import com.furybook.dubl.model.*
 
 fun main() {
     val attrs = AttributeId.entries.associateWith { AttributeValue(base = 0) }.toMutableMap().apply {

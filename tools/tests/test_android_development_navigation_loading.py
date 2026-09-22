@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-APP = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/DublApp.kt').read_text(encoding='utf-8')
+APP = (ROOT / 'app/src/main/java/com/furybook/android/ui/DublApp.kt').read_text(encoding='utf-8')
 
 
 def test_feats_navigation_renders_loading_frame_before_mounting_heavy_screen():

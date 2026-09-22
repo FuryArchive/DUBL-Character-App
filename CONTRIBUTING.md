@@ -27,6 +27,17 @@ Keep platform modules focused on presentation, platform services and adapters.
 
 Do not duplicate a formula in Android and Desktop to make the screens agree.
 
+## Namespace ownership
+
+Keep package ownership aligned with module responsibility:
+
+- shared DUBL behavior: `com.furybook.dubl.*`;
+- shared Fury Book UI primitives: `com.furybook.ui.*`;
+- Android-only code: `com.furybook.android.*`;
+- Desktop-only code: `com.furybook.desktop.*`.
+
+Do not place platform packages in `shared/commonMain`. Do not rename compatibility identifiers such as the Android `applicationId`, DUBL ruleset ID, transfer format, or local data identity as part of ordinary namespace cleanup.
+
 ## Rulebook and catalog changes
 
 For rulebook-driven changes:

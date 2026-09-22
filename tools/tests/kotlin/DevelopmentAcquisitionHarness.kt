@@ -1,8 +1,8 @@
-import com.dubl.character.android.application.ApplicationUndoManager
-import com.dubl.character.android.application.DevelopmentApplication
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.*
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.application.ApplicationUndoManager
+import com.furybook.dubl.application.DevelopmentApplication
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.*
+import com.furybook.dubl.state.CharacterSession
 
 private fun entry(
     id: String,

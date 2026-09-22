@@ -23,7 +23,7 @@ def test_android_branding_uses_fury_book_without_changing_stable_application_id(
 
 
 def test_desktop_window_and_distribution_are_fury_book_branded_with_custom_icon():
-    main = text("desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt")
+    main = text("desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt")
     gradle = text("desktopApp/build.gradle.kts")
     icon = ROOT / "desktopApp/src/main/resources/fury-icon.svg"
 
@@ -44,7 +44,7 @@ def test_desktop_window_and_distribution_are_fury_book_branded_with_custom_icon(
 def test_linux_appimage_uses_fury_book_name_and_icon_but_preserves_data_identity():
     build = text("packaging/linux/build-appimage.sh")
     workflow = text(".github/workflows/linux-appimage.yml")
-    store = text("shared/src/desktopMain/kotlin/com/dubl/character/android/data/DesktopCharacterStore.kt")
+    store = text("shared/src/desktopMain/kotlin/com/furybook/dubl/data/DesktopCharacterStore.kt")
 
     assert 'Fury-Book-${VERSION}-linux-${ARCH}.AppImage' in build
     assert 'Name=Fury Book' in build
@@ -59,7 +59,7 @@ def test_linux_appimage_uses_fury_book_name_and_icon_but_preserves_data_identity
 def test_release_artifacts_use_fury_book_product_name_while_ruleset_identity_stays_dubl():
     android_ci = text(".github/workflows/android-ci.yml")
     release = text(".github/workflows/release.yml")
-    ruleset = text("shared/src/commonMain/kotlin/com/dubl/character/android/model/RulesetModels.kt")
+    ruleset = text("shared/src/commonMain/kotlin/com/furybook/dubl/model/RulesetModels.kt")
 
     assert 'Fury-Book-Android-dev.apk' in android_ci
     assert 'Fury-Book-${{ needs.validate.outputs.version }}-Android.apk' in release

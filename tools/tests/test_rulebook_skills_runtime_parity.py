@@ -1,8 +1,8 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILLS = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/model/SkillModels.kt"
-GENERATED = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/model/GeneratedSkillCatalog.kt"
+SKILLS = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/model/SkillModels.kt"
+GENERATED = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/model/GeneratedSkillCatalog.kt"
 
 
 def test_shared_skill_catalog_delegates_to_rulebook_generated_artifact():

@@ -117,7 +117,7 @@ def test_baseline_cli_promotes_skill_json_and_generated_kotlin_adapter(tmp_path:
             "runtimeArtifact": "shared/src/commonMain/resources/skills_catalog.json",
             "compiledArtifact": {
                 "type": "skill_catalog_kotlin",
-                "path": "shared/src/commonMain/kotlin/com/dubl/character/android/model/GeneratedSkillCatalog.kt",
+                "path": "shared/src/commonMain/kotlin/com/furybook/dubl/model/GeneratedSkillCatalog.kt",
             },
             "coverage": {"total": 1, "linked": 1, "ambiguous": 0, "missing": 0},
         }},
@@ -130,7 +130,7 @@ def test_baseline_cli_promotes_skill_json_and_generated_kotlin_adapter(tmp_path:
     assert updated.returncode == 0, updated.stdout + updated.stderr
 
     runtime = repo / "shared/src/commonMain/resources/skills_catalog.json"
-    compiled = repo / "shared/src/commonMain/kotlin/com/dubl/character/android/model/GeneratedSkillCatalog.kt"
+    compiled = repo / "shared/src/commonMain/kotlin/com/furybook/dubl/model/GeneratedSkillCatalog.kt"
     assert json.loads(runtime.read_text(encoding="utf-8")) == skills
     assert "internal object GeneratedSkillCatalog" in compiled.read_text(encoding="utf-8")
     assert 'id = "athletics"' in compiled.read_text(encoding="utf-8")

@@ -11,10 +11,10 @@ HARNESS = ROOT / "tools/tests/kotlin/DevelopmentOverrideSessionHarness.kt"
 def test_character_session_owns_development_override_and_custom_mutations():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [
-        SHARED / "com/dubl/character/android/data/CharacterStore.kt",
-        SHARED / "com/dubl/character/android/state/CharacterSession.kt",
+        SHARED / "com/furybook/dubl/data/CharacterStore.kt",
+        SHARED / "com/furybook/dubl/state/CharacterSession.kt",
         HARNESS,
     ]
     with tempfile.TemporaryDirectory() as td:

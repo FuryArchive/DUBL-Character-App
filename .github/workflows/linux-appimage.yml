@@ -112,6 +112,7 @@ jobs:
             tools/tests/test_rulebook_development_runtime_promotion.py \
             tools/tests/test_rulebook_release_gate.py \
             tools/tests/test_build_version_matrix.py \
+            tools/tests/test_namespace_ownership.py \
             tools/tests/test_windows_desktop_ci.py \
             tools/tests/test_compose_release_ready.py
 

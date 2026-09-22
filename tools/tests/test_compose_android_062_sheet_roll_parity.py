@@ -1,8 +1,8 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHEET = (ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt').read_text(encoding='utf-8')
-ROLL = (ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/RollDialog.kt').read_text(encoding='utf-8')
+SHEET = (ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt').read_text(encoding='utf-8')
+ROLL = (ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/RollDialog.kt').read_text(encoding='utf-8')
 
 
 def test_character_sheet_roll_uses_explicit_attribute_choice_before_roll():

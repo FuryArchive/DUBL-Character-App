@@ -6,8 +6,8 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = ROOT / 'shared/src/commonMain/kotlin'
 HARNESS = ROOT / 'tools/tests/kotlin/MagicParityHarness.kt'
-ANDROID_CONTROLLER = ROOT / 'app/src/main/java/com/dubl/character/android/state/CharacterController.kt'
-DESKTOP_STATE = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt'
+ANDROID_CONTROLLER = ROOT / 'app/src/main/java/com/furybook/android/state/CharacterController.kt'
+DESKTOP_STATE = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt'
 
 
 def test_android_and_desktop_magic_route_through_shared_application_capability():
@@ -37,10 +37,10 @@ def test_android_and_desktop_magic_route_through_shared_application_capability()
 def test_shared_magic_behavior_harness():
     kotlinc = shutil.which('kotlinc')
     assert kotlinc is not None
-    sources = sorted((SHARED / 'com/dubl/character/android/model').glob('*.kt'))
+    sources = sorted((SHARED / 'com/furybook/dubl/model').glob('*.kt'))
     sources += [
-        SHARED / 'com/dubl/character/android/data/CharacterStore.kt',
-        SHARED / 'com/dubl/character/android/state/CharacterSession.kt',
+        SHARED / 'com/furybook/dubl/data/CharacterStore.kt',
+        SHARED / 'com/furybook/dubl/state/CharacterSession.kt',
         HARNESS,
     ]
     with tempfile.TemporaryDirectory() as td:

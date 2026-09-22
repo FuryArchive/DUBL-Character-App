@@ -1,4 +1,4 @@
-import com.dubl.character.android.data.*
+import com.furybook.dubl.data.*
 import java.io.File
 
 fun main(args: Array<String>) {

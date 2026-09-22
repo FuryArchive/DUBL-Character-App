@@ -1,9 +1,9 @@
 package regression
 
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.model.SheetGroupingRules
-import com.dubl.character.android.ui.components.compactGridRows
-import com.dubl.character.android.ui.components.sheetContentOverscrollToConsume
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.model.SheetGroupingRules
+import com.furybook.android.ui.components.compactGridRows
+import com.furybook.android.ui.components.sheetContentOverscrollToConsume
 
 fun main() {
     // A downward drag at the top of a scrollable sheet must remain available

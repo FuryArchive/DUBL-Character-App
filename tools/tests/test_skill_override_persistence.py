@@ -11,10 +11,10 @@ HARNESS = ROOT / "tools/tests/kotlin/SkillOverridePersistenceHarness.kt"
 def test_skill_local_definition_overrides_round_trip_through_snapshot_codec():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [
-        SHARED / "com/dubl/character/android/data/MiniJson.kt",
-        SHARED / "com/dubl/character/android/data/SnapshotCodec.kt",
+        SHARED / "com/furybook/dubl/data/MiniJson.kt",
+        SHARED / "com/furybook/dubl/data/SnapshotCodec.kt",
         HARNESS,
     ]
     with tempfile.TemporaryDirectory() as td:

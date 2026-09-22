@@ -20,7 +20,7 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "com.dubl.character.desktop.MainKt"
+        mainClass = "com.furybook.desktop.MainKt"
         nativeDistributions {
             packageName = "FuryBook"
             packageVersion = desktopVersion

@@ -1,5 +1,5 @@
 from pathlib import Path
-DEV = (Path(__file__).resolve().parents[2] / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/DevelopmentScreen.kt').read_text(encoding='utf-8')
+DEV = (Path(__file__).resolve().parents[2] / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt').read_text(encoding='utf-8')
 
 
 def test_force_requirement_purchase_requires_confirmation():

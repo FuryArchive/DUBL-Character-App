@@ -1,20 +1,20 @@
-package com.dubl.character.tests
+package com.furybook.tests
 
-import com.dubl.character.android.application.CharacterTransferImportResult
-import com.dubl.character.android.application.DublApplication
-import com.dubl.character.android.data.CharacterExtrasStore
-import com.dubl.character.android.data.CharacterTransferCodec
-import com.dubl.character.android.data.CharacterTransferRejectReason
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.data.SnapshotCodec
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.CharacterConditionId
-import com.dubl.character.android.model.CharacterSheetExtras
-import com.dubl.character.android.model.CharacterSheetResourceId
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.RulesetRef
-import com.dubl.character.android.model.SheetGroup
+import com.furybook.dubl.application.CharacterTransferImportResult
+import com.furybook.dubl.application.DublApplication
+import com.furybook.dubl.data.CharacterExtrasStore
+import com.furybook.dubl.data.CharacterTransferCodec
+import com.furybook.dubl.data.CharacterTransferRejectReason
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.data.SnapshotCodec
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.CharacterConditionId
+import com.furybook.dubl.model.CharacterSheetExtras
+import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.RulesetRef
+import com.furybook.dubl.model.SheetGroup
 
 private class TransferExtrasStore : CharacterExtrasStore {
     private val values = mutableMapOf<String, CharacterSheetExtras>()

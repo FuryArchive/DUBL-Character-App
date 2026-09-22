@@ -11,10 +11,10 @@ HARNESS = ROOT / "tools/tests/kotlin/ConditionLocalOverrideHarness.kt"
 def test_conditions_support_local_override_custom_add_reset_and_delete():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [
-        SHARED / "com/dubl/character/android/data/CharacterExtrasStore.kt",
-        SHARED / "com/dubl/character/android/state/CharacterExtrasSession.kt",
+        SHARED / "com/furybook/dubl/data/CharacterExtrasStore.kt",
+        SHARED / "com/furybook/dubl/state/CharacterExtrasSession.kt",
         HARNESS,
     ]
     with tempfile.TemporaryDirectory() as td:

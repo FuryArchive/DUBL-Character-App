@@ -4,9 +4,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = ROOT / "shared/src/commonMain/resources"
 CONFIG = ROOT / "rulesets/dubl-3.69/config.json"
-CATALOG_DATA = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/data/CatalogData.kt"
-ANDROID_REPO = ROOT / "app/src/main/java/com/dubl/character/android/data/DevelopmentCatalogRepository.kt"
-DESKTOP_LOADER = ROOT / "shared/src/desktopMain/kotlin/com/dubl/character/desktop/data/DesktopCatalogLoader.kt"
+CATALOG_DATA = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/data/CatalogData.kt"
+ANDROID_REPO = ROOT / "app/src/main/java/com/furybook/android/data/DevelopmentCatalogRepository.kt"
+DESKTOP_LOADER = ROOT / "shared/src/desktopMain/kotlin/com/furybook/desktop/data/DesktopCatalogLoader.kt"
 
 LAYERS = (
     ("development_regular", "development_regular_catalog.json", 287, "core"),

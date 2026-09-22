@@ -1,6 +1,6 @@
-import com.dubl.character.android.model.*
-import com.dubl.character.android.data.DesktopCharacterExtrasStore
-import com.dubl.character.android.data.DesktopCharacterStore
+import com.furybook.dubl.model.*
+import com.furybook.dubl.data.DesktopCharacterExtrasStore
+import com.furybook.dubl.data.DesktopCharacterStore
 import java.nio.file.Files
 
 fun main() {
@@ -38,7 +38,7 @@ fun main() {
     check(loaded.activeCharacter.ruleset == DublRuleset.reference)
 
     val legacyRaw = """{"schema":7,"activeCharacterId":"legacy","characters":[{"id":"legacy","name":"Legacy"}]}"""
-    val migrated = com.dubl.character.android.data.SnapshotCodec.decode(legacyRaw) { "fallback" }
+    val migrated = com.furybook.dubl.data.SnapshotCodec.decode(legacyRaw) { "fallback" }
     check(migrated.activeCharacter.ruleset == DublRuleset.reference)
 
     val extras = CharacterSheetExtras(

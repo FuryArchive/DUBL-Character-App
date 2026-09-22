@@ -1,19 +1,19 @@
-package com.dubl.character.android.state
+package com.furybook.dubl.state
 
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.data.SnapshotCodec
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.model.DevelopmentCatalog
-import com.dubl.character.android.model.DevelopmentCostType
-import com.dubl.character.android.model.DevelopmentEntry
-import com.dubl.character.android.model.OwnedDevelopment
-import com.dubl.character.android.model.RollContext
-import com.dubl.character.android.model.SkillEffectCatalog
-import com.dubl.character.android.model.SkillEffectDefinition
-import com.dubl.character.android.model.SkillEffectMode
-import com.dubl.character.android.model.SkillEffectRules
-import com.dubl.character.android.model.resolveSkill
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.data.SnapshotCodec
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.DevelopmentCostType
+import com.furybook.dubl.model.DevelopmentEntry
+import com.furybook.dubl.model.OwnedDevelopment
+import com.furybook.dubl.model.RollContext
+import com.furybook.dubl.model.SkillEffectCatalog
+import com.furybook.dubl.model.SkillEffectDefinition
+import com.furybook.dubl.model.SkillEffectMode
+import com.furybook.dubl.model.SkillEffectRules
+import com.furybook.dubl.model.resolveSkill
 
 fun main() {
     val development = DevelopmentEntry(

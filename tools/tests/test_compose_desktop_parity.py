@@ -1,9 +1,9 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-MAIN = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/Main.kt'
-STATE = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/DesktopAppState.kt'
-SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens'
+MAIN = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/Main.kt'
+STATE = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt'
+SCREENS = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens'
 
 
 def text(path: Path) -> str:

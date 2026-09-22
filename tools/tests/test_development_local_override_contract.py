@@ -11,7 +11,7 @@ HARNESS = ROOT / "tools/tests/kotlin/DevelopmentLocalOverrideHarness.kt"
 def test_development_canonical_entries_can_be_locally_overridden_and_custom_entries_added():
     kotlinc = shutil.which("kotlinc")
     assert kotlinc is not None
-    sources = sorted((SHARED / "com/dubl/character/android/model").glob("*.kt"))
+    sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [HARNESS]
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / "development-local-override.jar"

@@ -25,7 +25,7 @@ val hasReleaseSigning = listOf(
 ).all { !it.isNullOrBlank() }
 
 android {
-    namespace = "com.dubl.character.android"
+    namespace = "com.furybook.android"
     compileSdk = 37
 
     defaultConfig {

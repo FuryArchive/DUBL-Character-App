@@ -6,9 +6,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PROMOTED = ROOT / "shared/src/commonMain/resources/conditions_catalog.json"
-KOTLIN = ROOT / "shared/src/commonMain/kotlin/com/dubl/character/android/model/CharacterSheetExtras.kt"
-ANDROID = ROOT / "app/src/main/java/com/dubl/character/android/ui/screens/OverviewScreen.kt"
-DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt"
+KOTLIN = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/model/CharacterSheetExtras.kt"
+ANDROID = ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt"
+DESKTOP = ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt"
 
 
 def _enum_titles() -> list[str]:

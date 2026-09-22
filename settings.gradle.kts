@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FURY"
+rootProject.name = "FuryBook"
 include(":shared", ":app", ":desktopApp")

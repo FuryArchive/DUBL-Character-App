@@ -1,9 +1,9 @@
-import com.dubl.character.android.data.InMemoryCharacterStore
-import com.dubl.character.android.model.AppSnapshot
-import com.dubl.character.android.model.AttributeId
-import com.dubl.character.android.model.AttributeValue
-import com.dubl.character.android.model.DublCharacter
-import com.dubl.character.android.state.CharacterSheetSession
+import com.furybook.dubl.data.InMemoryCharacterStore
+import com.furybook.dubl.model.AppSnapshot
+import com.furybook.dubl.model.AttributeId
+import com.furybook.dubl.model.AttributeValue
+import com.furybook.dubl.model.DublCharacter
+import com.furybook.dubl.state.CharacterSheetSession
 
 private fun expect(value: Boolean, message: String) {
     if (!value) error(message)

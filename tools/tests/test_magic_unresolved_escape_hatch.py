@@ -1,9 +1,9 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SESSION = (ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/state/CharacterSession.kt').read_text(encoding='utf-8')
-ANDROID = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/MagicScreen.kt').read_text(encoding='utf-8')
-DESKTOP = (ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
+SESSION = (ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/state/CharacterSession.kt').read_text(encoding='utf-8')
+ANDROID = (ROOT / 'app/src/main/java/com/furybook/android/ui/screens/MagicScreen.kt').read_text(encoding='utf-8')
+DESKTOP = (ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/MagicScreen.kt').read_text(encoding='utf-8')
 
 
 def test_shared_backend_does_not_hard_reject_incomplete_rulebook_spell():

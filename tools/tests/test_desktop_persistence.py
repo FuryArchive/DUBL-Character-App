@@ -2,17 +2,17 @@ from pathlib import Path
 import shutil, subprocess, tempfile, unittest
 ROOT=Path(__file__).resolve().parents[2]
 SHARED=ROOT/'shared/src/commonMain/kotlin'
-DESKTOP_DIR=ROOT/'shared/src/desktopMain/kotlin/com/dubl/character/android/data'
+DESKTOP_DIR=ROOT/'shared/src/desktopMain/kotlin/com/furybook/dubl/data'
 HARNESS=ROOT/'tools/tests/kotlin/DesktopPersistenceHarness.kt'
 class DesktopPersistenceTest(unittest.TestCase):
     def test_round_trip_snapshot_and_extras(self):
         kotlinc=shutil.which('kotlinc'); self.assertIsNotNone(kotlinc)
-        sources=sorted((SHARED/'com/dubl/character/android/model').glob('*.kt'))
+        sources=sorted((SHARED/'com/furybook/dubl/model').glob('*.kt'))
         sources += [
-            SHARED/'com/dubl/character/android/data/CharacterStore.kt',
-            SHARED/'com/dubl/character/android/data/CharacterExtrasStore.kt',
-            SHARED/'com/dubl/character/android/data/MiniJson.kt',
-            SHARED/'com/dubl/character/android/data/SnapshotCodec.kt',
+            SHARED/'com/furybook/dubl/data/CharacterStore.kt',
+            SHARED/'com/furybook/dubl/data/CharacterExtrasStore.kt',
+            SHARED/'com/furybook/dubl/data/MiniJson.kt',
+            SHARED/'com/furybook/dubl/data/SnapshotCodec.kt',
             DESKTOP_DIR/'DesktopCharacterStore.kt',
             DESKTOP_DIR/'DesktopCharacterExtrasStore.kt',
             HARNESS,

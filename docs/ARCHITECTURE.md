@@ -19,6 +19,17 @@ Android is the mature UX reference. It is not a rules authority when it conflict
 
 The current executable application boundary is still DUBL-specific (`DublApplication`). Future ruleset work should introduce explicit ruleset composition/adapter boundaries rather than renaming DUBL internals in-place or moving formulas into platform UI.
 
+## Namespace ownership
+
+Stage 1 establishes package ownership independently of compatibility identifiers:
+
+- `com.furybook.dubl.*` — shared DUBL domain, application, persistence contracts and DUBL-specific shared helpers;
+- `com.furybook.ui.*` — product-level shared Compose primitives/theme/layout policy;
+- `com.furybook.android.*` — Android frontend and Android-only adapters;
+- `com.furybook.desktop.*` — Compose Desktop frontend and desktop-only adapters.
+
+`shared/commonMain` must never depend on or declare Android/Desktop platform packages. Android's installed `applicationId` remains `com.dubl.character.android` for upgrade compatibility even though its source namespace is `com.furybook.android`.
+
 ## Shared core
 
 `shared` contains the platform-independent character model, executable rules, roll engine, development/magic/equipment logic, canonical catalog payloads/parsers, persistence codecs/contracts, responsive policy, theme tokens, and reusable Compose primitives.

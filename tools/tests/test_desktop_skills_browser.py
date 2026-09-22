@@ -1,7 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILLS = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/SkillsScreen.kt'
+SKILLS = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/SkillsScreen.kt'
 
 
 def read(path: Path) -> str:

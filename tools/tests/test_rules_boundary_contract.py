@@ -6,11 +6,11 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[2]
 SHARED = ROOT / 'shared/src/commonMain/kotlin'
 HARNESS = ROOT / 'tools/tests/kotlin/RulesBoundaryHarness.kt'
-ANDROID_OVERVIEW = ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/OverviewScreen.kt'
-ANDROID_FEATS = ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/FeatsScreen.kt'
-ANDROID_MAGIC = ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/MagicScreen.kt'
-DESKTOP_ROLL = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/RollDialog.kt'
-DESKTOP_DEVELOPMENT = ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/DevelopmentScreen.kt'
+ANDROID_OVERVIEW = ROOT / 'app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt'
+ANDROID_FEATS = ROOT / 'app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt'
+ANDROID_MAGIC = ROOT / 'app/src/main/java/com/furybook/android/ui/screens/MagicScreen.kt'
+DESKTOP_ROLL = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/RollDialog.kt'
+DESKTOP_DEVELOPMENT = ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt'
 
 
 def read(path: Path) -> str:
@@ -77,7 +77,7 @@ def test_character_sheet_stat_explanations_use_shared_formula_components():
 def test_shared_rules_boundary_harness():
     kotlinc = shutil.which('kotlinc')
     assert kotlinc is not None
-    sources = sorted((SHARED / 'com/dubl/character/android/model').glob('*.kt'))
+    sources = sorted((SHARED / 'com/furybook/dubl/model').glob('*.kt'))
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / 'rules-boundary.jar'
         compiled = subprocess.run(

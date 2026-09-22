@@ -4,15 +4,15 @@ import subprocess
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[2]
-MODEL = ROOT / 'shared/src/commonMain/kotlin/com/dubl/character/android/model'
+MODEL = ROOT / 'shared/src/commonMain/kotlin/com/furybook/dubl/model'
 CHARACTER = (MODEL / 'CharacterModels.kt').read_text(encoding='utf-8')
 SKILLS = (MODEL / 'SkillModels.kt').read_text(encoding='utf-8')
 ROLLS = (MODEL / 'CharacterRollContexts.kt').read_text(encoding='utf-8')
 RULES = MODEL / 'SkillCheckRules.kt'
-ANDROID_OVERVIEW = (ROOT / 'app/src/main/java/com/dubl/character/android/ui/screens/OverviewScreen.kt').read_text(encoding='utf-8')
+ANDROID_OVERVIEW = (ROOT / 'app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt').read_text(encoding='utf-8')
 HARNESS = ROOT / 'tools/tests/kotlin/SkillCheckRulesHarness.kt'
-DESKTOP_SHEET = (ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/CharacterSheetScreen.kt').read_text(encoding='utf-8')
-DESKTOP_ROLL = (ROOT / 'desktopApp/src/main/kotlin/com/dubl/character/desktop/screens/RollDialog.kt').read_text(encoding='utf-8')
+DESKTOP_SHEET = (ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt').read_text(encoding='utf-8')
+DESKTOP_ROLL = (ROOT / 'desktopApp/src/main/kotlin/com/furybook/desktop/screens/RollDialog.kt').read_text(encoding='utf-8')
 ROLL_RULES = (MODEL / 'RollRules.kt').read_text(encoding='utf-8')
 
 

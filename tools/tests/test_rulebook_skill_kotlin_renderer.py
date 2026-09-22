@@ -37,7 +37,7 @@ def test_renderer_emits_deterministic_shared_skill_catalog():
 
     rendered = render_skill_catalog_kotlin(payload)
 
-    assert rendered.startswith("package com.dubl.character.android.model\n")
+    assert rendered.startswith("package com.furybook.dubl.model\n")
     assert "internal object GeneratedSkillCatalog" in rendered
     assert "val rankCosts: List<Int> = listOf(0, 10, 30)" in rendered
     assert 'id = "athletics"' in rendered

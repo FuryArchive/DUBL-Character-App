@@ -1,6 +1,6 @@
-import com.dubl.character.android.data.CharacterStore
-import com.dubl.character.android.model.*
-import com.dubl.character.android.state.CharacterSession
+import com.furybook.dubl.data.CharacterStore
+import com.furybook.dubl.model.*
+import com.furybook.dubl.state.CharacterSession
 
 private class MemoryStore(initial: AppSnapshot) : CharacterStore {
     var value = initial
