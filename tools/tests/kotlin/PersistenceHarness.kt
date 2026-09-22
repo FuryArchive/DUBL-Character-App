@@ -1,5 +1,5 @@
-import com.dubl.character.android.data.*
-import com.dubl.character.android.model.*
+import com.furybook.dubl.data.*
+import com.furybook.dubl.model.*
 import java.nio.file.Files
 
 fun main() {
