@@ -1,5 +1,5 @@
-import com.dubl.character.android.model.SheetGroup
-import com.dubl.character.android.model.SheetGroupingRules
+import com.furybook.dubl.model.SheetGroup
+import com.furybook.dubl.model.SheetGroupingRules
 
 fun main() {
     val defaults = listOf(
