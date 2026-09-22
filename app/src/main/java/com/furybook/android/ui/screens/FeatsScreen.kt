@@ -47,8 +47,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.furybook.dubl.data.ChiCatalogRepository
-import com.furybook.dubl.data.DevelopmentCatalogRepository
+import com.furybook.android.data.ChiCatalogRepository
+import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.effectiveDevelopmentCatalog
@@ -78,11 +78,11 @@ import com.furybook.dubl.model.RequirementCheck
 import com.furybook.dubl.model.RequirementStatus
 import com.furybook.dubl.model.developmentNormalize
 import com.furybook.dubl.model.developmentRank
-import com.furybook.dubl.state.CharacterController
-import com.furybook.ui.components.containSheetOverscroll
+import com.furybook.android.state.CharacterController
+import com.furybook.android.ui.components.containSheetOverscroll
 import com.furybook.ui.components.DublCard
-import com.furybook.ui.components.DublScreenHeader
-import com.furybook.ui.components.DublSwitch
+import com.furybook.android.ui.components.DublScreenHeader
+import com.furybook.android.ui.components.DublSwitch
 import com.furybook.dubl.ui.development.DevelopmentGroupVisibility
 import com.furybook.ui.theme.DublAccent
 import com.furybook.ui.theme.DublDanger
