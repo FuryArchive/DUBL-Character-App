@@ -61,7 +61,7 @@ def test_baseline_cli_promotes_source_generated_domain_to_configured_runtime_art
     bundle = tmp_path / "bundle"
     _write_bundle(bundle)
     manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
-    manifest["domains"]["conditions"]["runtimeArtifact"] = "shared/src/commonMain/resources/conditions_catalog.json"
+    manifest["domains"]["conditions"]["runtimeArtifact"] = "shared/src/commonMain/resources/fcp/dubl-3.69/content/conditions_catalog.json"
     (bundle / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
     repo = tmp_path / "repo"
@@ -69,7 +69,7 @@ def test_baseline_cli_promotes_source_generated_domain_to_configured_runtime_art
     updated = _run(str(bundle), "--baseline", str(baseline), "--repo-root", str(repo), "--update")
     assert updated.returncode == 0, updated.stdout + updated.stderr
 
-    promoted = repo / "shared/src/commonMain/resources/conditions_catalog.json"
+    promoted = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content/conditions_catalog.json"
     assert promoted.exists()
     assert json.loads(promoted.read_text(encoding="utf-8")) == json.loads((bundle / "content/conditions.json").read_text(encoding="utf-8"))
     assert not (baseline.parent / "generated/conditions.json").exists()
@@ -114,7 +114,7 @@ def test_baseline_cli_promotes_skill_json_and_generated_kotlin_adapter(tmp_path:
         "domains": {"skills": {
             "status": "source_generated",
             "output": "content/skills.json",
-            "runtimeArtifact": "shared/src/commonMain/resources/skills_catalog.json",
+            "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/skills_catalog.json",
             "compiledArtifact": {
                 "type": "skill_catalog_kotlin",
                 "path": "shared/src/commonMain/kotlin/com/furybook/dubl/model/GeneratedSkillCatalog.kt",
@@ -129,7 +129,7 @@ def test_baseline_cli_promotes_skill_json_and_generated_kotlin_adapter(tmp_path:
     updated = _run(str(bundle), "--baseline", str(baseline), "--repo-root", str(repo), "--update")
     assert updated.returncode == 0, updated.stdout + updated.stderr
 
-    runtime = repo / "shared/src/commonMain/resources/skills_catalog.json"
+    runtime = repo / "shared/src/commonMain/resources/fcp/dubl-3.69/content/skills_catalog.json"
     compiled = repo / "shared/src/commonMain/kotlin/com/furybook/dubl/model/GeneratedSkillCatalog.kt"
     assert json.loads(runtime.read_text(encoding="utf-8")) == skills
     assert "internal object GeneratedSkillCatalog" in compiled.read_text(encoding="utf-8")
