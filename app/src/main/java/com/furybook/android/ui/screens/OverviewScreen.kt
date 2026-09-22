@@ -88,9 +88,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.furybook.dubl.data.ConditionCatalogRepository
-import com.furybook.dubl.data.DevelopmentCatalogRepository
-import com.furybook.dubl.data.SkillEffectCatalogRepository
+import com.furybook.android.data.ConditionCatalogRepository
+import com.furybook.android.data.DevelopmentCatalogRepository
+import com.furybook.android.data.SkillEffectCatalogRepository
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.ConditionLocalOverride
@@ -134,10 +134,10 @@ import com.furybook.dubl.model.resolvedSkills
 import com.furybook.dubl.model.skillCalculation
 import com.furybook.dubl.model.skillCalculationForRoll
 import com.furybook.dubl.model.selectedTotals
-import com.furybook.dubl.state.CharacterController
-import com.furybook.ui.components.containSheetOverscroll
+import com.furybook.android.state.CharacterController
+import com.furybook.android.ui.components.containSheetOverscroll
 import com.furybook.ui.components.DublCard
-import com.furybook.ui.components.DublSwitch
+import com.furybook.android.ui.components.DublSwitch
 import com.furybook.ui.theme.DublAccent
 import com.furybook.ui.theme.DublAccentSoft
 import com.furybook.ui.theme.DublDanger
