@@ -1,5 +1,6 @@
 package com.furybook.dubl.data
 
+import com.furybook.core.json.*
 import com.furybook.dubl.model.AbilityOption
 import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.ChiSchool
