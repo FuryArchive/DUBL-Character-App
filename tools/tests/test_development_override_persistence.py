@@ -13,7 +13,7 @@ def test_development_overrides_and_custom_entries_round_trip_through_snapshot_co
     assert kotlinc is not None
     sources = sorted((SHARED / "com/furybook/dubl/model").glob("*.kt"))
     sources += [
-        SHARED / "com/furybook/dubl/data/MiniJson.kt",
+        SHARED / "com/furybook/core/json/MiniJson.kt",
         SHARED / "com/furybook/dubl/data/SnapshotCodec.kt",
         HARNESS,
     ]
