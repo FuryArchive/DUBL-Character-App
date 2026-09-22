@@ -41,6 +41,7 @@ def test_shared_transfer_behavior_with_local_kotlin_harness():
     sources = []
     for folder in ("model", "data", "state", "application"):
         sources.extend(sorted((SHARED / folder).glob("*.kt")))
+    sources.append(ROOT / "shared/src/commonMain/kotlin/com/furybook/core/json/MiniJson.kt")
     with tempfile.TemporaryDirectory() as temp:
         jar = Path(temp) / "character-transfer.jar"
         compile_result = subprocess.run(
