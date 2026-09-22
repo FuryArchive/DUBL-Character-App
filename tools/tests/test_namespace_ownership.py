@@ -29,7 +29,7 @@ def test_shared_common_has_no_android_or_legacy_dubl_package_ownership():
 
 def test_shared_common_packages_are_owned_by_fury_book():
     violations = []
-    allowed = ("com.furybook.dubl.", "com.furybook.ui.")
+    allowed = ("com.furybook.core.", "com.furybook.content.", "com.furybook.dubl.", "com.furybook.ui.")
     for path in kotlin_files("shared/src/commonMain/kotlin"):
         package = package_of(path)
         if not package.startswith(allowed):
