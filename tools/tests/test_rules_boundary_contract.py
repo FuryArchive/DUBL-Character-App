@@ -77,7 +77,7 @@ def test_character_sheet_stat_explanations_use_shared_formula_components():
 def test_shared_rules_boundary_harness():
     kotlinc = shutil.which('kotlinc')
     assert kotlinc is not None
-    sources = sorted((SHARED / 'com/dubl/character/android/model').glob('*.kt'))
+    sources = sorted((SHARED / 'com/furybook/dubl/model').glob('*.kt'))
     with tempfile.TemporaryDirectory() as td:
         jar = Path(td) / 'rules-boundary.jar'
         compiled = subprocess.run(
