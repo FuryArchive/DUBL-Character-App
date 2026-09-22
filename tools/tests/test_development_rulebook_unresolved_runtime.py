@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CATALOG = ROOT / "shared/src/commonMain/resources/development_regular_catalog.json"
+CATALOG = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_regular_catalog.json"
 
 
 def entries_by_id():
