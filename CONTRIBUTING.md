@@ -38,6 +38,14 @@ Keep package ownership aligned with module responsibility:
 
 Do not place platform packages in `shared/commonMain`. Do not rename compatibility identifiers such as the Android `applicationId`, DUBL ruleset ID, transfer format, or local data identity as part of ordinary namespace cleanup.
 
+## Fury Content Packs
+
+Canonical DUBL runtime catalogs belong under `shared/src/commonMain/resources/fcp/dubl-3.69/content` and must be declared by that pack's `manifest.json`.
+
+Do not add new loose canonical catalog files under `shared/src/commonMain/resources`, Android assets, or Desktop-only resources. Format-level FCP code belongs in `com.furybook.content` and must remain ruleset-agnostic; DUBL interpretation belongs in `com.furybook.dubl.*`.
+
+When adding or moving pack content, update the FCP contract tests and deterministic pack build. See `docs/FCP.md`.
+
 ## Rulebook and catalog changes
 
 For rulebook-driven changes:
