@@ -215,3 +215,27 @@ def test_fcp_ui_order_controls_host_tab_and_resource_positions():
     assert "orderedUiItems(tileItems)" in desktop_sheet
     assert "chiTabUi.order" in desktop_dev
     assert "developmentTabs.forEach" in desktop_dev
+
+
+def test_resource_toggle_and_development_browser_use_fcp_presentation():
+    android_overview = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt").read_text(encoding="utf-8")
+    android_dev = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt").read_text(encoding="utf-8")
+    desktop_sheet = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
+    desktop_dev = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt").read_text(encoding="utf-8")
+
+    assert "chiResourceSettingsPresentation = chiResourceSettingsUi?.presentation()" in android_overview
+    assert "title = chiPresentation.label" in android_overview
+    assert "fcpIconGlyph(chiPresentation.icon)" in android_overview
+
+    assert "chiTabPresentation = chiTabUi?.presentation()" in android_dev
+    assert "chiTabPresentation?.label" in android_dev
+    assert "fcpDevelopmentIcon(chiTabPresentation?.icon)" in android_dev
+    assert 'properties?.get("icon")' not in android_dev
+
+    assert "chiTogglePresentation" in desktop_sheet
+    assert "chiTogglePresentation?.label" in desktop_sheet
+    assert "fcpDesktopIcon(chiTogglePresentation.icon)" in desktop_sheet
+
+    assert "chiTabPresentation = chiTabUi?.presentation()" in desktop_dev
+    assert "chiTabPresentation?.label" in desktop_dev
+    assert "fcpDevelopmentIcon(chiTabPresentation?.icon)" in desktop_dev

@@ -92,6 +92,12 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
+## Control presentation from FCP
+
+The `resource-toggle` and `development-browser` renderers now use the same manifest-driven presentation contract as `resource-meter`. Their visible label and semantic icon come from the active FCP contribution, with host-owned rendering and safe fallback behavior on Android and Desktop.
+
+This removes the remaining visible Chi-specific label/icon wiring from those controls. Changing the Chi FCP label or icon token updates the resource visibility control and Development tab without screen-code changes.
+
 ## UI contribution ordering
 
 Each UI contribution's `order` now participates in real host layout ordering. Fury Book assigns stable host slots to built-in items and merges FCP contributions into the same ordered sequence. The same shared sorter is used on Android and Desktop.

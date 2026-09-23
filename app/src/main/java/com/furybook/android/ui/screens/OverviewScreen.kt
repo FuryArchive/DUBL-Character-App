@@ -218,6 +218,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
     }
+    val chiResourceSettingsPresentation = chiResourceSettingsUi?.presentation()
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
     }
@@ -743,7 +744,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         ResourceVisibilitySheet(
             character = character,
             hidden = sheetExtras.hiddenResourceIds,
-            chiLabel = chiResourceSettingsUi?.label,
+            chiPresentation = chiResourceSettingsPresentation,
             onToggle = { resourceId ->
                 controller.setResourceHidden(
                     resourceId,
@@ -3952,7 +3953,7 @@ private fun sanitizeSignedBonus(raw: String): String {
 private fun ResourceVisibilitySheet(
     character: DublCharacter,
     hidden: Set<CharacterSheetResourceId>,
-    chiLabel: String?,
+    chiPresentation: FcpUiPresentation?,
     onToggle: (CharacterSheetResourceId) -> Unit,
     onAddCustom: () -> Unit,
     onEditCustom: (String) -> Unit,
@@ -3993,12 +3994,13 @@ private fun ResourceVisibilitySheet(
                 subtitle = if (character.manaEnabled) null else "Мана отключена у персонажа",
                 onToggle = { onToggle(CharacterSheetResourceId.MANA) },
             )
-            if (chiLabel != null) {
+            if (chiPresentation != null) {
                 ResourceVisibilityRow(
-                    title = chiLabel,
+                    title = chiPresentation.label,
+                    icon = fcpIconGlyph(chiPresentation.icon),
                     visible = character.chiActive && CharacterSheetResourceId.CHI !in hidden,
                     enabled = character.chiActive,
-                    subtitle = if (character.chiActive) null else "$chiLabel недоступна у персонажа",
+                    subtitle = if (character.chiActive) null else "${chiPresentation.label} недоступна у персонажа",
                     onToggle = { onToggle(CharacterSheetResourceId.CHI) },
                 )
             }
@@ -4034,6 +4036,7 @@ private fun ResourceVisibilityRow(
     visible: Boolean,
     enabled: Boolean,
     subtitle: String? = null,
+    icon: String? = null,
     onToggle: () -> Unit,
 ) {
     Row(
@@ -4043,11 +4046,16 @@ private fun ResourceVisibilityRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            Text(
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (icon != null) {
+                    Text(icon, color = DublAccent, fontWeight = FontWeight.Bold)
+                }
+                Text(
                 title,
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                )
+            }
             subtitle?.let {
                 Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

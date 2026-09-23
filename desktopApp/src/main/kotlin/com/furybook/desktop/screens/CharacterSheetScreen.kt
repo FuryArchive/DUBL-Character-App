@@ -1937,12 +1937,38 @@ private fun CustomConditionDialog(
 
 @Composable
 private fun ResourceVisibilityDialog(state: DesktopAppState, onDismiss: () -> Unit) {
+    val chiTogglePresentation = state
+        .ui(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
+        ?.presentation()
     FuryDialog(
         onDismissRequest = onDismiss,
         title = { Text("Видимость ресурсов") },
-        text = { Column { CharacterSheetResourceId.entries
-            .filter { resource -> resource != CharacterSheetResourceId.CHI || state.ui(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI) != null }
-            .forEach { resource -> Row(verticalAlignment = Alignment.CenterVertically) { val hidden = resource in state.extras.hiddenResourceIds; Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) }); Text(resource.title) } } } },
+        text = {
+            Column {
+                CharacterSheetResourceId.entries
+                    .filter { resource -> resource != CharacterSheetResourceId.CHI || chiTogglePresentation != null }
+                    .forEach { resource ->
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            val hidden = resource in state.extras.hiddenResourceIds
+                            Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) })
+                            if (resource == CharacterSheetResourceId.CHI && chiTogglePresentation?.icon != null) {
+                                DesktopIcon(
+                                    kind = fcpDesktopIcon(chiTogglePresentation.icon),
+                                    tint = DesktopAccent,
+                                    size = 16.dp,
+                                )
+                            }
+                            Text(
+                                if (resource == CharacterSheetResourceId.CHI) {
+                                    chiTogglePresentation?.label ?: resource.title
+                                } else {
+                                    resource.title
+                                },
+                            )
+                        }
+                    }
+            }
+        },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Готово") } },
     )
 }

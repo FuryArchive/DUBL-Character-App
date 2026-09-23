@@ -45,8 +45,10 @@ import androidx.compose.ui.unit.dp
 import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiComponent
 import com.furybook.content.FcpUiHostOrder
+import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
+import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AbilityOption
 import com.furybook.dubl.model.CharacterEconomy
@@ -97,6 +99,7 @@ private data class DevelopmentGridSection(
 fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val character = state.activeCharacter
     val chiTabUi = state.ui(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
+    val chiTabPresentation = chiTabUi?.presentation()
     val showChiTab = chiTabUi != null
     val developmentTabs = remember(chiTabUi) {
         orderedUiItems(
@@ -235,7 +238,10 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                             availableOnly = false
                             browserFilter = DevelopmentBrowserFilter.ALL
                         },
-                        label = { Text(if (target == DevelopmentTab.CHI) chiTabUi?.label ?: target.title else target.title) },
+                        label = { Text(if (target == DevelopmentTab.CHI) chiTabPresentation?.label ?: target.title else target.title) },
+                        leadingIcon = if (target == DevelopmentTab.CHI) {
+                            { fcpDevelopmentIcon(chiTabPresentation?.icon)?.let { Text(it) } }
+                        } else null,
                     )
                 }
             }
@@ -1465,4 +1471,10 @@ private fun ChiTechniquesCard(state: DesktopAppState) {
             }
         }
     }
+}
+
+
+private fun fcpDevelopmentIcon(token: String?): String? = when (token) {
+    FcpUiIconToken.CHI -> "◎"
+    else -> null
 }
