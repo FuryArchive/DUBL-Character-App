@@ -50,7 +50,9 @@ import androidx.compose.ui.unit.sp
 import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ChiCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
-import com.furybook.dubl.content.DublChiUi
+import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiSurface
+import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.effectiveDevelopmentCatalog
@@ -142,10 +144,10 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
     val chiTabUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.DEVELOPMENT_TABS)
+        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
     }
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_ECONOMY)
+        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
     }
     var loadingStage by remember(character.id) { mutableStateOf("Загружаем каталог развития…") }
     val preparation by produceState<DevelopmentScreenPreparation?>(

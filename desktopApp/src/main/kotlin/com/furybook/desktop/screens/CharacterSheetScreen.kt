@@ -70,7 +70,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.furybook.dubl.content.DublChiUi
+import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiSurface
+import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.CharacterEconomy
@@ -128,7 +130,7 @@ fun CharacterSheetScreen(
     val economy = CharacterEconomy.breakdown(
         character,
         state.developmentCatalog,
-        includeChi = state.chiUi(DublChiUi.CHARACTER_ECONOMY) != null,
+        includeChi = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null,
     )
     var showIdentity by remember(character.id) { mutableStateOf(false) }
     var showEconomy by remember(character.id) { mutableStateOf(false) }
@@ -647,7 +649,7 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.MANA) },
             )
         }
-        if (state.chiUi(DublChiUi.CHARACTER_RESOURCES) != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if (state.ui(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI) != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
             DesktopResourceTile(
                 DesktopIconKind.CHI, "ЦИ", character.chiCurrent, character.chiMaximum, DesktopAccent,
                 { onResourceDelta(CharacterSheetResourceId.CHI, -1) },
@@ -1546,7 +1548,7 @@ private fun EconomySummaryCard(
 @Composable
 private fun EconomyDialog(state: DesktopAppState, onDismiss: () -> Unit) {
     val character = state.activeCharacter
-    val showChiEconomy = state.chiUi(DublChiUi.CHARACTER_ECONOMY) != null
+    val showChiEconomy = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null
     val economy = CharacterEconomy.breakdown(character, state.developmentCatalog, includeChi = showChiEconomy)
     var total by remember(character.id) { mutableStateOf(character.experience.toString()) }
     var creation by remember(character.id) { mutableStateOf(character.effectiveCreationExperience.toString()) }
@@ -1925,7 +1927,7 @@ private fun ResourceVisibilityDialog(state: DesktopAppState, onDismiss: () -> Un
         onDismissRequest = onDismiss,
         title = { Text("Видимость ресурсов") },
         text = { Column { CharacterSheetResourceId.entries
-            .filter { resource -> resource != CharacterSheetResourceId.CHI || state.chiUi(DublChiUi.CHARACTER_RESOURCE_SETTINGS) != null }
+            .filter { resource -> resource != CharacterSheetResourceId.CHI || state.ui(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI) != null }
             .forEach { resource -> Row(verticalAlignment = Alignment.CenterVertically) { val hidden = resource in state.extras.hiddenResourceIds; Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) }); Text(resource.title) } } } },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Готово") } },
     )
