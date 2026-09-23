@@ -4,8 +4,8 @@ import android.content.Context
 import com.furybook.content.FcpComposition
 import com.furybook.content.FcpManifest
 import com.furybook.content.FcpUiContribution
+import com.furybook.content.firstUi
 import com.furybook.dubl.content.DublChiFcp
-import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
@@ -61,8 +61,13 @@ object AndroidContentPackState {
         )
     }
 
-    fun chiUi(context: Context, enabled: Boolean, surface: String): FcpUiContribution? =
-        composition(context, enabled).ui(surface, DublChiUi.BINDING).firstOrNull()
+    fun ui(
+        context: Context,
+        enabled: Boolean,
+        surface: String,
+        component: String,
+        binding: String,
+    ): FcpUiContribution? = composition(context, enabled).firstUi(surface, component, binding)
 
     fun canActivatePack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
