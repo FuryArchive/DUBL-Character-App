@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
@@ -31,7 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.furybook.android.data.AndroidContentPackState
+import com.furybook.android.data.AndroidFcpInstaller
 import com.furybook.content.FcpComposition
+import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.CharacterTransferRejectReason
 import com.furybook.android.state.CharacterController
@@ -50,8 +54,15 @@ fun CharactersScreen(
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
     var contentPackStatus by remember { mutableStateOf<String?>(null) }
+    var installedPackRevision by remember { mutableIntStateOf(0) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
+    val displayedComposition = remember(contentPackComposition, installedPackRevision) {
+        AndroidContentPackState.composition(
+            context,
+            contentPackComposition.isActive(DublChiFcp.PACK_ID),
+        )
+    }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -61,6 +72,21 @@ fun CharactersScreen(
                 "Персонаж экспортирован."
             } else {
                 "Не удалось сохранить файл персонажа."
+            }
+        }
+    }
+    val fcpImportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            contentPackStatus = runCatching {
+                val result = AndroidFcpInstaller.install(
+                    context = context,
+                    uri = uri,
+                    reservedPackIds = AndroidContentPackState.bundledPackIds(),
+                )
+                installedPackRevision += 1
+                "Установлен FCP: ${result.manifest.name} v${result.manifest.version}."
+            }.getOrElse { error ->
+                "Ошибка импорта FCP: ${error.message ?: "неизвестная ошибка"}"
             }
         }
     }
@@ -121,15 +147,22 @@ fun CharactersScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            contentPackComposition.available.forEach { manifest ->
-                val required = manifest.id in contentPackComposition.requiredPackIds
+            OutlinedButton(
+                onClick = { fcpImportLauncher.launch(arrayOf("application/zip", "application/octet-stream", "*/*")) },
+                modifier = Modifier.fillMaxWidth(),
+            ) { Text("Импортировать .fcp") }
+            displayedComposition.available.forEach { manifest ->
+                val required = manifest.id in displayedComposition.requiredPackIds
+                val canActivate = AndroidContentPackState.canActivatePack(manifest.id)
                 ContentPackRow(
                     name = manifest.name,
                     version = manifest.version,
-                    enabled = contentPackComposition.isActive(manifest.id),
-                    toggleEnabled = !required,
+                    enabled = displayedComposition.isActive(manifest.id),
+                    toggleEnabled = !required && canActivate,
                     subtitle = if (required) {
                         "Основной ruleset · обязателен"
+                    } else if (!canActivate) {
+                        "Установлен · adapter support пока отсутствует"
                     } else if (manifest.dependencies.isEmpty()) {
                         "Опциональный FCP"
                     } else {

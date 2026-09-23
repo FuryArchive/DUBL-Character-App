@@ -37,16 +37,22 @@ object AndroidContentPackState {
         setPackEnabled(context, DublChiFcp.PACK_ID, enabled)
 
     fun composition(context: Context, chiEnabled: Boolean): FcpComposition = FcpComposition.resolve(
-        manifests = listOf(
-            AndroidDublFcp.loader(context).pack.manifest,
-            AndroidDublFcp.chiLoader(context).pack.manifest,
-        ),
+        manifests = buildList {
+            add(AndroidDublFcp.loader(context).pack.manifest)
+            add(AndroidDublFcp.chiLoader(context).pack.manifest)
+            addAll(AndroidFcpInstaller.listInstalled(context))
+        },
         requiredPackIds = setOf(DublFcp.PACK_ID),
         enabledPackIds = if (chiEnabled) setOf(DublChiFcp.PACK_ID) else emptySet(),
     )
 
     fun chiUi(context: Context, enabled: Boolean, surface: String): FcpUiContribution? =
         composition(context, enabled).ui(surface, DublChiUi.BINDING).firstOrNull()
+
+    fun canActivatePack(packId: String): Boolean =
+        packId == DublFcp.PACK_ID || packId == DublChiFcp.PACK_ID
+
+    fun bundledPackIds(): Set<String> = setOf(DublFcp.PACK_ID, DublChiFcp.PACK_ID)
 
     fun chiDevelopmentIds(context: Context): Set<String> = linkedSetOf<String>().apply {
         addAll(AndroidDublFcp.chiLoader(context).loadDevelopment().entries.map { it.id })

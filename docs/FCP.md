@@ -103,6 +103,22 @@ The companion pack declares a dependency on `dubl-3.69`, publishes declarative `
 
 Pack activation is persisted per installation. This is the first vertical proof that Fury Book is the host and FCPs own rules/content/UI contributions rather than the host hardcoding a complete DUBL sheet.
 
+## File import and installation
+
+The pack manager can import external `.fcp` archives on Android and Desktop.
+
+Before anything is installed, Fury Book validates:
+
+- ZIP paths and duplicate entries;
+- per-entry and total unpacked size limits;
+- `manifest.json` format and install-safe pack identity;
+- the exact archive payload declared by the manifest;
+- every SHA-256 entry in `checksums.sha256`;
+- that the imported pack does not replace a bundled Fury Book pack ID.
+
+Validated packs are unpacked into app-local data storage and then appear in the Fury Content Packs list. Installation does **not** imply activation. Packs that do not yet have an engine/adapter path remain visible but inactive, so importing an unknown pack cannot silently alter character rules or state.
+
+
 ## Source of truth
 
 For DUBL, promoted canonical runtime content now lives inside the unpacked FCP tree. Rulebook DOCX files remain development inputs and the DUBL importer remains responsible for provenance, diagnostics and explicit resolutions.

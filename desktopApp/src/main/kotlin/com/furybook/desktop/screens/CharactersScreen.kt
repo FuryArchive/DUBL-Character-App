@@ -100,16 +100,30 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                     color = DublMuted,
                     style = MaterialTheme.typography.bodySmall,
                 )
+                OutlinedButton(onClick = {
+                    val file = pickFcpFile()
+                    if (file != null) {
+                        contentPackStatus = runCatching {
+                            val manifest = state.installContentPack(file)
+                            "Установлен FCP: ${manifest.name} v${manifest.version}."
+                        }.getOrElse { error ->
+                            "Ошибка импорта FCP: ${error.message ?: "неизвестная ошибка"}"
+                        }
+                    }
+                }) { Text("Импортировать .fcp") }
                 val composition = state.contentPackComposition
                 composition.available.forEach { manifest ->
                     val required = manifest.id in composition.requiredPackIds
+                    val canActivate = state.canActivateContentPack(manifest.id)
                     ContentPackRow(
                         name = manifest.name,
                         version = manifest.version,
                         enabled = composition.isActive(manifest.id),
-                        toggleEnabled = !required,
+                        toggleEnabled = !required && canActivate,
                         subtitle = if (required) {
                             "Основной ruleset · обязателен"
+                        } else if (!canActivate) {
+                            "Установлен · adapter support пока отсутствует"
                         } else if (manifest.dependencies.isEmpty()) {
                             "Опциональный FCP"
                         } else {
@@ -192,6 +206,14 @@ private fun ContentPackRow(
             onCheckedChange = onToggle,
         )
     }
+}
+
+private fun pickFcpFile(): Path? {
+    val dialog = FileDialog(null as Frame?, "Импорт Fury Content Pack", FileDialog.LOAD)
+    dialog.file = "*.fcp"
+    dialog.isVisible = true
+    val file = dialog.file ?: return null
+    return Path.of(dialog.directory, file)
 }
 
 private fun pickTransferFile(): Path? {
