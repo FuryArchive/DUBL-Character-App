@@ -3,10 +3,12 @@ package com.furybook.desktop
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.furybook.content.FcpComposition
 import com.furybook.content.FcpUiContribution
 import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublChiUi
+import com.furybook.dubl.content.DublFcp
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
 import com.furybook.dubl.data.DesktopCharacterStore
@@ -69,8 +71,15 @@ class DesktopAppState {
         refresh()
     }
 
+    val contentPackComposition: FcpComposition
+        get() = FcpComposition.resolve(
+            manifests = listOf(corePackManifest, chiPackManifest),
+            requiredPackIds = setOf(DublFcp.PACK_ID),
+            enabledPackIds = if (chiPackEnabled) setOf(DublChiFcp.PACK_ID) else emptySet(),
+        )
+
     fun chiUi(surface: String): FcpUiContribution? =
-        if (chiPackEnabled) DublChiUi.contribution(chiPackManifest, surface) else null
+        contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()
 
     fun setChiPackActive(enabled: Boolean) {
         if (enabled) catalogLoader.verifyChiPack()
