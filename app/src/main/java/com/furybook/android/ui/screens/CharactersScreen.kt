@@ -57,12 +57,11 @@ fun CharactersScreen(
     var installedPackRevision by remember { mutableIntStateOf(0) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
-    val displayedComposition = remember(contentPackComposition, installedPackRevision) {
-        AndroidContentPackState.composition(
-            context,
-            contentPackComposition.isActive(DublChiFcp.PACK_ID),
-        )
-    }
+    installedPackRevision
+    val displayedComposition = AndroidContentPackState.composition(
+        context,
+        contentPackComposition.isActive(DublChiFcp.PACK_ID),
+    )
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -83,6 +82,7 @@ fun CharactersScreen(
                     uri = uri,
                     reservedPackIds = AndroidContentPackState.bundledPackIds(),
                 )
+                AndroidContentPackState.setPackEnabled(context, result.manifest.id, false)
                 installedPackRevision += 1
                 "Установлен FCP: ${result.manifest.name} v${result.manifest.version}."
             }.getOrElse { error ->
@@ -153,7 +153,7 @@ fun CharactersScreen(
             ) { Text("Импортировать .fcp") }
             displayedComposition.available.forEach { manifest ->
                 val required = manifest.id in displayedComposition.requiredPackIds
-                val canActivate = AndroidContentPackState.canActivatePack(manifest.id)
+                val canActivate = AndroidContentPackState.canActivatePack(manifest)
                 ContentPackRow(
                     name = manifest.name,
                     version = manifest.version,
@@ -163,6 +163,8 @@ fun CharactersScreen(
                         "Основной ruleset · обязателен"
                     } else if (!canActivate) {
                         "Установлен · adapter support пока отсутствует"
+                    } else if (manifest.id !in AndroidContentPackState.bundledPackIds()) {
+                        "DUBL data-only · дополнительное развитие"
                     } else if (manifest.dependencies.isEmpty()) {
                         "Опциональный FCP"
                     } else {

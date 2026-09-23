@@ -2,7 +2,9 @@ package com.furybook.android.data
 
 import android.content.Context
 import android.net.Uri
+import com.furybook.content.FcpContentPack
 import com.furybook.content.FcpManifest
+import com.furybook.content.FcpTextSource
 import com.furybook.content.parseFcpManifest
 import com.furybook.content.validateFcpArchive
 import java.io.ByteArrayOutputStream
@@ -70,6 +72,23 @@ object AndroidFcpInstaller {
             }
             .sortedBy { it.id }
             .toList()
+    }
+
+    fun findInstalled(context: Context, packId: String): FcpManifest? =
+        listInstalled(context).firstOrNull { it.id == packId }
+
+    fun openInstalled(context: Context, manifest: FcpManifest): FcpContentPack {
+        val root = File(installRoot(context), "${manifest.id}/${manifest.version}").canonicalFile
+        require(root.isDirectory) { "Installed FCP directory is missing: ${manifest.id} ${manifest.version}" }
+        val source = FcpTextSource { relative ->
+            val file = File(root, relative).canonicalFile
+            if (!file.path.startsWith(root.path + File.separator) || !file.isFile) null else file.readText()
+        }
+        val pack = FcpContentPack.load("", source)
+        require(pack.manifest.id == manifest.id && pack.manifest.version == manifest.version) {
+            "Installed FCP identity changed on disk: ${manifest.id} ${manifest.version}"
+        }
+        return pack
     }
 
     fun installRoot(context: Context): File = File(context.applicationContext.filesDir, "fcp")
