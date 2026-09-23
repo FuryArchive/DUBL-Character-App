@@ -4,6 +4,8 @@ from pathlib import Path
 import tempfile
 import zipfile
 
+import pytest
+
 from tools.fcp.build_fcp import build_fcp, declared_paths, load_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -87,3 +89,36 @@ def test_fury_book_mounts_chi_from_real_pack_activation_and_ui_contributions():
     assert "setChiPackActive" in desktop_state
     assert "DublChiUi.CHARACTER_RESOURCES" in desktop_sheet
     assert "DublChiUi.DEVELOPMENT_TABS" in desktop_dev
+
+
+def _write_manifest(directory: Path, payload: dict) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "manifest.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def test_builder_validates_composition_metadata_before_packaging():
+    source = json.loads((CHI_PACK / "manifest.json").read_text(encoding="utf-8"))
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+
+        duplicate_claims = json.loads(json.dumps(source))
+        duplicate_claims["claims"] = duplicate_claims["claims"] * 2
+        _write_manifest(tmp / "claims", duplicate_claims)
+        with pytest.raises(ValueError, match="duplicate FCP content claim"):
+            load_manifest(tmp / "claims")
+
+        duplicate_ui = json.loads(json.dumps(source))
+        duplicate_ui["ui"] = duplicate_ui["ui"] + [duplicate_ui["ui"][0]]
+        _write_manifest(tmp / "ui", duplicate_ui)
+        with pytest.raises(ValueError, match="duplicate FCP UI contribution id"):
+            load_manifest(tmp / "ui")
+
+        self_dependency = json.loads(json.dumps(source))
+        self_dependency["dependencies"] = [{"id": self_dependency["id"], "version": self_dependency["version"]}]
+        _write_manifest(tmp / "dependency", self_dependency)
+        with pytest.raises(ValueError, match="cannot depend on itself"):
+            load_manifest(tmp / "dependency")
