@@ -56,6 +56,7 @@ import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
+import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
@@ -150,6 +151,7 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val chiTabUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
     }
+    val chiTabPresentation = chiTabUi?.presentation()
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
     }
@@ -433,9 +435,9 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                             availableOnly = false
                             browserFilter = DevelopmentBrowserFilter.ALL
                         },
-                        label = { Text(if (target == DevelopmentTab.CHI) chiTabUi?.label ?: target.title else target.title) },
+                        label = { Text(if (target == DevelopmentTab.CHI) chiTabPresentation?.label ?: target.title else target.title) },
                         leadingIcon = if (target == DevelopmentTab.CHI) {
-                            { fcpDevelopmentIcon(chiTabUi?.properties?.get("icon"))?.let { Text(it) } }
+                            { fcpDevelopmentIcon(chiTabPresentation?.icon)?.let { Text(it) } }
                         } else null,
                     )
                 }
