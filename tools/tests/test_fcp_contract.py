@@ -84,6 +84,6 @@ def test_fury_book_mounts_chi_from_real_pack_activation_and_ui_contributions():
     assert "DublChiUi.CHARACTER_RESOURCES" in android_overview
     assert "DublChiUi.DEVELOPMENT_TABS" in android_dev
     assert "Preferences.userRoot().node" in desktop_state
-    assert "setChiPackEnabled" in desktop_state
+    assert "setChiPackActive" in desktop_state
     assert "DublChiUi.CHARACTER_RESOURCES" in desktop_sheet
     assert "DublChiUi.DEVELOPMENT_TABS" in desktop_dev

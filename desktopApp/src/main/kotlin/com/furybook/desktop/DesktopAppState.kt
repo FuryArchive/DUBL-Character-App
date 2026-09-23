@@ -72,7 +72,7 @@ class DesktopAppState {
     fun chiUi(surface: String): FcpUiContribution? =
         if (chiPackEnabled) DublChiUi.contribution(chiPackManifest, surface) else null
 
-    fun setChiPackEnabled(enabled: Boolean) {
+    fun setChiPackActive(enabled: Boolean) {
         if (enabled) catalogLoader.verifyChiPack()
         contentPackPreferences.putBoolean(DublChiFcp.PACK_ID, enabled)
         chiPackEnabled = enabled

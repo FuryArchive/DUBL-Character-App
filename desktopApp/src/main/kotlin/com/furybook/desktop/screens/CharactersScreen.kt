@@ -116,7 +116,7 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                     subtitle = "Опциональный FCP · контент + UI ЦИ",
                     onToggle = { enabled ->
                         contentPackStatus = runCatching {
-                            state.setChiPackEnabled(enabled)
+                            state.setChiPackActive(enabled)
                             if (enabled) "DUBL 3.69 — ЦИ включён." else "DUBL 3.69 — ЦИ выключен."
                         }.getOrElse { error ->
                             "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
