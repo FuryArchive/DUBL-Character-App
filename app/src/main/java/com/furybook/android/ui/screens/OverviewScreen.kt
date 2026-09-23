@@ -92,11 +92,14 @@ import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ConditionCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.android.data.SkillEffectCatalogRepository
+import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiAccentToken
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiPresentation
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
@@ -1283,12 +1286,22 @@ private fun ResourceStrip(
     onCustomResourceClick: (String) -> Unit,
     onConfigure: () -> Unit,
 ) {
-    val resources = buildList {
-        if (CharacterSheetResourceId.HEALTH !in hiddenResources) add(CharacterResource.HEALTH)
-        if (CharacterSheetResourceId.ENDURANCE !in hiddenResources) add(CharacterResource.ENDURANCE)
-        if (character.manaEnabled && CharacterSheetResourceId.MANA !in hiddenResources) add(CharacterResource.MANA)
-        if (chiPresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) add(CharacterResource.CHI)
-    }
+    val resources = orderedUiItems(
+        buildList {
+            if (CharacterSheetResourceId.HEALTH !in hiddenResources) {
+                add(FcpOrderedUiItem(FcpUiHostOrder.PRIMARY, CharacterResource.HEALTH.name, CharacterResource.HEALTH))
+            }
+            if (CharacterSheetResourceId.ENDURANCE !in hiddenResources) {
+                add(FcpOrderedUiItem(FcpUiHostOrder.SECONDARY, CharacterResource.ENDURANCE.name, CharacterResource.ENDURANCE))
+            }
+            if (character.manaEnabled && CharacterSheetResourceId.MANA !in hiddenResources) {
+                add(FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, CharacterResource.MANA.name, CharacterResource.MANA))
+            }
+            if (chiPresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) {
+                add(FcpOrderedUiItem(chiPresentation.order, CharacterResource.CHI.name, CharacterResource.CHI))
+            }
+        },
+    )
 
     if (resources.isEmpty() && character.customResources.isEmpty()) {
         Surface(
