@@ -26,7 +26,8 @@ def test_chi_tab_is_mounted_only_from_fcp_ui_contribution():
     text = read(DEV)
     assert 'FcpUiSurface.DEVELOPMENT_TABS' in text
     assert 'FcpUiComponent.DEVELOPMENT_BROWSER' in text
-    assert 'target != DevelopmentTab.CHI || showChiTab' in text
+    assert 'chiTabUi.order' in text
+    assert 'developmentTabs.forEach' in text
 
 
 def test_chi_card_matches_android_automatic_access_semantics():

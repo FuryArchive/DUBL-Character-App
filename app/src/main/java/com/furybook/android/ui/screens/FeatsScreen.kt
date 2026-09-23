@@ -50,8 +50,11 @@ import androidx.compose.ui.unit.sp
 import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ChiCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
+import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.orderedUiItems
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
@@ -148,6 +151,19 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     }
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
+    }
+    val developmentTabs = remember(chiTabUi) {
+        orderedUiItems(
+            buildList {
+                add(FcpOrderedUiItem(FcpUiHostOrder.PRIMARY, DevelopmentTab.REGULAR.name, DevelopmentTab.REGULAR))
+                add(FcpOrderedUiItem(FcpUiHostOrder.SECONDARY, DevelopmentTab.SPECIAL.name, DevelopmentTab.SPECIAL))
+                add(FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, DevelopmentTab.MARTIAL_ARTS.name, DevelopmentTab.MARTIAL_ARTS))
+                if (chiTabUi != null) {
+                    add(FcpOrderedUiItem(chiTabUi.order, DevelopmentTab.CHI.name, DevelopmentTab.CHI))
+                }
+                add(FcpOrderedUiItem(FcpUiHostOrder.TRAILING, DevelopmentTab.OWNED.name, DevelopmentTab.OWNED))
+            },
+        )
     }
     var loadingStage by remember(character.id) { mutableStateOf("Загружаем каталог развития…") }
     val preparation by produceState<DevelopmentScreenPreparation?>(
@@ -407,7 +423,7 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
 
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                items(DevelopmentTab.entries.filter { target -> target != DevelopmentTab.CHI || chiTabUi != null }) { target ->
+                items(developmentTabs) { target ->
                     FilterChip(
                         selected = tab == target,
                         onClick = {

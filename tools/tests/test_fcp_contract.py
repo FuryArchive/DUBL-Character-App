@@ -196,3 +196,22 @@ def test_resource_meter_uses_manifest_presentation_tokens_on_both_platforms():
     assert ".presentation()" in desktop
     assert "fcpDesktopIcon" in desktop
     assert "fcpDesktopAccent" in desktop
+
+
+def test_fcp_ui_order_controls_host_tab_and_resource_positions():
+    android_overview = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt").read_text(encoding="utf-8")
+    android_dev = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt").read_text(encoding="utf-8")
+    desktop_sheet = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
+    desktop_dev = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt").read_text(encoding="utf-8")
+    contract = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpUiContract.kt").read_text(encoding="utf-8")
+
+    assert "object FcpUiHostOrder" in contract
+    assert "fun <T> orderedUiItems" in contract
+    assert "chiPresentation.order" in android_overview
+    assert "orderedUiItems(" in android_overview
+    assert "chiTabUi.order" in android_dev
+    assert "items(developmentTabs)" in android_dev
+    assert "chiResourcePresentation.order" in desktop_sheet
+    assert "orderedUiItems(tileItems)" in desktop_sheet
+    assert "chiTabUi.order" in desktop_dev
+    assert "developmentTabs.forEach" in desktop_dev

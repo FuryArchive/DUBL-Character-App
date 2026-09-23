@@ -25,6 +25,7 @@ class FcpUiContractTest {
         assertEquals("Energy", presentation.label)
         assertEquals(FcpUiIconToken.CHI, presentation.icon)
         assertEquals(FcpUiAccentToken.FURY_ACCENT, presentation.accent)
+        assertEquals(10, presentation.order)
     }
 
     @Test
@@ -42,5 +43,20 @@ class FcpUiContractTest {
         val presentation = contribution.presentation()
         assertNull(presentation.icon)
         assertNull(presentation.accent)
+    }
+
+    @Test
+    fun orderedItemsMergeHostSlotsAndPackOrderDeterministically() {
+        val ordered = orderedUiItems(
+            listOf(
+                FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, "mana", "mana"),
+                FcpOrderedUiItem(15, "addon", "addon"),
+                FcpOrderedUiItem(FcpUiHostOrder.PRIMARY, "health", "health"),
+                FcpOrderedUiItem(FcpUiHostOrder.SECONDARY, "endurance", "endurance"),
+                FcpOrderedUiItem(15, "addon-b", "addon-b"),
+            ),
+        )
+
+        assertEquals(listOf("health", "addon", "addon-b", "endurance", "mana"), ordered)
     }
 }

@@ -116,7 +116,8 @@ def test_live_screenshot_regression_uses_compact_hero_resources_and_skills_devel
     assert 'Modifier.weight(.65f)' in workspace
     assert 'SheetSkillsPanel(' in workspace
     assert 'SheetDevelopmentPanel(' in workspace
-    assert 'character.customResources.forEach { resource ->' in sheet
+    assert 'character.customResources.forEachIndexed { index, resource ->' in sheet
+    assert 'FcpUiHostOrder.CUSTOM + index' in sheet
 
 
 def test_hero_metrics_expose_only_requested_quick_rolls():
