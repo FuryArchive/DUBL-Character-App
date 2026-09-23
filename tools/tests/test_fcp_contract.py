@@ -83,12 +83,16 @@ def test_fury_book_mounts_chi_from_real_pack_activation_and_ui_contributions():
 
     assert "AndroidContentPackState.isChiEnabled" in android_app
     assert "AndroidContentPackState.setPackEnabled" in android_app
-    assert "DublChiUi.CHARACTER_RESOURCES" in android_overview
-    assert "DublChiUi.DEVELOPMENT_TABS" in android_dev
+    assert "FcpUiSurface.CHARACTER_RESOURCES" in android_overview
+    assert "FcpUiComponent.RESOURCE_METER" in android_overview
+    assert "FcpUiSurface.DEVELOPMENT_TABS" in android_dev
+    assert "FcpUiComponent.DEVELOPMENT_BROWSER" in android_dev
     assert "Preferences.userRoot().node" in desktop_state
     assert "setContentPackActive" in desktop_state
-    assert "DublChiUi.CHARACTER_RESOURCES" in desktop_sheet
-    assert "DublChiUi.DEVELOPMENT_TABS" in desktop_dev
+    assert "FcpUiSurface.CHARACTER_RESOURCES" in desktop_sheet
+    assert "FcpUiComponent.RESOURCE_METER" in desktop_sheet
+    assert "FcpUiSurface.DEVELOPMENT_TABS" in desktop_dev
+    assert "FcpUiComponent.DEVELOPMENT_BROWSER" in desktop_dev
 
 
 def _write_manifest(directory: Path, payload: dict) -> None:
@@ -154,3 +158,25 @@ def test_external_dubl_development_packs_have_real_activation_path():
     assert "DublDevelopmentAddon::isSupported" in desktop_state
     assert "DesktopFcpInstaller.openInstalled" in desktop_state
     assert "composeCanonicalDevelopmentCatalog" in desktop_state
+
+
+def test_chi_ui_mounts_use_generic_fcp_surface_contract():
+    ui_contract = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpUiContract.kt").read_text(encoding="utf-8")
+    chi_loader = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublChiFcpCatalogLoader.kt").read_text(encoding="utf-8")
+    bindings = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublUiBindings.kt").read_text(encoding="utf-8")
+    screens = [
+        ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt",
+        ROOT / "app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt",
+        ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt",
+        ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt",
+    ]
+
+    assert "object FcpUiSurface" in ui_contract
+    assert "object FcpUiComponent" in ui_contract
+    assert "fun FcpComposition.firstUi" in ui_contract
+    assert 'const val CHI = "dubl.chi"' in bindings
+    assert "DublChiUi" not in chi_loader
+    for path in screens:
+        text = path.read_text(encoding="utf-8")
+        assert "DublChiUi" not in text
+        assert "DublUiBinding.CHI" in text

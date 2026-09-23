@@ -14,7 +14,8 @@ def read(path: Path) -> str:
 def test_development_summary_uses_pack_composed_character_economy():
     text = read(DEV)
     assert 'remember(character, state.chiPackEnabled) { state.developmentCatalog }' in text
-    assert 'DublChiUi.CHARACTER_ECONOMY' in text
+    assert 'FcpUiSurface.CHARACTER_ECONOMY' in text
+    assert 'FcpUiComponent.XP_LINE' in text
     assert 'includeChi = showChiEconomy' in text
     assert 'economy.remainingXp' in text
     assert 'economy.abilityPointsRemaining' in text
@@ -23,7 +24,8 @@ def test_development_summary_uses_pack_composed_character_economy():
 
 def test_chi_tab_is_mounted_only_from_fcp_ui_contribution():
     text = read(DEV)
-    assert 'DublChiUi.DEVELOPMENT_TABS' in text
+    assert 'FcpUiSurface.DEVELOPMENT_TABS' in text
+    assert 'FcpUiComponent.DEVELOPMENT_BROWSER' in text
     assert 'target != DevelopmentTab.CHI || showChiTab' in text
 
 

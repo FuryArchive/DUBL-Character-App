@@ -92,6 +92,12 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
+## Generic UI mounting
+
+FCP UI is mounted through host-defined surface/component contracts rather than pack-specific screen hooks. `FcpUiSurface` names stable host attachment points, `FcpUiComponent` names supported renderer families, and the manifest supplies the concrete `binding`, label, order, and properties.
+
+For DUBL Chi, the adapter only defines the semantic data binding `dubl.chi`. Android and Desktop resolve the active composition for a surface/component/binding tuple; they no longer call a Chi-specific UI registry. This keeps pack identity out of screen code while preserving a typed host renderer boundary.
+
 ## Optional pack composition
 
 DUBL 3.69 is now split into two bundled Fury Content Packs:

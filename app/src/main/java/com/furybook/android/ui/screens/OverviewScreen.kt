@@ -92,7 +92,9 @@ import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ConditionCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.android.data.SkillEffectCatalogRepository
-import com.furybook.dubl.content.DublChiUi
+import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiSurface
+import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.ConditionLocalOverride
@@ -203,13 +205,13 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
     val chiResourceUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_RESOURCES)
+        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI)
     }
     val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_RESOURCE_SETTINGS)
+        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
     }
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_ECONOMY)
+        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
     }
     val conditionCatalog = remember(context.applicationContext) {
         ConditionCatalogRepository(context.applicationContext).load()

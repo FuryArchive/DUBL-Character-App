@@ -7,9 +7,9 @@ import com.furybook.content.DesktopFcpInstaller
 import com.furybook.content.FcpComposition
 import com.furybook.content.FcpManifest
 import com.furybook.content.FcpUiContribution
+import com.furybook.content.firstUi
 import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
-import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
 import com.furybook.dubl.application.CharacterTransferImportResult
@@ -101,8 +101,8 @@ class DesktopAppState {
             )
         }
 
-    fun chiUi(surface: String): FcpUiContribution? =
-        contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()
+    fun ui(surface: String, component: String, binding: String): FcpUiContribution? =
+        contentPackComposition.firstUi(surface, component, binding)
 
     fun canActivateContentPack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||

@@ -1,9 +1,10 @@
 package com.furybook.dubl.content
 
 import com.furybook.content.FcpContentPack
-import com.furybook.content.FcpManifest
 import com.furybook.content.FcpTextSource
-import com.furybook.content.FcpUiContribution
+import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiSurface
+import com.furybook.content.firstUi
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
 import com.furybook.dubl.data.parseChiCatalog
 import com.furybook.dubl.data.parseDevelopmentCatalog
@@ -17,17 +18,6 @@ object DublChiFcp {
 
     fun open(source: FcpTextSource): DublChiFcpCatalogLoader =
         DublChiFcpCatalogLoader(FcpContentPack.load(BUNDLED_ROOT, source))
-}
-
-object DublChiUi {
-    const val BINDING = "dubl.chi"
-    const val CHARACTER_RESOURCES = "character.resources"
-    const val CHARACTER_RESOURCE_SETTINGS = "character.resource-settings"
-    const val DEVELOPMENT_TABS = "development.tabs"
-    const val CHARACTER_ECONOMY = "character.economy"
-
-    fun contribution(manifest: FcpManifest, surface: String): FcpUiContribution? =
-        manifest.ui(surface).firstOrNull { it.binding == BINDING }
 }
 
 class DublChiFcpCatalogLoader(
@@ -64,7 +54,7 @@ class DublChiFcpCatalogLoader(
     fun verifyContent() {
         loadDevelopment()
         loadChi()
-        require(DublChiUi.contribution(pack.manifest, DublChiUi.CHARACTER_RESOURCES) != null)
-        require(DublChiUi.contribution(pack.manifest, DublChiUi.DEVELOPMENT_TABS) != null)
+        require(pack.manifest.firstUi(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI) != null)
+        require(pack.manifest.firstUi(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI) != null)
     }
 }
