@@ -42,8 +42,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.orderedUiItems
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AbilityOption
 import com.furybook.dubl.model.CharacterEconomy
@@ -93,7 +96,21 @@ private data class DevelopmentGridSection(
 @Composable
 fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val character = state.activeCharacter
-    val showChiTab = state.ui(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI) != null
+    val chiTabUi = state.ui(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
+    val showChiTab = chiTabUi != null
+    val developmentTabs = remember(chiTabUi) {
+        orderedUiItems(
+            buildList {
+                add(FcpOrderedUiItem(FcpUiHostOrder.PRIMARY, DevelopmentTab.REGULAR.name, DevelopmentTab.REGULAR))
+                add(FcpOrderedUiItem(FcpUiHostOrder.SECONDARY, DevelopmentTab.SPECIAL.name, DevelopmentTab.SPECIAL))
+                add(FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, DevelopmentTab.MARTIAL.name, DevelopmentTab.MARTIAL))
+                if (chiTabUi != null) {
+                    add(FcpOrderedUiItem(chiTabUi.order, DevelopmentTab.CHI.name, DevelopmentTab.CHI))
+                }
+                add(FcpOrderedUiItem(FcpUiHostOrder.TRAILING, DevelopmentTab.OWNED.name, DevelopmentTab.OWNED))
+            },
+        )
+    }
     val showChiEconomy = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null
     val developmentCatalog = remember(character, state.chiPackEnabled) { state.developmentCatalog }
     var tab by remember(character.id) { mutableStateOf(DevelopmentTab.REGULAR) }
@@ -209,7 +226,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SectionCard("Навыки и развитие") {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                DevelopmentTab.entries.filter { target -> target != DevelopmentTab.CHI || showChiTab }.forEach { target ->
+                developmentTabs.forEach { target ->
                     FilterChip(
                         selected = tab == target,
                         onClick = {
@@ -218,7 +235,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                             availableOnly = false
                             browserFilter = DevelopmentBrowserFilter.ALL
                         },
-                        label = { Text(target.title) },
+                        label = { Text(if (target == DevelopmentTab.CHI) chiTabUi?.label ?: target.title else target.title) },
                     )
                 }
             }
