@@ -823,10 +823,10 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                 onDismiss = { selectedResource = null },
             )
             CharacterResource.CHI -> ResourceAdjustSheet(
-                title = chiResourceUi?.label ?: CharacterSheetResourceId.CHI.title,
+                title = chiResourcePresentation?.label ?: CharacterSheetResourceId.CHI.title,
                 current = character.chiCurrent,
                 maximum = character.chiMaximum,
-                accent = DublAccent,
+                accent = fcpAccentColor(chiResourcePresentation?.accent),
                 onChange = { requestedDelta ->
                     val before = character.chiCurrent
                     val after = (before + requestedDelta).coerceIn(0, character.chiMaximum)
@@ -1391,12 +1391,16 @@ private fun CompactResourceCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     if (icon != null) {
                         Text(icon, color = displayAccent, fontWeight = FontWeight.Bold)
                     }
                     Text(
-                    text = title,
+                        text = title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
