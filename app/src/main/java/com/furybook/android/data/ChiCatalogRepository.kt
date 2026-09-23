@@ -10,13 +10,12 @@ class ChiCatalogRepository(context: Context) {
         cached?.let { return it }
         return synchronized(lock) {
             cached?.let { return@synchronized it }
-            AndroidDublFcp.loader(appContext).loadChi().also { cached = it }
+            AndroidDublFcp.chiLoader(appContext).loadChi().also { cached = it }
         }
     }
 
     private companion object {
         private val lock = Any()
-        @Volatile
-        private var cached: ChiCatalog? = null
+        @Volatile private var cached: ChiCatalog? = null
     }
 }

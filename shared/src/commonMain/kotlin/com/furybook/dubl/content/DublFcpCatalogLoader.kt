@@ -3,12 +3,10 @@ package com.furybook.dubl.content
 import com.furybook.content.FcpContentPack
 import com.furybook.content.FcpTextSource
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
-import com.furybook.dubl.data.parseChiCatalog
 import com.furybook.dubl.data.parseConditionCatalog
 import com.furybook.dubl.data.parseDevelopmentCatalog
 import com.furybook.dubl.data.parseMagicEquipmentCatalog
 import com.furybook.dubl.data.parseSkillEffectCatalog
-import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.ConditionCatalog
 import com.furybook.dubl.model.DevelopmentCatalog
 import com.furybook.dubl.model.DublRuleset
@@ -48,9 +46,6 @@ class DublFcpCatalogLoader(
                 .toTypedArray(),
         )
 
-    fun loadChi(): ChiCatalog =
-        parseChiCatalog(pack.readSingle("dubl.chi"))
-
     fun loadMagicEquipment(): MagicEquipmentCatalog =
         parseMagicEquipmentCatalog(pack.readSingle("dubl.magic-equipment"))
 
@@ -72,7 +67,6 @@ class DublFcpCatalogLoader(
     fun verifyContent() {
         loadConditions()
         loadDevelopment()
-        loadChi()
         loadMagicEquipment()
         loadSkillEffects()
         require(loadSkillsPayload().isNotBlank()) {
