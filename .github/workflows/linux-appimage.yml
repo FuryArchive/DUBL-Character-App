@@ -122,6 +122,9 @@ jobs:
           python3 -m tools.fcp.build_fcp \
             --source shared/src/commonMain/resources/fcp/dubl-3.69 \
             --output dist/fcp/dubl-3.69.fcp
+          python3 -m tools.fcp.build_fcp \
+            --source shared/src/commonMain/resources/fcp/dubl-chi-3.69 \
+            --output dist/fcp/dubl-chi-3.69.fcp
 
       - name: Upload DUBL FCP artifact
         uses: actions/upload-artifact@v4
@@ -130,6 +133,8 @@ jobs:
           path: |
             dist/fcp/dubl-3.69.fcp
             dist/fcp/dubl-3.69.fcp.sha256
+            dist/fcp/dubl-chi-3.69.fcp
+            dist/fcp/dubl-chi-3.69.fcp.sha256
           if-no-files-found: error
 
       - name: Compile and test Compose Desktop

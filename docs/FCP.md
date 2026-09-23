@@ -88,13 +88,16 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
-## In-app import probe
+## Optional pack composition
 
-The Characters screen on Android and Desktop exposes an experimental **Fury Content Packs** probe.
+DUBL 3.69 is now split into two bundled Fury Content Packs:
 
-The probe currently lists the bundled DUBL 3.69 pack and, when enabled, asks the DUBL adapter to read and parse every supported catalog through the FCP boundary. It does not mutate character data.
+- `dubl-3.69` is the required core rules/content pack.
+- `dubl-chi-3.69` is an optional companion pack that owns Chi development, techniques, resource UI, resource settings, development navigation, and Chi XP presentation.
 
-This is intentionally a first vertical slice. It proves that Fury Book can surface rules content as a product-level pack instead of hiding DUBL catalogs behind the app UI. Installing arbitrary external `.fcp` archives, choosing between multiple rules engines, persistence of installed packs, and dependency/conflict management are follow-up work.
+The companion pack declares a dependency on `dubl-3.69` and publishes declarative `ui` contributions. Android and Desktop only mount those supported UI surfaces while the pack is active. Turning the pack off leaves persisted character fields intact, but removes Chi-owned runtime content and presentation from the active Fury Book composition.
+
+Pack activation is persisted per installation. This is the first vertical proof that Fury Book is the host and FCPs own rules/content/UI contributions rather than the host hardcoding a complete DUBL sheet.
 
 ## Source of truth
 
