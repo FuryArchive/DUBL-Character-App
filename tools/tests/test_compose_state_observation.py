@@ -8,9 +8,12 @@ UI_FILES = [
 ]
 
 
-def test_desktop_state_exposes_snapshot_backed_active_character():
+def test_desktop_state_exposes_observable_snapshot_backed_runtime_projection():
     text = STATE.read_text(encoding='utf-8')
-    assert 'val activeCharacter: DublCharacter get() = snapshot.activeCharacter' in text
+    assert 'val activeCharacter: DublCharacter' in text
+    assert 'snapshot.activeCharacter' in text
+    assert 'withoutRuntimeDevelopmentEffects' in text
+    assert 'suppressedEntryIds = chiDevelopmentIds' in text
 
 
 def test_compose_ui_never_reads_unobservable_session_active_directly():
