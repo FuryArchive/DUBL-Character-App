@@ -1,70 +1,78 @@
-package com.furybook.content
+package com.furybook.android.data
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import android.content.Context
+import android.net.Uri
+import com.furybook.content.FcpManifest
+import com.furybook.content.parseFcpManifest
+import com.furybook.content.validateFcpArchive
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.security.MessageDigest
 import java.util.UUID
 import java.util.zip.ZipInputStream
 
-data class DesktopFcpInstallResult(
+data class AndroidFcpInstallResult(
     val manifest: FcpManifest,
-    val installDirectory: Path,
+    val installDirectory: File,
 )
 
-object DesktopFcpInstaller {
+object AndroidFcpInstaller {
     private const val MAX_ENTRIES = 512
     private const val MAX_ENTRY_BYTES = 16 * 1024 * 1024
     private const val MAX_TOTAL_BYTES = 64 * 1024 * 1024
 
     fun install(
-        archive: Path,
-        installRoot: Path,
+        context: Context,
+        uri: Uri,
         reservedPackIds: Set<String> = emptySet(),
-    ): DesktopFcpInstallResult {
-        val files = Files.newInputStream(archive).use(::readArchive)
+    ): AndroidFcpInstallResult {
+        val stream = context.contentResolver.openInputStream(uri) ?: error("Cannot open FCP file")
+        val files = stream.use(::readArchive)
         val validated = validateFcpArchive(files, ::sha256Hex)
         require(validated.manifest.id !in reservedPackIds) {
             "FCP ${validated.manifest.id} is bundled with Fury Book and cannot be replaced by file import"
         }
-        val idRoot = installRoot.resolve(validated.manifest.id)
-        val target = idRoot.resolve(validated.manifest.version)
-        val temp = installRoot.resolve(".install-${UUID.randomUUID()}")
-        Files.createDirectories(temp)
+
+        val root = installRoot(context)
+        val idRoot = File(root, validated.manifest.id)
+        val target = File(idRoot, validated.manifest.version)
+        val temp = File(root, ".install-${UUID.randomUUID()}")
+        require(temp.mkdirs() || temp.isDirectory) { "Cannot create FCP install directory" }
         try {
             validated.files.forEach { (relative, bytes) ->
-                val destination = temp.resolve(relative).normalize()
-                require(destination.startsWith(temp)) { "Unsafe FCP install path: $relative" }
-                Files.createDirectories(destination.parent)
-                Files.write(destination, bytes)
+                val destination = File(temp, relative).canonicalFile
+                require(destination.path.startsWith(temp.canonicalPath + File.separator)) {
+                    "Unsafe FCP install path: $relative"
+                }
+                destination.parentFile?.mkdirs()
+                destination.writeBytes(bytes)
             }
-            Files.createDirectories(installRoot)
-            if (Files.exists(idRoot)) deleteRecursively(idRoot)
-            Files.createDirectories(target.parent)
-            runCatching {
-                Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE)
-            }.getOrElse {
-                Files.move(temp, target)
-            }
+            if (idRoot.exists()) idRoot.deleteRecursively()
+            target.parentFile?.mkdirs()
+            require(temp.renameTo(target)) { "Cannot finalize FCP installation" }
         } finally {
-            if (Files.exists(temp)) deleteRecursively(temp)
+            if (temp.exists()) temp.deleteRecursively()
         }
-        return DesktopFcpInstallResult(validated.manifest, target)
+        return AndroidFcpInstallResult(validated.manifest, target)
     }
 
-    fun listInstalled(installRoot: Path): List<FcpManifest> {
-        if (!Files.isDirectory(installRoot)) return emptyList()
-        return Files.walk(installRoot, 3).use { paths ->
-            paths.filter { path ->
-                Files.isRegularFile(path) && path.fileName.toString() == "manifest.json"
-            }.map { manifest ->
-                runCatching { parseFcpManifest(Files.readString(manifest, StandardCharsets.UTF_8)) }.getOrNull()
-            }.filter { it != null }
-                .map { it!! }
-                .toList()
-        }.sortedBy { it.id }
+    fun listInstalled(context: Context): List<FcpManifest> {
+        val root = installRoot(context)
+        if (!root.isDirectory) return emptyList()
+        return root.listFiles().orEmpty()
+            .asSequence()
+            .filter(File::isDirectory)
+            .flatMap { idDir -> idDir.listFiles().orEmpty().asSequence() }
+            .filter(File::isDirectory)
+            .mapNotNull { versionDir ->
+                val manifest = File(versionDir, "manifest.json")
+                if (!manifest.isFile) null else runCatching { parseFcpManifest(manifest.readText()) }.getOrNull()
+            }
+            .sortedBy { it.id }
+            .toList()
     }
+
+    fun installRoot(context: Context): File = File(context.applicationContext.filesDir, "fcp")
 
     private fun readArchive(input: java.io.InputStream): Map<String, ByteArray> {
         val result = linkedMapOf<String, ByteArray>()
@@ -88,7 +96,7 @@ object DesktopFcpInstaller {
     }
 
     private fun readLimited(input: java.io.InputStream, limit: Int): ByteArray {
-        val output = java.io.ByteArrayOutputStream()
+        val output = ByteArrayOutputStream()
         val buffer = ByteArray(8192)
         var total = 0
         while (true) {
@@ -104,11 +112,4 @@ object DesktopFcpInstaller {
     private fun sha256Hex(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256")
         .digest(bytes)
         .joinToString("") { byte -> "%02x".format(byte) }
-
-    private fun deleteRecursively(path: Path) {
-        if (!Files.exists(path)) return
-        Files.walk(path).use { stream ->
-            stream.sorted(Comparator.reverseOrder()).forEach(Files::deleteIfExists)
-        }
-    }
 }

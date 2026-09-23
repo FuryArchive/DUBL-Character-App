@@ -3,6 +3,7 @@ package com.furybook.desktop
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.furybook.content.DesktopFcpInstaller
 import com.furybook.content.FcpComposition
 import com.furybook.content.FcpUiContribution
 import com.furybook.dubl.application.DublApplication
@@ -30,6 +31,8 @@ class DesktopAppState {
     )
     private val catalogLoader = DesktopCatalogLoader()
     private val contentPackPreferences = Preferences.userRoot().node("com/furybook/content-packs")
+    private val installedFcpRoot = DesktopCharacterStore.defaultDataDirectory().resolve("fcp")
+    private var installedPackRevision: Int by mutableStateOf(0)
 
     val corePackManifest = catalogLoader.manifest
     val chiPackManifest = catalogLoader.chiManifest
@@ -76,13 +79,30 @@ class DesktopAppState {
 
     val contentPackComposition: FcpComposition
         get() = FcpComposition.resolve(
-            manifests = listOf(corePackManifest, chiPackManifest),
+            manifests = buildList {
+                add(corePackManifest)
+                add(chiPackManifest)
+                addAll(DesktopFcpInstaller.listInstalled(installedFcpRoot))
+            },
             requiredPackIds = setOf(DublFcp.PACK_ID),
             enabledPackIds = if (chiPackEnabled) setOf(DublChiFcp.PACK_ID) else emptySet(),
         )
 
     fun chiUi(surface: String): FcpUiContribution? =
         contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()
+
+    fun canActivateContentPack(packId: String): Boolean =
+        packId == DublFcp.PACK_ID || packId == DublChiFcp.PACK_ID
+
+    fun installContentPack(archive: Path): FcpManifest {
+        val installed = DesktopFcpInstaller.install(
+            archive = archive,
+            installRoot = installedFcpRoot,
+            reservedPackIds = setOf(DublFcp.PACK_ID, DublChiFcp.PACK_ID),
+        )
+        installedPackRevision += 1
+        return installed.manifest
+    }
 
     fun setContentPackActive(packId: String, enabled: Boolean) {
         when (packId) {
