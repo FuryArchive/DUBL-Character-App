@@ -92,6 +92,12 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
+## UI presentation tokens
+
+UI contributions may provide semantic presentation tokens in `properties`. Fury Book currently recognizes `icon` and `accent` for the `resource-meter` renderer. The manifest never supplies raw Compose classes or arbitrary executable styling; each platform maps known tokens to host-owned renderers and falls back safely for unknown or missing values.
+
+The bundled Chi FCP demonstrates this with `icon=chi` and `accent=fury.accent`. Android renders the resource marker and accent through its resource card, while Desktop maps the same tokens to `DesktopIconKind` and the desktop theme palette.
+
 ## Generic UI mounting
 
 FCP UI is mounted through host-defined surface/component contracts rather than pack-specific screen hooks. `FcpUiSurface` names stable host attachment points, `FcpUiComponent` names supported renderer families, and the manifest supplies the concrete `binding`, label, order, and properties.

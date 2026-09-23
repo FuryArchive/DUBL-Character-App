@@ -180,3 +180,19 @@ def test_chi_ui_mounts_use_generic_fcp_surface_contract():
         text = path.read_text(encoding="utf-8")
         assert "DublChiUi" not in text
         assert "DublUiBinding.CHI" in text
+
+
+def test_resource_meter_uses_manifest_presentation_tokens_on_both_platforms():
+    android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt").read_text(encoding="utf-8")
+    desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
+    contract = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpUiContract.kt").read_text(encoding="utf-8")
+
+    assert "FcpUiProperty" in contract
+    assert "FcpUiIconToken" in contract
+    assert "FcpUiAccentToken" in contract
+    assert ".presentation()" in android
+    assert "fcpIconGlyph" in android
+    assert "fcpAccentColor" in android
+    assert ".presentation()" in desktop
+    assert "fcpDesktopIcon" in desktop
+    assert "fcpDesktopAccent" in desktop
