@@ -10,9 +10,11 @@ import com.furybook.content.FcpUiContribution
 import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublChiUi
+import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
+import com.furybook.dubl.data.mergeDevelopmentCatalogs
 import com.furybook.dubl.data.DesktopCharacterStore
 import com.furybook.dubl.model.*
 import com.furybook.desktop.data.DesktopCatalogLoader
@@ -46,7 +48,7 @@ class DesktopAppState {
         private set
 
     val conditionCatalog = catalogLoader.loadConditions()
-    private var canonicalDevelopmentCatalog: DevelopmentCatalog by mutableStateOf(catalogLoader.loadDevelopment(chiPackEnabled))
+    private var canonicalDevelopmentCatalog: DevelopmentCatalog by mutableStateOf(composeCanonicalDevelopmentCatalog())
     val developmentCatalog: DevelopmentCatalog
         get() = activeCharacter
             .effectiveDevelopmentCatalog(canonicalDevelopmentCatalog)
@@ -81,22 +83,31 @@ class DesktopAppState {
     val contentPackComposition: FcpComposition
         get() {
             installedPackRevision
+            val installed = DesktopFcpInstaller.listInstalled(installedFcpRoot)
+            val enabled = linkedSetOf<String>()
+            if (chiPackEnabled) enabled += DublChiFcp.PACK_ID
+            installed.asSequence()
+                .filter(DublDevelopmentAddon::isSupported)
+                .filter { contentPackPreferences.getBoolean(it.id, false) }
+                .mapTo(enabled) { it.id }
             return FcpComposition.resolve(
-            manifests = buildList {
-                add(corePackManifest)
-                add(chiPackManifest)
-                addAll(DesktopFcpInstaller.listInstalled(installedFcpRoot))
-            },
-            requiredPackIds = setOf(DublFcp.PACK_ID),
-            enabledPackIds = if (chiPackEnabled) setOf(DublChiFcp.PACK_ID) else emptySet(),
-        )
+                manifests = buildList {
+                    add(corePackManifest)
+                    add(chiPackManifest)
+                    addAll(installed)
+                },
+                requiredPackIds = setOf(DublFcp.PACK_ID),
+                enabledPackIds = enabled,
+            )
         }
 
     fun chiUi(surface: String): FcpUiContribution? =
         contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()
 
-    fun canActivateContentPack(packId: String): Boolean =
-        packId == DublFcp.PACK_ID || packId == DublChiFcp.PACK_ID
+    fun canActivateContentPack(manifest: FcpManifest): Boolean =
+        manifest.id == DublFcp.PACK_ID ||
+            manifest.id == DublChiFcp.PACK_ID ||
+            DublDevelopmentAddon.isSupported(manifest)
 
     fun installContentPack(archive: Path): FcpManifest {
         val installed = DesktopFcpInstaller.install(
@@ -104,7 +115,9 @@ class DesktopAppState {
             installRoot = installedFcpRoot,
             reservedPackIds = setOf(DublFcp.PACK_ID, DublChiFcp.PACK_ID),
         )
+        contentPackPreferences.putBoolean(installed.manifest.id, false)
         installedPackRevision += 1
+        canonicalDevelopmentCatalog = composeCanonicalDevelopmentCatalog()
         return installed.manifest
     }
 
@@ -112,7 +125,17 @@ class DesktopAppState {
         when (packId) {
             DublFcp.PACK_ID -> require(enabled) { "Required FCP ${DublFcp.PACK_ID} cannot be disabled" }
             DublChiFcp.PACK_ID -> setChiPackActive(enabled)
-            else -> error("Unknown bundled FCP: $packId")
+            else -> {
+                val manifest = DesktopFcpInstaller.findInstalled(installedFcpRoot, packId)
+                    ?: error("Installed FCP not found: $packId")
+                if (enabled && !contentPackPreferences.getBoolean(packId, false)) {
+                    validateExternalActivation(manifest)
+                }
+                contentPackPreferences.putBoolean(packId, enabled)
+                canonicalDevelopmentCatalog = composeCanonicalDevelopmentCatalog()
+                installedPackRevision += 1
+                refresh()
+            }
         }
     }
 
@@ -120,11 +143,41 @@ class DesktopAppState {
         if (enabled) catalogLoader.verifyChiPack()
         contentPackPreferences.putBoolean(DublChiFcp.PACK_ID, enabled)
         chiPackEnabled = enabled
-        canonicalDevelopmentCatalog = catalogLoader.loadDevelopment(includeChi = enabled)
+        canonicalDevelopmentCatalog = composeCanonicalDevelopmentCatalog()
         chiCatalog = if (enabled) catalogLoader.loadChi() else ChiCatalog("disabled", emptyList(), emptyList())
         refresh()
     }
 
+    private fun composeCanonicalDevelopmentCatalog(): DevelopmentCatalog {
+        val composition = contentPackComposition
+        val layers = mutableListOf(
+            catalogLoader.loadDevelopment(includeChi = composition.isActive(DublChiFcp.PACK_ID)),
+        )
+        composition.active
+            .asSequence()
+            .filter { it.id != DublFcp.PACK_ID && it.id != DublChiFcp.PACK_ID }
+            .forEach { manifest ->
+                layers += DublDevelopmentAddon.load(DesktopFcpInstaller.openInstalled(installedFcpRoot, manifest))
+            }
+        return mergeDevelopmentCatalogs(*layers.toTypedArray())
+    }
+
+    private fun validateExternalActivation(manifest: FcpManifest) {
+        DublDevelopmentAddon.requireSupported(manifest)
+        val candidate = DublDevelopmentAddon.load(DesktopFcpInstaller.openInstalled(installedFcpRoot, manifest))
+        val layers = mutableListOf(
+            catalogLoader.loadDevelopment(includeChi = true),
+        )
+        DesktopFcpInstaller.listInstalled(installedFcpRoot)
+            .asSequence()
+            .filter { it.id != manifest.id }
+            .filter(DublDevelopmentAddon::isSupported)
+            .filter { contentPackPreferences.getBoolean(it.id, false) }
+            .map { installed -> DublDevelopmentAddon.load(DesktopFcpInstaller.openInstalled(installedFcpRoot, installed)) }
+            .forEach(layers::add)
+        layers += candidate
+        mergeDevelopmentCatalogs(*layers.toTypedArray())
+    }
     fun refresh() {
         snapshot = application.snapshot
         extras = application.activeExtras

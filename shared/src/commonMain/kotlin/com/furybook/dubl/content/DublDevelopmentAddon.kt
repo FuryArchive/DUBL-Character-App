@@ -38,10 +38,14 @@ object DublDevelopmentAddon {
 
     fun load(pack: FcpContentPack): DevelopmentCatalog {
         requireSupported(pack.manifest)
-        return mergeDevelopmentCatalogs(
+        val catalog = mergeDevelopmentCatalogs(
             *pack.readAll(ENTRY_KIND)
                 .map(::parseDevelopmentCatalog)
                 .toTypedArray(),
         )
+        require(catalog.entries.none { it.isChiDevelopment }) {
+            "External core-only DUBL development pack ${pack.manifest.id} cannot add Chi development"
+        }
+        return catalog
     }
 }
