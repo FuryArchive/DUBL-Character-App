@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.model.AbilityOption
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.CharacterEconomyBreakdown
@@ -90,7 +91,9 @@ private data class DevelopmentGridSection(
 @Composable
 fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val character = state.activeCharacter
-    val developmentCatalog = remember(character) { state.developmentCatalog }
+    val showChiTab = state.chiUi(DublChiUi.DEVELOPMENT_TABS) != null
+    val showChiEconomy = state.chiUi(DublChiUi.CHARACTER_ECONOMY) != null
+    val developmentCatalog = remember(character, state.chiPackEnabled) { state.developmentCatalog }
     var tab by remember(character.id) { mutableStateOf(DevelopmentTab.REGULAR) }
     var availableOnly by remember(character.id) { mutableStateOf(false) }
     var browserFilter by remember(character.id) { mutableStateOf(DevelopmentBrowserFilter.ALL) }
@@ -108,7 +111,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val rules = remember(character, developmentCatalog) { DevelopmentRules(character, developmentCatalog, progress) }
     val planner = remember(character, developmentCatalog) { DevelopmentAcquisitionPlanner(character, developmentCatalog) }
     val chiRules = remember(character, developmentCatalog) { ChiRules(character, developmentCatalog) }
-    val economy = remember(character, developmentCatalog) { CharacterEconomy.breakdown(character, developmentCatalog) }
+    val economy = remember(character, developmentCatalog, showChiEconomy) { CharacterEconomy.breakdown(character, developmentCatalog, includeChi = showChiEconomy) }
     val availabilityById = remember(character, developmentCatalog) { mutableMapOf<String, com.furybook.dubl.model.DevelopmentAvailability>() }
     val unlockCountById = remember(character, developmentCatalog) { mutableMapOf<String, Int>() }
 
@@ -204,7 +207,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         SectionCard("Навыки и развитие") {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                DevelopmentTab.entries.forEach { target ->
+                DevelopmentTab.entries.filter { target -> target != DevelopmentTab.CHI || showChiTab }.forEach { target ->
                     FilterChip(
                         selected = tab == target,
                         onClick = {
@@ -247,7 +250,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                             )
                         }
                         Spacer(Modifier.weight(0.18f))
-                        DevelopmentBudgetPanel(economy)
+                        DevelopmentBudgetPanel(economy, showChi = showChiEconomy)
                     }
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -268,7 +271,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                             onToggleAvailableOnly = { availableOnly = !availableOnly },
                             onBrowserFilter = { browserFilter = it },
                         )
-                        DevelopmentBudgetPanel(economy, Modifier.fillMaxWidth())
+                        DevelopmentBudgetPanel(economy, showChi = showChiEconomy, modifier = Modifier.fillMaxWidth())
                     }
                 }
             }
@@ -540,6 +543,7 @@ private fun DevelopmentFilterControls(
 @Composable
 private fun DevelopmentBudgetPanel(
     economy: CharacterEconomyBreakdown,
+    showChi: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -577,7 +581,13 @@ private fun DevelopmentBudgetPanel(
                 }
             }
             Text(
-                "Потрачено: характеристики ${economy.attributeXp} · умения ${economy.skillXp} · навыки ${economy.developmentXp} · ЦИ ${economy.chiXp} · магия ${economy.manaXp + economy.magicSchoolXp + economy.spellXp}",
+                buildList {
+                    add("характеристики ${economy.attributeXp}")
+                    add("умения ${economy.skillXp}")
+                    add("навыки ${economy.developmentXp}")
+                    if (showChi) add("ЦИ ${economy.chiXp}")
+                    add("магия ${economy.manaXp + economy.magicSchoolXp + economy.spellXp}")
+                }.joinToString(" · ", prefix = "Потрачено: "),
                 color = DublMuted,
                 style = MaterialTheme.typography.labelSmall,
             )

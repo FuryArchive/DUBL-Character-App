@@ -70,6 +70,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.CharacterEconomy
@@ -124,7 +125,11 @@ fun CharacterSheetScreen(
 ) {
     val character = state.activeCharacter
     val extras = state.extras
-    val economy = CharacterEconomy.breakdown(character, state.developmentCatalog)
+    val economy = CharacterEconomy.breakdown(
+        character,
+        state.developmentCatalog,
+        includeChi = state.chiUi(DublChiUi.CHARACTER_ECONOMY) != null,
+    )
     var showIdentity by remember(character.id) { mutableStateOf(false) }
     var showEconomy by remember(character.id) { mutableStateOf(false) }
     var showConditions by remember(character.id) { mutableStateOf(false) }
@@ -642,7 +647,7 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.MANA) },
             )
         }
-        if (character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if (state.chiUi(DublChiUi.CHARACTER_RESOURCES) != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
             DesktopResourceTile(
                 DesktopIconKind.CHI, "ЦИ", character.chiCurrent, character.chiMaximum, DesktopAccent,
                 { onResourceDelta(CharacterSheetResourceId.CHI, -1) },
@@ -1541,7 +1546,8 @@ private fun EconomySummaryCard(
 @Composable
 private fun EconomyDialog(state: DesktopAppState, onDismiss: () -> Unit) {
     val character = state.activeCharacter
-    val economy = CharacterEconomy.breakdown(character, state.developmentCatalog)
+    val showChiEconomy = state.chiUi(DublChiUi.CHARACTER_ECONOMY) != null
+    val economy = CharacterEconomy.breakdown(character, state.developmentCatalog, includeChi = showChiEconomy)
     var total by remember(character.id) { mutableStateOf(character.experience.toString()) }
     var creation by remember(character.id) { mutableStateOf(character.effectiveCreationExperience.toString()) }
     var adjustment by remember(character.id) { mutableStateOf(character.xpAdjustment.toString()) }
@@ -1602,7 +1608,12 @@ private fun EconomyDialog(state: DesktopAppState, onDismiss: () -> Unit) {
                             style = MaterialTheme.typography.bodySmall,
                         )
                         Text(
-                            "Мана ${economy.manaXp} · ЦИ ${economy.chiXp} · Школы ${economy.magicSchoolXp} · Заклинания ${economy.spellXp}",
+                            buildList {
+                                add("Мана ${economy.manaXp}")
+                                if (showChiEconomy) add("ЦИ ${economy.chiXp}")
+                                add("Школы ${economy.magicSchoolXp}")
+                                add("Заклинания ${economy.spellXp}")
+                            }.joinToString(" · "),
                             color = DesktopMuted,
                             style = MaterialTheme.typography.bodySmall,
                         )
@@ -1913,7 +1924,9 @@ private fun ResourceVisibilityDialog(state: DesktopAppState, onDismiss: () -> Un
     FuryDialog(
         onDismissRequest = onDismiss,
         title = { Text("Видимость ресурсов") },
-        text = { Column { CharacterSheetResourceId.entries.forEach { resource -> Row(verticalAlignment = Alignment.CenterVertically) { val hidden = resource in state.extras.hiddenResourceIds; Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) }); Text(resource.title) } } } },
+        text = { Column { CharacterSheetResourceId.entries
+            .filter { resource -> resource != CharacterSheetResourceId.CHI || state.chiUi(DublChiUi.CHARACTER_RESOURCE_SETTINGS) != null }
+            .forEach { resource -> Row(verticalAlignment = Alignment.CenterVertically) { val hidden = resource in state.extras.hiddenResourceIds; Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) }); Text(resource.title) } } } },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Готово") } },
     )
 }
