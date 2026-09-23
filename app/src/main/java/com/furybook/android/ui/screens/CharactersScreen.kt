@@ -18,6 +18,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,12 +26,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.CharacterTransferRejectReason
+import com.furybook.android.data.AndroidDublFcp
 import com.furybook.android.state.CharacterController
 import com.furybook.ui.components.DublCard
 import com.furybook.android.ui.components.DublScreenHeader
@@ -42,8 +45,12 @@ private const val TRANSFER_EXTENSION = ".dubl"
 fun CharactersScreen(controller: CharacterController) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
+    var rulesImportProbeEnabled by remember { mutableStateOf(false) }
+    var rulesImportStatus by remember { mutableStateOf<String?>(null) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
+    val fcpLoader = remember(context.applicationContext) { AndroidDublFcp.loader(context) }
+    val fcpManifest = fcpLoader.pack.manifest
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -104,6 +111,52 @@ fun CharactersScreen(controller: CharacterController) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+
+        DublCard(Modifier.fillMaxWidth()) {
+            Text("Fury Content Packs", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Пробный импорт правил. Сейчас Fury Book видит один встроенный FCP.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(fcpManifest.name, style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        "ruleset ${fcpManifest.ruleset.id} ${fcpManifest.ruleset.version} • FCP v${fcpManifest.formatVersion} • ${fcpManifest.modules.size} модулей",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Switch(
+                    checked = rulesImportProbeEnabled,
+                    onCheckedChange = { enabled ->
+                        rulesImportProbeEnabled = enabled
+                        rulesImportStatus = if (!enabled) {
+                            "Пробный импорт выключен."
+                        } else {
+                            runCatching {
+                                fcpLoader.verifyContent()
+                                "${fcpManifest.name}: пакет прочитан, ${fcpManifest.entries.size} записей успешно разобраны."
+                            }.getOrElse { error ->
+                                "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                            }
+                        }
+                    },
+                )
+            }
+            rulesImportStatus?.let { status ->
+                Text(
+                    status,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
 
         snapshot.characters.forEach { character ->

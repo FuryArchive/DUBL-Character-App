@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import com.furybook.dubl.data.CharacterTransferRejectReason
 import com.furybook.ui.theme.DublFocus
 import com.furybook.ui.theme.DublMuted
 import com.furybook.desktop.DesktopAppState
+import com.furybook.desktop.data.DesktopCatalogLoader
 import java.awt.FileDialog
 import java.awt.Frame
 import java.nio.charset.StandardCharsets
@@ -38,6 +40,10 @@ import java.nio.file.Path
 fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
+    var rulesImportProbeEnabled by remember { mutableStateOf(false) }
+    var rulesImportStatus by remember { mutableStateOf<String?>(null) }
+    val fcpLoader = remember { DesktopCatalogLoader() }
+    val fcpManifest = remember(fcpLoader) { fcpLoader.manifest }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -89,6 +95,48 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                     color = DublMuted,
                     style = MaterialTheme.typography.bodySmall,
                 )
+            }
+        }
+        item {
+            SectionCard(title = "Fury Content Packs") {
+                Text(
+                    "Пробный импорт правил. Сейчас Fury Book видит один встроенный FCP.",
+                    color = DublMuted,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(fcpManifest.name, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            "ruleset ${fcpManifest.ruleset.id} ${fcpManifest.ruleset.version} • FCP v${fcpManifest.formatVersion} • ${fcpManifest.modules.size} модулей",
+                            color = DublMuted,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                    Switch(
+                        checked = rulesImportProbeEnabled,
+                        onCheckedChange = { enabled ->
+                            rulesImportProbeEnabled = enabled
+                            rulesImportStatus = if (!enabled) {
+                                "Пробный импорт выключен."
+                            } else {
+                                runCatching {
+                                    fcpLoader.verifyBundledPack()
+                                    "${fcpManifest.name}: пакет прочитан, ${fcpManifest.entries.size} записей успешно разобраны."
+                                }.getOrElse { error ->
+                                    "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                                }
+                            }
+                        },
+                    )
+                }
+                rulesImportStatus?.let { status ->
+                    Text(status, color = DublMuted, style = MaterialTheme.typography.bodySmall)
+                }
             }
         }
         items(state.snapshot.characters, key = { it.id }) { character ->

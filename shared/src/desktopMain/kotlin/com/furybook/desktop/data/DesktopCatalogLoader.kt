@@ -27,9 +27,13 @@ class DesktopCatalogLoader(
         )
     }
 
+    val manifest get() = fcp.pack.manifest
+
     fun loadConditions(): ConditionCatalog = fcp.loadConditions()
     fun loadDevelopment(): DevelopmentCatalog = fcp.loadDevelopment()
     fun loadChi(): ChiCatalog = fcp.loadChi()
     fun loadMagicEquipment(): MagicEquipmentCatalog = fcp.loadMagicEquipment()
     fun loadSkillEffects(): SkillEffectCatalog = fcp.loadSkillEffects()
+
+    fun verifyBundledPack() = fcp.verifyContent()
 }

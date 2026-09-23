@@ -64,4 +64,19 @@ class DublFcpCatalogLoader(
      */
     fun loadSkillsPayload(): String =
         pack.readSingle("dubl.skills")
+
+    /**
+     * Exercises the complete bundled DUBL FCP boundary without mutating character data.
+     * Used by Fury Book's in-app content-pack probe and by platform diagnostics.
+     */
+    fun verifyContent() {
+        loadConditions()
+        loadDevelopment()
+        loadChi()
+        loadMagicEquipment()
+        loadSkillEffects()
+        require(loadSkillsPayload().isNotBlank()) {
+            "FCP ${pack.manifest.id} contains an empty DUBL skills payload"
+        }
+    }
 }

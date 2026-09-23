@@ -81,3 +81,33 @@ def test_generic_fcp_runtime_does_not_depend_on_dubl():
     for path in sources:
         source = path.read_text(encoding="utf-8")
         assert "com.furybook.dubl" not in source, f"generic FCP layer depends on DUBL: {path}"
+
+
+def test_fury_book_surfaces_the_bundled_fcp_as_a_rules_import_probe():
+    android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    desktop_loader = (ROOT / "shared/src/desktopMain/kotlin/com/furybook/desktop/data/DesktopCatalogLoader.kt").read_text(encoding="utf-8")
+    dubl_loader = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublFcpCatalogLoader.kt").read_text(encoding="utf-8")
+
+    for source in (android, desktop):
+        assert "Fury Content Packs" in source
+        assert "Пробный импорт правил" in source
+        assert "Switch(" in source
+        assert "fcpManifest.ruleset.id" in source
+        assert "fcpManifest.formatVersion" in source
+
+    assert "AndroidDublFcp.loader(context)" in android
+    assert "fcpLoader.verifyContent()" in android
+    assert "val manifest get() = fcp.pack.manifest" in desktop_loader
+    assert "fun verifyBundledPack() = fcp.verifyContent()" in desktop_loader
+    assert "fcpLoader.verifyBundledPack()" in desktop
+
+    for call in (
+        "loadConditions()",
+        "loadDevelopment()",
+        "loadChi()",
+        "loadMagicEquipment()",
+        "loadSkillEffects()",
+        "loadSkillsPayload()",
+    ):
+        assert call in dubl_loader
