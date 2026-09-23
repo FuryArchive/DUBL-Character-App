@@ -71,10 +71,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiAccentToken
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
@@ -627,8 +630,8 @@ private fun HeroResources(
             DesktopInlineAction("Показать / скрыть", onResourceVisibility)
         }
 
-        val tiles = mutableListOf<@Composable (Modifier) -> Unit>()
-        if (CharacterSheetResourceId.HEALTH !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        val tileItems = mutableListOf<FcpOrderedUiItem<@Composable (Modifier) -> Unit>>()
+        if (CharacterSheetResourceId.HEALTH !in extras.hiddenResourceIds) tileItems += FcpOrderedUiItem(FcpUiHostOrder.PRIMARY, "health") { tileModifier ->
             DesktopResourceTile(
                 DesktopIconKind.HEALTH, "Здоровье", character.hpCurrent, character.healthMaximum, DesktopHealth,
                 { onResourceDelta(CharacterSheetResourceId.HEALTH, -1) },
@@ -637,7 +640,7 @@ private fun HeroResources(
                 onSecondary = onHealthControl,
             )
         }
-        if (CharacterSheetResourceId.ENDURANCE !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if (CharacterSheetResourceId.ENDURANCE !in extras.hiddenResourceIds) tileItems += FcpOrderedUiItem(FcpUiHostOrder.SECONDARY, "endurance") { tileModifier ->
             DesktopResourceTile(
                 DesktopIconKind.ENDURANCE, "Выносливость", character.enduranceCurrent, character.enduranceMaximum, DesktopStamina,
                 { onResourceDelta(CharacterSheetResourceId.ENDURANCE, -1) },
@@ -646,7 +649,7 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.ENDURANCE) },
             )
         }
-        if ((character.manaEnabled || character.effectiveManaMaximum > 0) && CharacterSheetResourceId.MANA !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if ((character.manaEnabled || character.effectiveManaMaximum > 0) && CharacterSheetResourceId.MANA !in extras.hiddenResourceIds) tileItems += FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, "mana") { tileModifier ->
             DesktopResourceTile(
                 DesktopIconKind.MANA, "Мана", character.manaCurrent, character.effectiveManaMaximum, DesktopMana,
                 { onResourceDelta(CharacterSheetResourceId.MANA, -1) },
@@ -655,7 +658,7 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.MANA) },
             )
         }
-        if (chiResourcePresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if (chiResourcePresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tileItems += FcpOrderedUiItem(chiResourcePresentation.order, "chi") { tileModifier ->
             DesktopResourceTile(
                 fcpDesktopIcon(chiResourcePresentation.icon),
                 chiResourcePresentation.label,
@@ -668,8 +671,8 @@ private fun HeroResources(
                 onSecondary = { state.restoreChi() },
             )
         }
-        character.customResources.forEach { resource ->
-            tiles += { tileModifier ->
+        character.customResources.forEachIndexed { index, resource ->
+            tileItems += FcpOrderedUiItem(FcpUiHostOrder.CUSTOM + index, "custom:${resource.uid}") { tileModifier ->
                 DesktopResourceTile(
                     DesktopIconKind.GENERIC_SKILL,
                     resource.name,
@@ -684,6 +687,7 @@ private fun HeroResources(
             }
         }
 
+        val tiles = orderedUiItems(tileItems)
         if (tiles.isEmpty()) {
             Text("Нет видимых ресурсов", color = DesktopMuted, style = MaterialTheme.typography.bodySmall)
             return@Column
