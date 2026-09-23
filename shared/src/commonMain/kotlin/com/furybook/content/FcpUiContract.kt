@@ -51,10 +51,31 @@ data class FcpUiPresentation(
     val label: String,
     val icon: String?,
     val accent: String?,
+    val order: Int,
 )
 
 fun FcpUiContribution.presentation(): FcpUiPresentation = FcpUiPresentation(
     label = label,
     icon = properties[FcpUiProperty.ICON],
     accent = properties[FcpUiProperty.ACCENT],
+    order = order,
 )
+
+object FcpUiHostOrder {
+    const val PRIMARY = 10
+    const val SECONDARY = 20
+    const val TERTIARY = 30
+    const val EXTENSION = 40
+    const val TRAILING = 90
+    const val CUSTOM = 100
+}
+
+data class FcpOrderedUiItem<T>(
+    val order: Int,
+    val stableKey: String,
+    val value: T,
+)
+
+fun <T> orderedUiItems(items: Iterable<FcpOrderedUiItem<T>>): List<T> = items
+    .sortedWith(compareBy<FcpOrderedUiItem<T>>({ it.order }, { it.stableKey }))
+    .map { it.value }
