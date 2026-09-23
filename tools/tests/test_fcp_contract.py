@@ -135,3 +135,22 @@ def test_pack_manager_ui_is_driven_by_generic_composition():
     assert "inactiveClaims" in composition
     assert "content claim conflict" in composition
     assert "UI contribution conflict" in composition
+
+
+def test_external_dubl_development_packs_have_real_activation_path():
+    addon = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublDevelopmentAddon.kt").read_text(encoding="utf-8")
+    android_state = (ROOT / "app/src/main/java/com/furybook/android/data/AndroidContentPackState.kt").read_text(encoding="utf-8")
+    android_repo = (ROOT / "app/src/main/java/com/furybook/android/data/DevelopmentCatalogRepository.kt").read_text(encoding="utf-8")
+    desktop_state = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt").read_text(encoding="utf-8")
+
+    assert 'const val ENTRY_KIND = "dubl.development"' in addon
+    assert "content claims are not supported" in addon
+    assert "external UI contributions are not supported" in addon
+    assert "cannot add Chi development" in addon
+    assert "DublDevelopmentAddon::isSupported" in android_state
+    assert "validateExternalActivation" in android_state
+    assert "AndroidFcpInstaller.openInstalled" in android_repo
+    assert "DublDevelopmentAddon.load" in android_repo
+    assert "DublDevelopmentAddon::isSupported" in desktop_state
+    assert "DesktopFcpInstaller.openInstalled" in desktop_state
+    assert "composeCanonicalDevelopmentCatalog" in desktop_state

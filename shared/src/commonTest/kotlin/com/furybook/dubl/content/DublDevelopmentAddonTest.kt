@@ -1,14 +1,18 @@
 package com.furybook.dubl.content
 
 import com.furybook.content.FcpContentClaim
+import com.furybook.content.FcpContentPack
 import com.furybook.content.FcpDependency
 import com.furybook.content.FcpEntry
 import com.furybook.content.FcpManifest
 import com.furybook.content.FcpModule
 import com.furybook.content.FcpRulesetRef
 import com.furybook.content.FcpUiContribution
+import com.furybook.content.FcpTextSource
 import com.furybook.content.FcpFormat
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -38,6 +42,31 @@ class DublDevelopmentAddonTest {
         assertTrue(DublDevelopmentAddon.isSupported(manifest()))
     }
 
+    @Test
+    fun loadsAdditiveDevelopmentAndRejectsChiPayload() {
+        fun pack(section: String): FcpContentPack {
+            val manifestJson = """
+                {
+                  "format":"fury.content-pack","formatVersion":1,
+                  "id":"community-feats","name":"Community Feats","version":"1.0",
+                  "ruleset":{"id":"dubl","version":"3.69","engineApi":1},
+                  "dependencies":[{"id":"dubl-3.69","version":"3.69"}],
+                  "modules":[{"id":"core","name":"Core","required":true,"enabledByDefault":true}],
+                  "entries":[{"kind":"dubl.development","path":"content/dev.json","modules":["core"],"order":10}],
+                  "claims":[],"ui":[]
+                }
+            """.trimIndent()
+            val dev = """{"version":"1","entries":[{"id":"community_one","name":"Community One","section":"$section","cost":2}]}"""
+            val files = mapOf(
+                "pack/manifest.json" to manifestJson,
+                "pack/content/dev.json" to dev,
+            )
+            return FcpContentPack.load("pack", FcpTextSource(files::get))
+        }
+
+        assertEquals(listOf("community_one"), DublDevelopmentAddon.load(pack("Навыки")).entries.map { it.id })
+        assertFailsWith<IllegalArgumentException> { DublDevelopmentAddon.load(pack("ЦИ")) }
+    }
     @Test
     fun rejectsOtherKindsClaimsUiAndWrongRuleset() {
         assertFalse(DublDevelopmentAddon.isSupported(manifest(

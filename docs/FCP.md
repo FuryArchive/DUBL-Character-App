@@ -119,6 +119,24 @@ Before anything is installed, Fury Book validates:
 Validated packs are unpacked into app-local data storage and then appear in the Fury Content Packs list. Installation does **not** imply activation. Packs that do not yet have an engine/adapter path remain visible but inactive, so importing an unknown pack cannot silently alter character rules or state.
 
 
+## External DUBL data-only activation
+
+Installed external packs can now be activated when they fit the first safe DUBL addon profile:
+
+- ruleset `dubl / 3.69`, engine API `1`;
+- exactly one dependency: `dubl-3.69 / 3.69`;
+- one or more `dubl.development` entries only;
+- no `claims`;
+- no `ui` contributions;
+- no development entries owned by the optional Chi subsystem.
+
+Activation is persistent per installation. Before the enabled flag is written, Fury Book parses the installed payload and merges it against core DUBL, the full Chi development catalog, and all already-active external addons. Duplicate development IDs reject activation instead of creating ambiguous runtime behavior.
+
+Disabling an external addon removes its entries from the active development catalog but does not rewrite the character snapshot. Any ranks previously stored under those IDs remain dormant and become visible again if the same compatible pack is re-enabled.
+
+This is intentionally additive-only. External overrides/claims, custom UI surfaces, Chi extensions, magic/equipment replacement, and executable logic are separate future capabilities rather than implicit privileges of file import.
+
+
 ## Source of truth
 
 For DUBL, promoted canonical runtime content now lives inside the unpacked FCP tree. Rulebook DOCX files remain development inputs and the DUBL importer remains responsible for provenance, diagnostics and explicit resolutions.
