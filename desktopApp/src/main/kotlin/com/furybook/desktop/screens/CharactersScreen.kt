@@ -114,7 +114,7 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                 val composition = state.contentPackComposition
                 composition.available.forEach { manifest ->
                     val required = manifest.id in composition.requiredPackIds
-                    val canActivate = state.canActivateContentPack(manifest.id)
+                    val canActivate = state.canActivateContentPack(manifest)
                     ContentPackRow(
                         name = manifest.name,
                         version = manifest.version,
@@ -124,6 +124,8 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                             "Основной ruleset · обязателен"
                         } else if (!canActivate) {
                             "Установлен · adapter support пока отсутствует"
+                        } else if (manifest.id != state.corePackManifest.id && manifest.id != state.chiPackManifest.id) {
+                            "DUBL data-only · дополнительное развитие"
                         } else if (manifest.dependencies.isEmpty()) {
                             "Опциональный FCP"
                         } else {

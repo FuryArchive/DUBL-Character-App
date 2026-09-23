@@ -66,6 +66,23 @@ object DesktopFcpInstaller {
         }.sortedBy { it.id }
     }
 
+    fun findInstalled(installRoot: Path, packId: String): FcpManifest? =
+        listInstalled(installRoot).firstOrNull { it.id == packId }
+
+    fun openInstalled(installRoot: Path, manifest: FcpManifest): FcpContentPack {
+        val root = installRoot.resolve(manifest.id).resolve(manifest.version).toAbsolutePath().normalize()
+        require(Files.isDirectory(root)) { "Installed FCP directory is missing: ${manifest.id} ${manifest.version}" }
+        val source = FcpTextSource { relative ->
+            val file = root.resolve(relative).normalize()
+            if (!file.startsWith(root) || !Files.isRegularFile(file)) null else Files.readString(file, StandardCharsets.UTF_8)
+        }
+        val pack = FcpContentPack.load("", source)
+        require(pack.manifest.id == manifest.id && pack.manifest.version == manifest.version) {
+            "Installed FCP identity changed on disk: ${manifest.id} ${manifest.version}"
+        }
+        return pack
+    }
+
     private fun readArchive(input: java.io.InputStream): Map<String, ByteArray> {
         val result = linkedMapOf<String, ByteArray>()
         var total = 0L

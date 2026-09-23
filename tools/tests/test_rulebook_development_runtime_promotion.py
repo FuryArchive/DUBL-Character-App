@@ -149,7 +149,9 @@ def test_android_and_desktop_compose_core_and_optional_development_layers():
     assert "AndroidDublFcp.loader(appContext)" in android
     assert ".loadDevelopment()" in android
     assert "AndroidDublFcp.chiLoader(appContext).loadDevelopment()" in android
-    assert 'inactiveClaims("dubl.development")' in android
+    assert "AndroidDublFcp.chiLoader(appContext).claimedDevelopmentIds()" in android
+    assert "DublDevelopmentAddon.load" in android
+    assert "AndroidFcpInstaller.openInstalled" in android
     assert "DublFcp.open(" in desktop
     assert "DublChiFcp.open(" in desktop
     assert "mergeDevelopmentCatalogs(core, chiFcp.loadDevelopment())" in desktop
