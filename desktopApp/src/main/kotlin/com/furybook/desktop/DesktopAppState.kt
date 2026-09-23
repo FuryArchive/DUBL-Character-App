@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.furybook.content.DesktopFcpInstaller
 import com.furybook.content.FcpComposition
+import com.furybook.content.FcpManifest
 import com.furybook.content.FcpUiContribution
 import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
