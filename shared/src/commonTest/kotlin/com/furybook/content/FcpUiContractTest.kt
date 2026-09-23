@@ -44,8 +44,6 @@ class FcpUiContractTest {
         assertNull(presentation.icon)
         assertNull(presentation.accent)
     }
-}
-
 
     @Test
     fun orderedItemsMergeHostSlotsAndPackOrderDeterministically() {
@@ -61,3 +59,4 @@ class FcpUiContractTest {
 
         assertEquals(listOf("health", "addon", "addon-b", "endurance", "mana"), ordered)
     }
+}
