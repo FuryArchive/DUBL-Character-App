@@ -310,3 +310,14 @@ data class AppSnapshot(
 
 fun defaultAttributes(): Map<AttributeId, AttributeValue> =
     AttributeId.entries.associateWith { AttributeValue() }
+
+fun DublCharacter.withoutRuntimeDevelopmentEffects(
+    suppressedEntryIds: Set<String>,
+    suppressChiResource: Boolean = false,
+): DublCharacter {
+    if (suppressedEntryIds.isEmpty() && !suppressChiResource) return this
+    return copy(
+        development = development.filterKeys { it !in suppressedEntryIds },
+        chiEnabled = if (suppressChiResource) false else chiEnabled,
+    )
+}

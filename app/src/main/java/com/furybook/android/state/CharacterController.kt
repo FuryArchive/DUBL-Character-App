@@ -23,6 +23,7 @@ import com.furybook.dubl.model.KnownSpell
 import com.furybook.dubl.model.SheetGroup
 import com.furybook.dubl.model.SpellCatalogEntry
 import com.furybook.dubl.model.UntrainedRule
+import com.furybook.dubl.model.withoutRuntimeDevelopmentEffects
 import java.util.UUID
 
 /** Android observable adapter over the shared application boundary. */
@@ -41,7 +42,19 @@ class CharacterController(
     var extras: CharacterSheetExtras by mutableStateOf(application.activeExtras)
         private set
 
-    val active: DublCharacter get() = snapshot.activeCharacter
+    private var suppressedDevelopmentIds: Set<String> by mutableStateOf(emptySet())
+    private var suppressChiRuntime: Boolean by mutableStateOf(false)
+
+    val active: DublCharacter
+        get() = snapshot.activeCharacter.withoutRuntimeDevelopmentEffects(
+            suppressedEntryIds = suppressedDevelopmentIds,
+            suppressChiResource = suppressChiRuntime,
+        )
+
+    fun setRuntimeContentSuppression(developmentIds: Set<String>, suppressChiResource: Boolean) {
+        suppressedDevelopmentIds = developmentIds
+        suppressChiRuntime = suppressChiResource
+    }
 
     private inline fun <T> sync(block: () -> T): T {
         val result = block()

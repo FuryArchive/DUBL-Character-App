@@ -31,6 +31,7 @@ class DesktopAppState {
 
     val corePackManifest = catalogLoader.manifest
     val chiPackManifest = catalogLoader.chiManifest
+    private val chiDevelopmentIds = catalogLoader.loadChiDevelopment().entries.mapTo(linkedSetOf()) { it.id }
 
     var chiPackEnabled: Boolean by mutableStateOf(contentPackPreferences.getBoolean(DublChiFcp.PACK_ID, false))
         private set
@@ -53,7 +54,15 @@ class DesktopAppState {
     var extras: CharacterSheetExtras by mutableStateOf(application.activeExtras)
         private set
 
-    val activeCharacter: DublCharacter get() = snapshot.activeCharacter
+    val activeCharacter: DublCharacter
+        get() = if (chiPackEnabled) {
+            snapshot.activeCharacter
+        } else {
+            snapshot.activeCharacter.withoutRuntimeDevelopmentEffects(
+                suppressedEntryIds = chiDevelopmentIds,
+                suppressChiResource = true,
+            )
+        }
 
     init {
         if (chiPackEnabled && !application.snapshot.activeCharacter.chiActive) {

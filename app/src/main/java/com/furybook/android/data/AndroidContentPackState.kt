@@ -22,4 +22,7 @@ object AndroidContentPackState {
 
     fun chiUi(context: Context, enabled: Boolean, surface: String): FcpUiContribution? =
         if (enabled) DublChiUi.contribution(AndroidDublFcp.chiLoader(context).pack.manifest, surface) else null
+
+    fun chiDevelopmentIds(context: Context): Set<String> =
+        AndroidDublFcp.chiLoader(context).loadDevelopment().entries.mapTo(linkedSetOf()) { it.id }
 }

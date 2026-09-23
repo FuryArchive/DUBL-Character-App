@@ -34,6 +34,7 @@ class DesktopCatalogLoader(
         val core = fcp.loadDevelopment()
         return if (includeChi) mergeDevelopmentCatalogs(core, chiFcp.loadDevelopment()) else core
     }
+    fun loadChiDevelopment(): DevelopmentCatalog = chiFcp.loadDevelopment()
     fun loadChi(): ChiCatalog = chiFcp.loadChi()
     fun loadMagicEquipment(): MagicEquipmentCatalog = fcp.loadMagicEquipment()
     fun loadSkillEffects(): SkillEffectCatalog = fcp.loadSkillEffects()

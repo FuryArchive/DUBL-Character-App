@@ -74,8 +74,13 @@ fun DublApp() {
     var selected by rememberSaveable { mutableStateOf(AppSection.OVERVIEW) }
     var pendingSection by remember { mutableStateOf<AppSection?>(null) }
     var chiPackEnabled by rememberSaveable { mutableStateOf(AndroidContentPackState.isChiEnabled(appContext)) }
+    val chiDevelopmentIds = remember(appContext) { AndroidContentPackState.chiDevelopmentIds(appContext) }
 
-    LaunchedEffect(chiPackEnabled, controller.active.id) {
+    LaunchedEffect(chiPackEnabled, controller.snapshot.activeCharacterId) {
+        controller.setRuntimeContentSuppression(
+            developmentIds = if (chiPackEnabled) emptySet() else chiDevelopmentIds,
+            suppressChiResource = !chiPackEnabled,
+        )
         if (chiPackEnabled && !controller.active.chiActive) {
             controller.setChiEnabled(true)
         }
