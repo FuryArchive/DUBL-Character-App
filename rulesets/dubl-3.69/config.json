@@ -39,7 +39,7 @@
       "sources": [
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/chi_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-chi-3.69/content/chi_catalog.json",
       "note": "Chi schools and techniques are generated together with Chi development from one Master of Melee Raw IR pass."
     },
     "magic_equipment": {
@@ -109,7 +109,7 @@
       "sources": [
         "melee"
       ],
-      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-3.69/content/development_chi_catalog.json",
+      "runtimeArtifact": "shared/src/commonMain/resources/fcp/dubl-chi-3.69/content/development_chi_catalog.json",
       "note": "Chi progression/development entries are generated from the Master of Melee module."
     },
     "development_magic": {
