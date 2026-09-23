@@ -79,7 +79,9 @@ class DesktopAppState {
     }
 
     val contentPackComposition: FcpComposition
-        get() = FcpComposition.resolve(
+        get() {
+            installedPackRevision
+            return FcpComposition.resolve(
             manifests = buildList {
                 add(corePackManifest)
                 add(chiPackManifest)
@@ -88,6 +90,7 @@ class DesktopAppState {
             requiredPackIds = setOf(DublFcp.PACK_ID),
             enabledPackIds = if (chiPackEnabled) setOf(DublChiFcp.PACK_ID) else emptySet(),
         )
+        }
 
     fun chiUi(surface: String): FcpUiContribution? =
         contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()

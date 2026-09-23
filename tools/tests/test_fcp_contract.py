@@ -129,7 +129,7 @@ def test_pack_manager_ui_is_driven_by_generic_composition():
     desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt").read_text(encoding="utf-8")
     composition = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpComposition.kt").read_text(encoding="utf-8")
 
-    assert "contentPackComposition.available.forEach" in android
+    assert "displayedComposition.available.forEach" in android
     assert "composition.available.forEach" in desktop
     assert "requiredPackIds" in android and "requiredPackIds" in desktop
     assert "inactiveClaims" in composition
