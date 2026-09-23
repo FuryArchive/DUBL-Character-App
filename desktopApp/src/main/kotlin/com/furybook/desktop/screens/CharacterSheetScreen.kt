@@ -56,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -70,8 +71,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.furybook.content.FcpUiAccentToken
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
@@ -611,6 +615,8 @@ private fun HeroResources(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember(character.id) { mutableStateOf(false) }
+    val chiResourceUi = state.ui(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI)
+    val chiResourcePresentation = chiResourceUi?.presentation()
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(7.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -649,9 +655,13 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.MANA) },
             )
         }
-        if (state.ui(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI) != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
+        if (chiResourcePresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tiles += { tileModifier ->
             DesktopResourceTile(
-                DesktopIconKind.CHI, "ЦИ", character.chiCurrent, character.chiMaximum, DesktopAccent,
+                fcpDesktopIcon(chiResourcePresentation.icon),
+                chiResourcePresentation.label,
+                character.chiCurrent,
+                character.chiMaximum,
+                fcpDesktopAccent(chiResourcePresentation.accent),
                 { onResourceDelta(CharacterSheetResourceId.CHI, -1) },
                 { onResourceDelta(CharacterSheetResourceId.CHI, 1) },
                 tileModifier,
@@ -2416,4 +2426,15 @@ private fun pickPortraitFile(): Path? {
     dialog.isVisible = true
     val file = dialog.file ?: return null
     return Path.of(dialog.directory, file)
+}
+
+
+private fun fcpDesktopIcon(token: String?): DesktopIconKind = when (token) {
+    FcpUiIconToken.CHI -> DesktopIconKind.CHI
+    else -> DesktopIconKind.GENERIC_SKILL
+}
+
+private fun fcpDesktopAccent(token: String?): Color = when (token) {
+    FcpUiAccentToken.FURY_ACCENT -> DesktopAccent
+    else -> DesktopAccent
 }
