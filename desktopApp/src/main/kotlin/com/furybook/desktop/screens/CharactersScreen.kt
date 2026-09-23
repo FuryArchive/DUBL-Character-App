@@ -100,29 +100,31 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                     color = DublMuted,
                     style = MaterialTheme.typography.bodySmall,
                 )
-                ContentPackRow(
-                    name = state.corePackManifest.name,
-                    version = state.corePackManifest.version,
-                    enabled = true,
-                    toggleEnabled = false,
-                    subtitle = "Основной ruleset · обязателен",
-                    onToggle = {},
-                )
-                ContentPackRow(
-                    name = state.chiPackManifest.name,
-                    version = state.chiPackManifest.version,
-                    enabled = state.chiPackEnabled,
-                    toggleEnabled = true,
-                    subtitle = "Опциональный FCP · контент + UI ЦИ",
-                    onToggle = { enabled ->
-                        contentPackStatus = runCatching {
-                            state.setChiPackActive(enabled)
-                            if (enabled) "DUBL 3.69 — ЦИ включён." else "DUBL 3.69 — ЦИ выключен."
-                        }.getOrElse { error ->
-                            "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
-                        }
-                    },
-                )
+                val composition = state.contentPackComposition
+                composition.available.forEach { manifest ->
+                    val required = manifest.id in composition.requiredPackIds
+                    ContentPackRow(
+                        name = manifest.name,
+                        version = manifest.version,
+                        enabled = composition.isActive(manifest.id),
+                        toggleEnabled = !required,
+                        subtitle = if (required) {
+                            "Основной ruleset · обязателен"
+                        } else if (manifest.dependencies.isEmpty()) {
+                            "Опциональный FCP"
+                        } else {
+                            "Опциональный FCP · зависит от ${manifest.dependencies.joinToString { it.id }}"
+                        },
+                        onToggle = { enabled ->
+                            contentPackStatus = runCatching {
+                                state.setContentPackActive(manifest.id, enabled)
+                                if (enabled) "${manifest.name} включён." else "${manifest.name} выключен."
+                            }.getOrElse { error ->
+                                "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                            }
+                        },
+                    )
+                }
                 contentPackStatus?.let { status ->
                     Text(status, color = DublMuted, style = MaterialTheme.typography.bodySmall)
                 }

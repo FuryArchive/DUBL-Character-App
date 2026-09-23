@@ -84,6 +84,14 @@ class DesktopAppState {
     fun chiUi(surface: String): FcpUiContribution? =
         contentPackComposition.ui(surface, DublChiUi.BINDING).firstOrNull()
 
+    fun setContentPackActive(packId: String, enabled: Boolean) {
+        when (packId) {
+            DublFcp.PACK_ID -> require(enabled) { "Required FCP ${DublFcp.PACK_ID} cannot be disabled" }
+            DublChiFcp.PACK_ID -> setChiPackActive(enabled)
+            else -> error("Unknown bundled FCP: $packId")
+        }
+    }
+
     fun setChiPackActive(enabled: Boolean) {
         if (enabled) catalogLoader.verifyChiPack()
         contentPackPreferences.putBoolean(DublChiFcp.PACK_ID, enabled)

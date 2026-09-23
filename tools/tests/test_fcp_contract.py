@@ -122,3 +122,16 @@ def test_builder_validates_composition_metadata_before_packaging():
         _write_manifest(tmp / "dependency", self_dependency)
         with pytest.raises(ValueError, match="cannot depend on itself"):
             load_manifest(tmp / "dependency")
+
+
+def test_pack_manager_ui_is_driven_by_generic_composition():
+    android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    composition = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpComposition.kt").read_text(encoding="utf-8")
+
+    assert "contentPackComposition.available.forEach" in android
+    assert "composition.available.forEach" in desktop
+    assert "requiredPackIds" in android and "requiredPackIds" in desktop
+    assert "inactiveClaims" in composition
+    assert "content claim conflict" in composition
+    assert "UI contribution conflict" in composition

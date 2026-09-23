@@ -37,7 +37,10 @@ The manifest owns:
 - pack identity and version;
 - target ruleset identity and engine API;
 - optional/required module metadata;
-- ordered typed content entries.
+- ordered typed content entries;
+- pack dependencies;
+- content ownership claims for IDs physically shared with a dependency;
+- declarative UI contributions for host-defined surfaces/components.
 
 Example:
 
@@ -81,6 +84,7 @@ Entry paths are pack-relative, use forward slashes, and may not contain `.` or `
 - `FcpManifest`
 - `FcpContentPack`
 - `FcpTextSource`
+- `FcpComposition`
 
 That package must remain ruleset-agnostic.
 
@@ -95,7 +99,7 @@ DUBL 3.69 is now split into two bundled Fury Content Packs:
 - `dubl-3.69` is the required core rules/content pack.
 - `dubl-chi-3.69` is an optional companion pack that owns Chi development, techniques, resource UI, resource settings, development navigation, and Chi XP presentation.
 
-The companion pack declares a dependency on `dubl-3.69` and publishes declarative `ui` contributions. Android and Desktop only mount those supported UI surfaces while the pack is active. Turning the pack off leaves persisted character fields intact, but removes Chi-owned runtime content and presentation from the active Fury Book composition.
+The companion pack declares a dependency on `dubl-3.69`, publishes declarative `ui` contributions, and may declare `claims` for mixed content IDs whose runtime ownership belongs to the optional pack. `FcpComposition` resolves dependency closure, rejects incompatible rulesets and active ownership/UI conflicts, and exposes active/inactive claims to ruleset adapters. Android and Desktop only mount those supported UI/content surfaces while the pack is active. Turning the pack off leaves persisted character fields intact, but removes Chi-owned runtime content, claimed mixed entries, mechanics and presentation from the active Fury Book composition.
 
 Pack activation is persisted per installation. This is the first vertical proof that Fury Book is the host and FCPs own rules/content/UI contributions rather than the host hardcoding a complete DUBL sheet.
 
@@ -111,6 +115,10 @@ The generated `GeneratedSkillCatalog.kt` is a compiled projection of `content/sk
 python3 -m tools.fcp.build_fcp \
   --source shared/src/commonMain/resources/fcp/dubl-3.69 \
   --output dist/fcp/dubl-3.69.fcp
+
+python3 -m tools.fcp.build_fcp \
+  --source shared/src/commonMain/resources/fcp/dubl-chi-3.69 \
+  --output dist/fcp/dubl-chi-3.69.fcp
 ```
 
 The builder:
