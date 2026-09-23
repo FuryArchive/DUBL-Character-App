@@ -1,5 +1,6 @@
 package com.furybook.desktop.data
 
+import com.furybook.content.FcpComposition
 import com.furybook.content.FcpTextSource
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublChiFcpCatalogLoader
@@ -11,6 +12,7 @@ import com.furybook.dubl.model.ConditionCatalog
 import com.furybook.dubl.model.DevelopmentCatalog
 import com.furybook.dubl.model.MagicEquipmentCatalog
 import com.furybook.dubl.model.SkillEffectCatalog
+import com.furybook.dubl.model.withoutEntries
 import java.io.InputStream
 
 class DesktopCatalogLoader(
@@ -31,7 +33,12 @@ class DesktopCatalogLoader(
 
     fun loadConditions(): ConditionCatalog = fcp.loadConditions()
     fun loadDevelopment(includeChi: Boolean = false): DevelopmentCatalog {
-        val core = fcp.loadDevelopment()
+        val composition = FcpComposition.resolve(
+            manifests = listOf(manifest, chiManifest),
+            requiredPackIds = setOf(DublFcp.PACK_ID),
+            enabledPackIds = if (includeChi) setOf(DublChiFcp.PACK_ID) else emptySet(),
+        )
+        val core = fcp.loadDevelopment().withoutEntries(composition.inactiveClaims("dubl.development"))
         return if (includeChi) mergeDevelopmentCatalogs(core, chiFcp.loadDevelopment()) else core
     }
     fun loadChiDevelopment(): DevelopmentCatalog = chiFcp.loadDevelopment()

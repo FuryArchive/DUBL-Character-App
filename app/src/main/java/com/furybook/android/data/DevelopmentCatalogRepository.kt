@@ -3,6 +3,7 @@ package com.furybook.android.data
 import android.content.Context
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
 import com.furybook.dubl.model.DevelopmentCatalog
+import com.furybook.dubl.model.withoutEntries
 
 class DevelopmentCatalogRepository(context: Context) {
     private val appContext = context.applicationContext
@@ -13,7 +14,10 @@ class DevelopmentCatalogRepository(context: Context) {
         return synchronized(lock) {
             val synchronizedCached = if (includeChi) cachedWithChi else cachedCore
             synchronizedCached?.let { return@synchronized it }
-            val core = AndroidDublFcp.loader(appContext).loadDevelopment()
+            val composition = AndroidContentPackState.composition(appContext, includeChi)
+            val core = AndroidDublFcp.loader(appContext)
+                .loadDevelopment()
+                .withoutEntries(composition.inactiveClaims("dubl.development"))
             val loaded = if (includeChi) {
                 mergeDevelopmentCatalogs(core, AndroidDublFcp.chiLoader(appContext).loadDevelopment())
             } else core

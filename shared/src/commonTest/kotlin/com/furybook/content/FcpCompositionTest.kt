@@ -11,6 +11,7 @@ class FcpCompositionTest {
         id: String,
         version: String = "1",
         dependencies: List<FcpDependency> = emptyList(),
+        claims: List<FcpContentClaim> = emptyList(),
         ui: List<FcpUiContribution> = emptyList(),
         rulesetId: String = "demo",
     ) = FcpManifest(
@@ -23,6 +24,7 @@ class FcpCompositionTest {
         dependencies = dependencies,
         modules = emptyList(),
         entries = emptyList(),
+        claims = claims,
         ui = ui,
     )
 
@@ -32,6 +34,7 @@ class FcpCompositionTest {
         val addon = manifest(
             id = "addon",
             dependencies = listOf(FcpDependency("core", "1")),
+            claims = listOf(FcpContentClaim("demo.data", "mixed-entry")),
             ui = listOf(
                 FcpUiContribution(
                     id = "addon.energy",
@@ -53,6 +56,7 @@ class FcpCompositionTest {
         assertTrue(disabled.isActive("core"))
         assertFalse(disabled.isActive("addon"))
         assertEquals(emptyList(), disabled.ui("character.resources"))
+        assertEquals(setOf("mixed-entry"), disabled.inactiveClaims("demo.data"))
 
         val enabled = FcpComposition.resolve(
             manifests = listOf(core, addon),
@@ -60,6 +64,8 @@ class FcpCompositionTest {
             enabledPackIds = setOf("addon"),
         )
         assertEquals(listOf("core", "addon"), enabled.active.map { it.id })
+        assertEquals(setOf("mixed-entry"), enabled.activeClaims("demo.data"))
+        assertEquals(emptySet(), enabled.inactiveClaims("demo.data"))
         assertEquals("Energy", enabled.ui("character.resources", "demo.energy").single().label)
     }
 

@@ -33,7 +33,10 @@ class DesktopAppState {
 
     val corePackManifest = catalogLoader.manifest
     val chiPackManifest = catalogLoader.chiManifest
-    private val chiDevelopmentIds = catalogLoader.loadChiDevelopment().entries.mapTo(linkedSetOf()) { it.id }
+    private val chiDevelopmentIds = linkedSetOf<String>().apply {
+        addAll(catalogLoader.loadChiDevelopment().entries.map { it.id })
+        addAll(catalogLoader.chiManifest.claims("dubl.development").map { it.id })
+    }
 
     var chiPackEnabled: Boolean by mutableStateOf(contentPackPreferences.getBoolean(DublChiFcp.PACK_ID, false))
         private set

@@ -9,6 +9,19 @@ class FcpComposition private constructor(
 
     fun isActive(packId: String): Boolean = packId in activeIds
 
+    fun activeClaims(kind: String): Set<String> = active
+        .flatMap { manifest -> manifest.claims(kind) }
+        .mapTo(linkedSetOf()) { it.id }
+
+    fun inactiveClaims(kind: String): Set<String> {
+        val activeIds = active.mapTo(hashSetOf()) { it.id }
+        return available
+            .asSequence()
+            .filter { it.id !in activeIds }
+            .flatMap { it.claims(kind).asSequence() }
+            .mapTo(linkedSetOf()) { it.id }
+    }
+
     fun ui(surface: String): List<FcpUiContribution> = active
         .flatMap { manifest -> manifest.ui(surface) }
         .sortedWith(compareBy<FcpUiContribution>({ it.order }, { it.id }))

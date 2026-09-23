@@ -34,6 +34,8 @@ object AndroidContentPackState {
     fun chiUi(context: Context, enabled: Boolean, surface: String): FcpUiContribution? =
         composition(context, enabled).ui(surface, DublChiUi.BINDING).firstOrNull()
 
-    fun chiDevelopmentIds(context: Context): Set<String> =
-        AndroidDublFcp.chiLoader(context).loadDevelopment().entries.mapTo(linkedSetOf()) { it.id }
+    fun chiDevelopmentIds(context: Context): Set<String> = linkedSetOf<String>().apply {
+        addAll(AndroidDublFcp.chiLoader(context).loadDevelopment().entries.map { it.id })
+        addAll(AndroidDublFcp.chiLoader(context).claimedDevelopmentIds())
+    }
 }
