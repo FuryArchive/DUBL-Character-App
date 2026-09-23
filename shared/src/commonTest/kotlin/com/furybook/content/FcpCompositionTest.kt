@@ -83,6 +83,49 @@ class FcpCompositionTest {
     }
 
     @Test
+    fun rejectsDuplicateActiveClaims() {
+        val core = manifest("core", claims = listOf(FcpContentClaim("demo.data", "shared")))
+        val addon = manifest(
+            "addon",
+            dependencies = listOf(FcpDependency("core", "1")),
+            claims = listOf(FcpContentClaim("demo.data", "shared")),
+        )
+        assertFailsWith<IllegalArgumentException> {
+            FcpComposition.resolve(
+                manifests = listOf(core, addon),
+                requiredPackIds = setOf("core"),
+                enabledPackIds = setOf("addon"),
+            )
+        }
+    }
+
+    @Test
+    fun rejectsDuplicateActiveUiIds() {
+        val sharedUi = FcpUiContribution(
+            id = "shared.ui",
+            surface = "character.resources",
+            component = "resource-meter",
+            binding = "demo.shared",
+            label = "Shared",
+            order = 10,
+            properties = emptyMap(),
+        )
+        val core = manifest("core", ui = listOf(sharedUi))
+        val addon = manifest(
+            "addon",
+            dependencies = listOf(FcpDependency("core", "1")),
+            ui = listOf(sharedUi),
+        )
+        assertFailsWith<IllegalArgumentException> {
+            FcpComposition.resolve(
+                manifests = listOf(core, addon),
+                requiredPackIds = setOf("core"),
+                enabledPackIds = setOf("addon"),
+            )
+        }
+    }
+
+    @Test
     fun rejectsMixedRulesetsInOneActiveComposition() {
         val core = manifest("core")
         val alien = manifest("alien", rulesetId = "alien")

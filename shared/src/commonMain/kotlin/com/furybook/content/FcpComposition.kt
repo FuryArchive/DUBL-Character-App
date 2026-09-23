@@ -74,6 +74,27 @@ class FcpComposition private constructor(
 
             requested.forEach(::activate)
 
+            val claimOwners = linkedMapOf<Pair<String, String>, String>()
+            ordered.forEach { manifest ->
+                manifest.claims.forEach { claim ->
+                    val key = claim.kind to claim.id
+                    val previous = claimOwners.put(key, manifest.id)
+                    require(previous == null) {
+                        "FCP content claim conflict for ${claim.kind}:${claim.id}: $previous vs ${manifest.id}"
+                    }
+                }
+            }
+
+            val uiOwners = linkedMapOf<String, String>()
+            ordered.forEach { manifest ->
+                manifest.ui.forEach { contribution ->
+                    val previous = uiOwners.put(contribution.id, manifest.id)
+                    require(previous == null) {
+                        "FCP UI contribution conflict for ${contribution.id}: $previous vs ${manifest.id}"
+                    }
+                }
+            }
+
             val rulesets = ordered.map {
                 Triple(it.ruleset.id, it.ruleset.version, it.ruleset.engineApi)
             }.distinct()
