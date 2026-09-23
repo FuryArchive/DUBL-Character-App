@@ -85,5 +85,11 @@
       "order": 40,
       "properties": {}
     }
+  ],
+  "claims": [
+    {
+      "kind": "dubl.development",
+      "id": "martial_technique_08d81ce45b880c24"
+    }
   ]
 }

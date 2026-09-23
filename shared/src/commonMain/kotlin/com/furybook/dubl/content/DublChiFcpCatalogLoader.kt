@@ -48,6 +48,9 @@ class DublChiFcpCatalogLoader(
         }
     }
 
+    fun claimedDevelopmentIds(): Set<String> =
+        pack.manifest.claims("dubl.development").mapTo(linkedSetOf()) { it.id }
+
     fun loadDevelopment(): DevelopmentCatalog =
         mergeDevelopmentCatalogs(
             *pack.readAll("dubl.development")

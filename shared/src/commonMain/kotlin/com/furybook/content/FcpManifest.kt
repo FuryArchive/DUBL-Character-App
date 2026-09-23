@@ -32,6 +32,11 @@ data class FcpEntry(
     val order: Int,
 )
 
+data class FcpContentClaim(
+    val kind: String,
+    val id: String,
+)
+
 data class FcpUiContribution(
     val id: String,
     val surface: String,
@@ -52,6 +57,7 @@ data class FcpManifest(
     val dependencies: List<FcpDependency>,
     val modules: List<FcpModule>,
     val entries: List<FcpEntry>,
+    val claims: List<FcpContentClaim>,
     val ui: List<FcpUiContribution>,
 ) {
     val defaultEnabledModules: Set<String>
@@ -62,6 +68,8 @@ data class FcpManifest(
         .filter { it.kind == kind }
         .sortedWith(compareBy<FcpEntry>({ it.order }, { it.path }))
         .toList()
+
+    fun claims(kind: String): List<FcpContentClaim> = claims.filter { it.kind == kind }
 
     fun ui(surface: String): List<FcpUiContribution> = ui
         .asSequence()
@@ -98,6 +106,13 @@ fun parseFcpManifest(raw: String): FcpManifest {
             order = item.int("order"),
         )
     }
+    val claims = root.array("claims").map { value ->
+        val item = value.asObject() ?: error("FCP content claim must be an object")
+        FcpContentClaim(
+            kind = item.string("kind").trim(),
+            id = item.string("id").trim(),
+        )
+    }
     val ui = root.array("ui").map { value ->
         val item = value.asObject() ?: error("FCP UI contribution must be an object")
         FcpUiContribution(
@@ -124,6 +139,7 @@ fun parseFcpManifest(raw: String): FcpManifest {
         dependencies = dependencies,
         modules = modules,
         entries = entries,
+        claims = claims,
         ui = ui,
     ).also(::validateFcpManifest)
 }
@@ -161,6 +177,15 @@ fun validateFcpManifest(manifest: FcpManifest) {
             require(moduleId in moduleIds) {
                 "FCP entry ${entry.path} references unknown module ${moduleId}"
             }
+        }
+    }
+
+    val claimKeys = linkedSetOf<Pair<String, String>>()
+    manifest.claims.forEach { claim ->
+        require(claim.kind.isNotBlank()) { "FCP content claim kind must not be blank" }
+        require(claim.id.isNotBlank()) { "FCP content claim id must not be blank" }
+        require(claimKeys.add(claim.kind to claim.id)) {
+            "Duplicate FCP content claim: \${claim.kind} -> \${claim.id}"
         }
     }
 
