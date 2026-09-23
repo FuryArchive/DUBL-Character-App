@@ -92,8 +92,12 @@ import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ConditionCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.android.data.SkillEffectCatalogRepository
+import com.furybook.content.FcpUiAccentToken
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiIconToken
+import com.furybook.content.FcpUiPresentation
 import com.furybook.content.FcpUiSurface
+import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiBinding
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
@@ -207,6 +211,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val chiResourceUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI)
     }
+    val chiResourcePresentation = chiResourceUi?.presentation()
     val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
     }
@@ -268,7 +273,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         recordRecent(
             RecentChange(
                 text = if (enabled) "Добавлено состояние: ${condition.title}" else "Убрано состояние: ${condition.title}",
-                accent = DublAccent,
+                accent = fcpAccentColor(chiResourcePresentation?.accent),
                 undo = UndoAction.Conditions(previous),
             ),
         )
@@ -389,7 +394,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                 ResourceStrip(
                     character = character,
                     hiddenResources = sheetExtras.hiddenResourceIds,
-                    chiLabel = chiResourceUi?.label,
+                    chiPresentation = chiResourcePresentation,
                     onResourceClick = { selectedResource = it },
                     onCustomResourceClick = { selectedCustomResourceId = it },
                     onConfigure = { showResourceVisibility = true },
@@ -831,7 +836,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                         recordRecent(
                             RecentChange(
                                 text = resourceChangeText(chiResourceUi?.label ?: CharacterSheetResourceId.CHI.title, applied),
-                                accent = DublAccent,
+                                accent = fcpAccentColor(chiResourcePresentation?.accent),
                                 undo = UndoAction.Resource(CharacterResource.CHI, applied),
                             ),
                         )
@@ -1273,7 +1278,7 @@ private fun SectionTitle(
 private fun ResourceStrip(
     character: DublCharacter,
     hiddenResources: Set<CharacterSheetResourceId>,
-    chiLabel: String?,
+    chiPresentation: FcpUiPresentation?,
     onResourceClick: (CharacterResource) -> Unit,
     onCustomResourceClick: (String) -> Unit,
     onConfigure: () -> Unit,
@@ -1282,7 +1287,7 @@ private fun ResourceStrip(
         if (CharacterSheetResourceId.HEALTH !in hiddenResources) add(CharacterResource.HEALTH)
         if (CharacterSheetResourceId.ENDURANCE !in hiddenResources) add(CharacterResource.ENDURANCE)
         if (character.manaEnabled && CharacterSheetResourceId.MANA !in hiddenResources) add(CharacterResource.MANA)
-        if (chiLabel != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) add(CharacterResource.CHI)
+        if (chiPresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) add(CharacterResource.CHI)
     }
 
     if (resources.isEmpty() && character.customResources.isEmpty()) {
@@ -1311,7 +1316,14 @@ private fun ResourceStrip(
                         CharacterResource.HEALTH -> CompactResourceCard("Здоровье", character.hpCurrent, character.healthMaximum, DublHealth, Modifier.weight(1f), healthCriticalLevel(character.hpCurrent, character.healthMaximum)) { onResourceClick(resource) }
                         CharacterResource.ENDURANCE -> CompactResourceCard("Выносливость", character.enduranceCurrent, character.enduranceMaximum, DublStamina, Modifier.weight(1f)) { onResourceClick(resource) }
                         CharacterResource.MANA -> CompactResourceCard("Мана", character.manaCurrent, character.effectiveManaMaximum, DublMana, Modifier.weight(1f)) { onResourceClick(resource) }
-                        CharacterResource.CHI -> CompactResourceCard(chiLabel ?: CharacterSheetResourceId.CHI.title, character.chiCurrent, character.chiMaximum, DublAccent, Modifier.weight(1f)) { onResourceClick(resource) }
+                        CharacterResource.CHI -> CompactResourceCard(
+                            title = chiPresentation?.label ?: CharacterSheetResourceId.CHI.title,
+                            current = character.chiCurrent,
+                            maximum = character.chiMaximum,
+                            accent = fcpAccentColor(chiPresentation?.accent),
+                            modifier = Modifier.weight(1f),
+                            icon = fcpIconGlyph(chiPresentation?.icon),
+                        ) { onResourceClick(resource) }
                     }
                 }
                 repeat(3 - rowResources.size) { Spacer(Modifier.weight(1f)) }
@@ -1343,6 +1355,7 @@ private fun CompactResourceCard(
     accent: Color,
     modifier: Modifier = Modifier,
     criticalLevel: Int = 0,
+    icon: String? = null,
     onClick: () -> Unit,
 ) {
     val animatedCurrent by animateIntAsState(
@@ -1378,13 +1391,18 @@ private fun CompactResourceCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                Row(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (icon != null) {
+                        Text(icon, color = displayAccent, fontWeight = FontWeight.Bold)
+                    }
+                    Text(
                     text = title,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                )
+                    )
+                }
                 if (criticalLevel >= 2) {
                     Text(
                         text = if (criticalLevel == 3) "0 HP" else "КРИТ.",
@@ -4791,3 +4809,14 @@ private fun resourceChangeText(label: String, delta: Int): String {
 private fun signed(value: Int): String = if (value >= 0) "+$value" else value.toString()
 
 private fun formatNumber(value: Double): String = DecimalFormat("0.##").format(value)
+
+
+private fun fcpAccentColor(token: String?): Color = when (token) {
+    FcpUiAccentToken.FURY_ACCENT -> DublAccent
+    else -> DublAccent
+}
+
+private fun fcpIconGlyph(token: String?): String? = when (token) {
+    FcpUiIconToken.CHI -> "◎"
+    else -> null
+}
