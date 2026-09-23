@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.furybook.content.FcpComposition
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.CharacterTransferRejectReason
-import com.furybook.android.data.AndroidDublFcp
 import com.furybook.android.state.CharacterController
 import com.furybook.ui.components.DublCard
 import com.furybook.android.ui.components.DublScreenHeader
@@ -44,16 +44,14 @@ private const val TRANSFER_EXTENSION = ".dubl"
 @Composable
 fun CharactersScreen(
     controller: CharacterController,
-    chiPackEnabled: Boolean,
-    onChiPackEnabledChange: (Boolean) -> Unit,
+    contentPackComposition: FcpComposition,
+    onContentPackActiveChange: (String, Boolean) -> Unit,
 ) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
     var contentPackStatus by remember { mutableStateOf<String?>(null) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
-    val coreManifest = remember(context.applicationContext) { AndroidDublFcp.loader(context).pack.manifest }
-    val chiManifest = remember(context.applicationContext) { AndroidDublFcp.chiLoader(context).pack.manifest }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -123,29 +121,30 @@ fun CharactersScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            ContentPackRow(
-                name = coreManifest.name,
-                version = coreManifest.version,
-                enabled = true,
-                toggleEnabled = false,
-                subtitle = "Основной ruleset · обязателен",
-                onToggle = {},
-            )
-            ContentPackRow(
-                name = chiManifest.name,
-                version = chiManifest.version,
-                enabled = chiPackEnabled,
-                toggleEnabled = true,
-                subtitle = "Опциональный FCP · контент + UI",
-                onToggle = { enabled ->
-                    contentPackStatus = runCatching {
-                        onChiPackEnabledChange(enabled)
-                        if (enabled) "Пакет включён." else "Пакет выключен."
-                    }.getOrElse { error ->
-                        "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
-                    }
-                },
-            )
+            contentPackComposition.available.forEach { manifest ->
+                val required = manifest.id in contentPackComposition.requiredPackIds
+                ContentPackRow(
+                    name = manifest.name,
+                    version = manifest.version,
+                    enabled = contentPackComposition.isActive(manifest.id),
+                    toggleEnabled = !required,
+                    subtitle = if (required) {
+                        "Основной ruleset · обязателен"
+                    } else if (manifest.dependencies.isEmpty()) {
+                        "Опциональный FCP"
+                    } else {
+                        "Опциональный FCP · зависит от ${manifest.dependencies.joinToString { it.id }}"
+                    },
+                    onToggle = { enabled ->
+                        contentPackStatus = runCatching {
+                            onContentPackActiveChange(manifest.id, enabled)
+                            if (enabled) "${manifest.name} включён." else "${manifest.name} выключен."
+                        }.getOrElse { error ->
+                            "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                        }
+                    },
+                )
+            }
             contentPackStatus?.let { status ->
                 Text(
                     status,

@@ -51,6 +51,7 @@ import com.furybook.android.ui.screens.FeatsScreen
 import com.furybook.android.ui.screens.MagicScreen
 import com.furybook.android.ui.screens.OverviewScreen
 import com.furybook.android.ui.screens.SkillsScreen
+import com.furybook.dubl.content.DublChiFcp
 import com.furybook.ui.theme.DublAccentSoft
 import com.furybook.ui.theme.DublFocus
 import com.furybook.ui.theme.DublMuted
@@ -126,10 +127,10 @@ fun DublApp() {
                     AppSection.INVENTORY -> EquipmentScreen(controller)
                     AppSection.MORE -> CharactersScreen(
                         controller = controller,
-                        chiPackEnabled = chiPackEnabled,
-                        onChiPackEnabledChange = { enabled ->
-                            AndroidContentPackState.setChiEnabled(appContext, enabled)
-                            chiPackEnabled = enabled
+                        contentPackComposition = AndroidContentPackState.composition(appContext, chiPackEnabled),
+                        onContentPackActiveChange = { packId, enabled ->
+                            AndroidContentPackState.setPackEnabled(appContext, packId, enabled)
+                            if (packId == DublChiFcp.PACK_ID) chiPackEnabled = enabled
                         },
                     )
                 }
