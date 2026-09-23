@@ -81,9 +81,6 @@ fun DublApp() {
             developmentIds = if (chiPackEnabled) emptySet() else chiDevelopmentIds,
             suppressChiResource = !chiPackEnabled,
         )
-        if (chiPackEnabled && !controller.active.chiActive) {
-            controller.setChiEnabled(true)
-        }
     }
 
     LaunchedEffect(pendingSection) {

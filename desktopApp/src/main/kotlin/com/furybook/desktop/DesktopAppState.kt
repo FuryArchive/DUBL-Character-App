@@ -65,9 +65,6 @@ class DesktopAppState {
         }
 
     init {
-        if (chiPackEnabled && !application.snapshot.activeCharacter.chiActive) {
-            application.development.setChiEnabled(true)
-        }
         application.equipment.syncCatalogLoads(magicEquipmentCatalog.gear)
         refresh()
     }
@@ -81,9 +78,6 @@ class DesktopAppState {
         chiPackEnabled = enabled
         canonicalDevelopmentCatalog = catalogLoader.loadDevelopment(includeChi = enabled)
         chiCatalog = if (enabled) catalogLoader.loadChi() else ChiCatalog("disabled", emptyList(), emptyList())
-        if (enabled && !application.snapshot.activeCharacter.chiActive) {
-            application.development.setChiEnabled(true)
-        }
         refresh()
     }
 
@@ -202,12 +196,7 @@ class DesktopAppState {
     fun importCharacter(raw: String): CharacterTransferImportResult = sync { application.transfer.importCharacter(raw) }
 
     fun createCharacter() = sync { application.character.createCharacter() }
-    fun selectCharacter(id: String) = sync {
-        application.character.selectCharacter(id)
-        if (chiPackEnabled && !application.snapshot.activeCharacter.chiActive) {
-            application.development.setChiEnabled(true)
-        }
-    }
+    fun selectCharacter(id: String) = sync { application.character.selectCharacter(id) }
     fun deleteActive() = sync { application.character.deleteActive() }
     fun undoLast(): Boolean = sync { application.undoLast() }
 
