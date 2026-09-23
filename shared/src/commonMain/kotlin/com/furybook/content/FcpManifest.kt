@@ -13,6 +13,11 @@ data class FcpRulesetRef(
     val engineApi: Int,
 )
 
+data class FcpDependency(
+    val id: String,
+    val version: String,
+)
+
 data class FcpModule(
     val id: String,
     val name: String,
@@ -27,6 +32,21 @@ data class FcpEntry(
     val order: Int,
 )
 
+data class FcpContentClaim(
+    val kind: String,
+    val id: String,
+)
+
+data class FcpUiContribution(
+    val id: String,
+    val surface: String,
+    val component: String,
+    val binding: String,
+    val label: String,
+    val order: Int,
+    val properties: Map<String, String>,
+)
+
 data class FcpManifest(
     val format: String,
     val formatVersion: Int,
@@ -34,8 +54,11 @@ data class FcpManifest(
     val name: String,
     val version: String,
     val ruleset: FcpRulesetRef,
+    val dependencies: List<FcpDependency>,
     val modules: List<FcpModule>,
     val entries: List<FcpEntry>,
+    val claims: List<FcpContentClaim>,
+    val ui: List<FcpUiContribution>,
 ) {
     val defaultEnabledModules: Set<String>
         get() = modules.filter { it.required || it.enabledByDefault }.mapTo(linkedSetOf()) { it.id }
@@ -45,11 +68,26 @@ data class FcpManifest(
         .filter { it.kind == kind }
         .sortedWith(compareBy<FcpEntry>({ it.order }, { it.path }))
         .toList()
+
+    fun claims(kind: String): List<FcpContentClaim> = claims.filter { it.kind == kind }
+
+    fun ui(surface: String): List<FcpUiContribution> = ui
+        .asSequence()
+        .filter { it.surface == surface }
+        .sortedWith(compareBy<FcpUiContribution>({ it.order }, { it.id }))
+        .toList()
 }
 
 fun parseFcpManifest(raw: String): FcpManifest {
     val root = parseRoot(raw)
     val rulesetRoot = root.objectValue("ruleset") ?: error("FCP manifest is missing ruleset")
+    val dependencies = root.array("dependencies").map { value ->
+        val item = value.asObject() ?: error("FCP dependency must be an object")
+        FcpDependency(
+            id = item.string("id").trim(),
+            version = item.string("version").trim(),
+        )
+    }
     val modules = root.array("modules").map { value ->
         val item = value.asObject() ?: error("FCP module must be an object")
         FcpModule(
@@ -68,6 +106,25 @@ fun parseFcpManifest(raw: String): FcpManifest {
             order = item.int("order"),
         )
     }
+    val claims = root.array("claims").map { value ->
+        val item = value.asObject() ?: error("FCP content claim must be an object")
+        FcpContentClaim(
+            kind = item.string("kind").trim(),
+            id = item.string("id").trim(),
+        )
+    }
+    val ui = root.array("ui").map { value ->
+        val item = value.asObject() ?: error("FCP UI contribution must be an object")
+        FcpUiContribution(
+            id = item.string("id").trim(),
+            surface = item.string("surface").trim(),
+            component = item.string("component").trim(),
+            binding = item.string("binding").trim(),
+            label = item.string("label").trim(),
+            order = item.int("order"),
+            properties = item.stringMap("properties"),
+        )
+    }
     return FcpManifest(
         format = root.string("format").trim(),
         formatVersion = root.int("formatVersion"),
@@ -79,8 +136,11 @@ fun parseFcpManifest(raw: String): FcpManifest {
             version = rulesetRoot.string("version").trim(),
             engineApi = rulesetRoot.int("engineApi"),
         ),
+        dependencies = dependencies,
         modules = modules,
         entries = entries,
+        claims = claims,
+        ui = ui,
     ).also(::validateFcpManifest)
 }
 
@@ -95,6 +155,12 @@ fun validateFcpManifest(manifest: FcpManifest) {
     require(manifest.ruleset.id.isNotBlank()) { "FCP ruleset id must not be blank" }
     require(manifest.ruleset.version.isNotBlank()) { "FCP ruleset version must not be blank" }
     require(manifest.ruleset.engineApi > 0) { "FCP engineApi must be positive" }
+
+    val dependencyIds = manifest.dependencies.map { it.id }
+    require(dependencyIds.all(String::isNotBlank)) { "FCP dependency id must not be blank" }
+    require(manifest.dependencies.all { it.version.isNotBlank() }) { "FCP dependency version must not be blank" }
+    require(dependencyIds.size == dependencyIds.toSet().size) { "Duplicate FCP dependency ids" }
+    require(manifest.id !in dependencyIds) { "FCP cannot depend on itself: ${manifest.id}" }
 
     val moduleIds = manifest.modules.map { it.id }
     require(moduleIds.all(String::isNotBlank)) { "FCP module id must not be blank" }
@@ -112,6 +178,25 @@ fun validateFcpManifest(manifest: FcpManifest) {
                 "FCP entry ${entry.path} references unknown module ${moduleId}"
             }
         }
+    }
+
+    val claimKeys = linkedSetOf<Pair<String, String>>()
+    manifest.claims.forEach { claim ->
+        require(claim.kind.isNotBlank()) { "FCP content claim kind must not be blank" }
+        require(claim.id.isNotBlank()) { "FCP content claim id must not be blank" }
+        require(claimKeys.add(claim.kind to claim.id)) {
+            "Duplicate FCP content claim: \${claim.kind} -> \${claim.id}"
+        }
+    }
+
+    val uiIds = linkedSetOf<String>()
+    manifest.ui.forEach { contribution ->
+        require(contribution.id.isNotBlank()) { "FCP UI contribution id must not be blank" }
+        require(uiIds.add(contribution.id)) { "Duplicate FCP UI contribution id: ${contribution.id}" }
+        require(contribution.surface.isNotBlank()) { "FCP UI surface must not be blank" }
+        require(contribution.component.isNotBlank()) { "FCP UI component must not be blank" }
+        require(contribution.binding.isNotBlank()) { "FCP UI binding must not be blank" }
+        require(contribution.label.isNotBlank()) { "FCP UI label must not be blank" }
     }
 }
 

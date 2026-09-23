@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.CharacterRepository
 import com.furybook.android.data.CharacterSheetExtrasRepository
 import com.furybook.android.state.CharacterController
@@ -50,6 +51,7 @@ import com.furybook.android.ui.screens.FeatsScreen
 import com.furybook.android.ui.screens.MagicScreen
 import com.furybook.android.ui.screens.OverviewScreen
 import com.furybook.android.ui.screens.SkillsScreen
+import com.furybook.dubl.content.DublChiFcp
 import com.furybook.ui.theme.DublAccentSoft
 import com.furybook.ui.theme.DublFocus
 import com.furybook.ui.theme.DublMuted
@@ -72,6 +74,15 @@ fun DublApp() {
     }
     var selected by rememberSaveable { mutableStateOf(AppSection.OVERVIEW) }
     var pendingSection by remember { mutableStateOf<AppSection?>(null) }
+    var chiPackEnabled by rememberSaveable { mutableStateOf(AndroidContentPackState.isChiEnabled(appContext)) }
+    val chiDevelopmentIds = remember(appContext) { AndroidContentPackState.chiDevelopmentIds(appContext) }
+
+    LaunchedEffect(chiPackEnabled, controller.snapshot.activeCharacterId) {
+        controller.setRuntimeContentSuppression(
+            developmentIds = if (chiPackEnabled) emptySet() else chiDevelopmentIds,
+            suppressChiResource = !chiPackEnabled,
+        )
+    }
 
     LaunchedEffect(pendingSection) {
         if (pendingSection == AppSection.FEATS) {
@@ -109,12 +120,19 @@ fun DublApp() {
                 DevelopmentNavigationLoadingScreen()
             } else {
                 when (selected) {
-                    AppSection.OVERVIEW -> OverviewScreen(controller)
+                    AppSection.OVERVIEW -> OverviewScreen(controller, chiPackEnabled)
                     AppSection.SKILLS -> SkillsScreen(controller)
-                    AppSection.FEATS -> FeatsScreen(controller)
+                    AppSection.FEATS -> FeatsScreen(controller, chiPackEnabled)
                     AppSection.MAGIC -> MagicScreen(controller)
                     AppSection.INVENTORY -> EquipmentScreen(controller)
-                    AppSection.MORE -> CharactersScreen(controller)
+                    AppSection.MORE -> CharactersScreen(
+                        controller = controller,
+                        contentPackComposition = AndroidContentPackState.composition(appContext, chiPackEnabled),
+                        onContentPackActiveChange = { packId, enabled ->
+                            AndroidContentPackState.setPackEnabled(appContext, packId, enabled)
+                            if (packId == DublChiFcp.PACK_ID) chiPackEnabled = enabled
+                        },
+                    )
                 }
             }
         }

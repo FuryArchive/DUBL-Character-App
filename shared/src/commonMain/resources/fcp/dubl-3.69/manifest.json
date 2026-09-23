@@ -18,7 +18,7 @@
     },
     {
       "id": "melee",
-      "name": "Martial Arts & Chi",
+      "name": "Martial Arts",
       "required": false,
       "enabledByDefault": true
     },
@@ -80,14 +80,6 @@
     },
     {
       "kind": "dubl.development",
-      "path": "content/development_chi_catalog.json",
-      "modules": [
-        "melee"
-      ],
-      "order": 140
-    },
-    {
-      "kind": "dubl.development",
       "path": "content/development_magic_catalog.json",
       "modules": [
         "core"
@@ -101,14 +93,6 @@
         "core"
       ],
       "order": 199
-    },
-    {
-      "kind": "dubl.chi",
-      "path": "content/chi_catalog.json",
-      "modules": [
-        "melee"
-      ],
-      "order": 200
     },
     {
       "kind": "dubl.magic-equipment",
@@ -127,5 +111,7 @@
       ],
       "order": 400
     }
-  ]
+  ],
+  "dependencies": [],
+  "ui": []
 }

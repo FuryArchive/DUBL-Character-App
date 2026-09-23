@@ -2,37 +2,41 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SHARED = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
-FCP_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/manifest.json"
+CORE = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
+CHI = ROOT / "shared/src/commonMain/resources/fcp/dubl-chi-3.69/content"
+CORE_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69/manifest.json"
+CHI_MANIFEST = ROOT / "shared/src/commonMain/resources/fcp/dubl-chi-3.69/manifest.json"
 CONFIG = ROOT / "rulesets/dubl-3.69/config.json"
 CATALOG_DATA = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/data/CatalogData.kt"
 DUBL_FCP_LOADER = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublFcpCatalogLoader.kt"
+DUBL_CHI_LOADER = ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublChiFcpCatalogLoader.kt"
 ANDROID_REPO = ROOT / "app/src/main/java/com/furybook/android/data/DevelopmentCatalogRepository.kt"
 DESKTOP_LOADER = ROOT / "shared/src/desktopMain/kotlin/com/furybook/desktop/data/DesktopCatalogLoader.kt"
 
 LAYERS = (
-    ("development_regular", "development_regular_catalog.json", 287, "core"),
-    ("development_special", "development_special_catalog.json", 304, "core"),
-    ("development_ability_roots", "development_ability_roots_catalog.json", 41, "core"),
-    ("development_martial", "development_martial_catalog.json", 122, "melee"),
-    ("development_chi", "development_chi_catalog.json", 27, "melee"),
-    ("development_magic", "development_magic_catalog.json", 15, "core"),
+    ("development_regular", "development_regular_catalog.json", 287, "core", CORE),
+    ("development_special", "development_special_catalog.json", 304, "core", CORE),
+    ("development_ability_roots", "development_ability_roots_catalog.json", 41, "core", CORE),
+    ("development_martial", "development_martial_catalog.json", 122, "melee", CORE),
+    ("development_chi", "development_chi_catalog.json", 27, "melee", CHI),
+    ("development_magic", "development_magic_catalog.json", 15, "core", CORE),
 )
 
 
-def _catalog(name: str):
-    return json.loads((SHARED / name).read_text(encoding="utf-8"))
+def _catalog(name: str, root: Path = CORE):
+    return json.loads((root / name).read_text(encoding="utf-8"))
 
 
-def test_all_development_domains_are_source_generated_and_bootstrap_is_empty():
+def test_all_development_domains_are_source_generated_and_owned_by_declared_fcp():
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     total = 0
-    for domain, filename, expected_count, source in LAYERS:
+    for domain, filename, expected_count, source, root in LAYERS:
         meta = config["domains"][domain]
         assert meta["status"] == "source_generated"
         assert meta["sources"] == [source]
-        assert meta["runtimeArtifact"] == f"shared/src/commonMain/resources/fcp/dubl-3.69/content/{filename}"
-        catalog = _catalog(filename)
+        pack = "dubl-chi-3.69" if root == CHI else "dubl-3.69"
+        assert meta["runtimeArtifact"] == f"shared/src/commonMain/resources/fcp/{pack}/content/{filename}"
+        catalog = _catalog(filename, root)
         assert len(catalog["entries"]) == expected_count
         total += expected_count
     assert total == 796
@@ -88,7 +92,7 @@ def test_promoted_ability_roots_keep_source_semantics_and_draft_markers():
 
 def test_martial_chi_and_magic_development_have_expected_sections_and_counts():
     martial = _catalog("development_martial_catalog.json")
-    chi_dev = _catalog("development_chi_catalog.json")
+    chi_dev = _catalog("development_chi_catalog.json", CHI)
     magic = _catalog("development_magic_catalog.json")
     assert len(martial["entries"]) == 122
     assert all(entry["section"] == "Боевые искусства" for entry in martial["entries"])
@@ -98,33 +102,54 @@ def test_martial_chi_and_magic_development_have_expected_sections_and_counts():
     assert all(entry["section"] == "Магические навыки" for entry in magic["entries"])
 
 
-def test_chi_catalog_itself_is_promoted_from_melee_rulebook():
+def test_chi_catalog_itself_is_promoted_into_optional_fcp_from_melee_rulebook():
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     meta = config["domains"]["chi"]
     assert meta["status"] == "source_generated"
     assert meta["sources"] == ["melee"]
-    assert meta["runtimeArtifact"] == "shared/src/commonMain/resources/fcp/dubl-3.69/content/chi_catalog.json"
-    chi = _catalog("chi_catalog.json")
+    assert meta["runtimeArtifact"] == "shared/src/commonMain/resources/fcp/dubl-chi-3.69/content/chi_catalog.json"
+    chi = _catalog("chi_catalog.json", CHI)
     assert len(chi["schools"]) == 9
     assert len(chi["techniques"]) == 68
 
 
-def test_android_and_desktop_load_same_manifest_ordered_development_layers():
+def test_android_and_desktop_compose_core_and_optional_development_layers():
     parser = CATALOG_DATA.read_text(encoding="utf-8")
-    loader = DUBL_FCP_LOADER.read_text(encoding="utf-8")
+    core_loader = DUBL_FCP_LOADER.read_text(encoding="utf-8")
+    chi_loader = DUBL_CHI_LOADER.read_text(encoding="utf-8")
     android = ANDROID_REPO.read_text(encoding="utf-8")
     desktop = DESKTOP_LOADER.read_text(encoding="utf-8")
-    manifest = json.loads(FCP_MANIFEST.read_text(encoding="utf-8"))
+    core_manifest = json.loads(CORE_MANIFEST.read_text(encoding="utf-8"))
+    chi_manifest = json.loads(CHI_MANIFEST.read_text(encoding="utf-8"))
 
     assert "fun mergeDevelopmentCatalogs" in parser
-    development = [
+
+    core_development = [
         entry["path"].removeprefix("content/")
-        for entry in sorted(manifest["entries"], key=lambda item: (item["order"], item["path"]))
+        for entry in sorted(core_manifest["entries"], key=lambda item: (item["order"], item["path"]))
         if entry["kind"] == "dubl.development"
     ]
-    assert development == [filename for _, filename, _, _ in LAYERS] + ["development_catalog.json"]
-    assert 'pack.readAll("dubl.development")' in loader
-    assert "map(::parseDevelopmentCatalog)" in loader
-    assert "AndroidDublFcp.loader(appContext).loadDevelopment()" in android
+    chi_development = [
+        entry["path"].removeprefix("content/")
+        for entry in sorted(chi_manifest["entries"], key=lambda item: (item["order"], item["path"]))
+        if entry["kind"] == "dubl.development"
+    ]
+    assert core_development == [
+        "development_regular_catalog.json",
+        "development_special_catalog.json",
+        "development_ability_roots_catalog.json",
+        "development_martial_catalog.json",
+        "development_magic_catalog.json",
+        "development_catalog.json",
+    ]
+    assert chi_development == ["development_chi_catalog.json"]
+
+    assert 'pack.readAll("dubl.development")' in core_loader
+    assert 'pack.readAll("dubl.development")' in chi_loader
+    assert "AndroidDublFcp.loader(appContext)" in android
+    assert ".loadDevelopment()" in android
+    assert "AndroidDublFcp.chiLoader(appContext).loadDevelopment()" in android
+    assert 'inactiveClaims("dubl.development")' in android
     assert "DublFcp.open(" in desktop
-    assert "fcp.loadDevelopment()" in desktop
+    assert "DublChiFcp.open(" in desktop
+    assert "mergeDevelopmentCatalogs(core, chiFcp.loadDevelopment())" in desktop

@@ -23,6 +23,83 @@ def load_manifest(source: Path) -> dict:
     for key in ("id", "name", "version", "ruleset", "entries"):
         if key not in manifest:
             raise ValueError(f"FCP manifest is missing {key}")
+
+    for key in ("id", "name", "version"):
+        if not str(manifest.get(key, "")).strip():
+            raise ValueError(f"FCP {key} must not be blank")
+
+    ruleset = manifest.get("ruleset")
+    if not isinstance(ruleset, dict):
+        raise ValueError("FCP ruleset must be an object")
+    for key in ("id", "version"):
+        if not str(ruleset.get(key, "")).strip():
+            raise ValueError(f"FCP ruleset {key} must not be blank")
+    engine_api = ruleset.get("engineApi")
+    if not isinstance(engine_api, int) or isinstance(engine_api, bool) or engine_api <= 0:
+        raise ValueError("FCP ruleset engineApi must be a positive integer")
+
+    dependencies = manifest.get("dependencies", [])
+    dependency_ids = []
+    for dependency in dependencies:
+        if not isinstance(dependency, dict):
+            raise ValueError("FCP dependency must be an object")
+        dep_id = str(dependency.get("id", "")).strip()
+        dep_version = str(dependency.get("version", "")).strip()
+        if not dep_id or not dep_version:
+            raise ValueError("FCP dependency id/version must not be blank")
+        if dep_id == manifest["id"]:
+            raise ValueError(f"FCP cannot depend on itself: {dep_id}")
+        dependency_ids.append(dep_id)
+    if len(dependency_ids) != len(set(dependency_ids)):
+        raise ValueError("duplicate FCP dependency ids")
+
+    modules = manifest.get("modules", [])
+    module_ids = [str(item.get("id", "")).strip() for item in modules if isinstance(item, dict)]
+    if len(module_ids) != len(modules) or any(not item for item in module_ids):
+        raise ValueError("FCP module id must not be blank")
+    if len(module_ids) != len(set(module_ids)):
+        raise ValueError("duplicate FCP module ids")
+
+    entry_keys = set()
+    for entry in manifest["entries"]:
+        if not isinstance(entry, dict):
+            raise ValueError("FCP entry must be an object")
+        kind = str(entry.get("kind", "")).strip()
+        path = str(entry.get("path", "")).strip()
+        if not kind:
+            raise ValueError("FCP entry kind must not be blank")
+        key = (kind, path)
+        if key in entry_keys:
+            raise ValueError(f"duplicate FCP entry: {kind} -> {path}")
+        entry_keys.add(key)
+
+    claim_keys = set()
+    for claim in manifest.get("claims", []):
+        if not isinstance(claim, dict):
+            raise ValueError("FCP content claim must be an object")
+        kind = str(claim.get("kind", "")).strip()
+        content_id = str(claim.get("id", "")).strip()
+        if not kind or not content_id:
+            raise ValueError("FCP content claim kind/id must not be blank")
+        key = (kind, content_id)
+        if key in claim_keys:
+            raise ValueError(f"duplicate FCP content claim: {kind} -> {content_id}")
+        claim_keys.add(key)
+
+    ui_ids = set()
+    for contribution in manifest.get("ui", []):
+        if not isinstance(contribution, dict):
+            raise ValueError("FCP UI contribution must be an object")
+        ui_id = str(contribution.get("id", "")).strip()
+        if not ui_id:
+            raise ValueError("FCP UI contribution id must not be blank")
+        if ui_id in ui_ids:
+            raise ValueError(f"duplicate FCP UI contribution id: {ui_id}")
+        ui_ids.add(ui_id)
+        for key in ("surface", "component", "binding", "label"):
+            if not str(contribution.get(key, "")).strip():
+                raise ValueError(f"FCP UI contribution {ui_id} has blank {key}")
+
     return manifest
 
 

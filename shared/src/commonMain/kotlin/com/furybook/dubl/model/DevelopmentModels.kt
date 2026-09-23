@@ -87,6 +87,19 @@ fun DublCharacter.effectiveDevelopmentCatalog(canonical: DevelopmentCatalog): De
     )
 }
 
+fun DevelopmentCatalog.withoutChiContent(): DevelopmentCatalog = DevelopmentCatalog(
+    version = version + "+no-chi",
+    entries = entries.filterNot { it.isChiDevelopment },
+)
+
+fun DevelopmentCatalog.withoutEntries(entryIds: Set<String>): DevelopmentCatalog {
+    if (entryIds.isEmpty()) return this
+    return DevelopmentCatalog(
+        version = version + "+filtered",
+        entries = entries.filterNot { it.id in entryIds },
+    )
+}
+
 data class OwnedDevelopment(
     val rank: Int = 0,
     val optionIndex: Int = 0,

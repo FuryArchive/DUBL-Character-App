@@ -47,8 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ChiCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
+import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.effectiveDevelopmentCatalog
@@ -78,6 +80,7 @@ import com.furybook.dubl.model.RequirementCheck
 import com.furybook.dubl.model.RequirementStatus
 import com.furybook.dubl.model.developmentNormalize
 import com.furybook.dubl.model.developmentRank
+import com.furybook.dubl.model.withoutChiContent
 import com.furybook.android.state.CharacterController
 import com.furybook.android.ui.components.containSheetOverscroll
 import com.furybook.ui.components.DublCard
@@ -135,20 +138,32 @@ private val developmentPreparationCache =
     RetainedPreparationCache<DevelopmentPreparationKey, DevelopmentScreenPreparation>(maximumEntries = 2)
 
 @Composable
-fun FeatsScreen(controller: CharacterController) {
+fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
+    val chiTabUi = remember(context.applicationContext, chiPackEnabled) {
+        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.DEVELOPMENT_TABS)
+    }
+    val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
+        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_ECONOMY)
+    }
     var loadingStage by remember(character.id) { mutableStateOf("Загружаем каталог развития…") }
     val preparation by produceState<DevelopmentScreenPreparation?>(
         initialValue = null,
         key1 = context.applicationContext,
         key2 = character,
+        key3 = chiPackEnabled,
     ) {
         value = null
         loadingStage = "Загружаем каталог развития…"
         val loadedCatalogs = withContext(Dispatchers.IO) {
-            DevelopmentCatalogRepository(context.applicationContext).load() to
+            val development = DevelopmentCatalogRepository(context.applicationContext).load(includeChi = chiTabUi != null)
+            val chi = if (chiTabUi != null) {
                 ChiCatalogRepository(context.applicationContext).load()
+            } else {
+                ChiCatalog("disabled", emptyList(), emptyList())
+            }
+            development to chi
         }
 
         loadingStage = "Готовим быстрый индекс навыков…"
@@ -156,12 +171,13 @@ fun FeatsScreen(controller: CharacterController) {
             val key = DevelopmentPreparationKey(character, loadedCatalogs.first.version, loadedCatalogs.second.version)
             developmentPreparationCache.getOrPut(key) {
                 val effectiveCatalog = character.effectiveDevelopmentCatalog(loadedCatalogs.first)
+                    .let { catalog -> if (chiTabUi != null) catalog else catalog.withoutChiContent() }
                 val preparationProgress = DevelopmentProgress(character.development)
                 val preparationRules = DevelopmentRules(character, effectiveCatalog, preparationProgress)
                 DevelopmentScreenPreparation(
                     catalog = effectiveCatalog,
                     chiCatalog = loadedCatalogs.second,
-                    economy = CharacterEconomy.breakdown(character, effectiveCatalog),
+                    economy = CharacterEconomy.breakdown(character, effectiveCatalog, includeChi = chiEconomyUi != null),
                     availabilityById = RetainedPreparationCache(maximumEntries = effectiveCatalog.entries.size),
                     rules = preparationRules,
                     index = DevelopmentScreenIndex(effectiveCatalog),
@@ -320,7 +336,7 @@ fun FeatsScreen(controller: CharacterController) {
     }
 
     val filteredChiTechniques = remember(query, availableOnly, character, chiCatalog, catalog, tab) {
-        if (tab != DevelopmentTab.CHI) {
+        if (tab != DevelopmentTab.CHI || chiTabUi == null) {
             emptyList()
         } else {
             val needle = developmentNormalize(query)
@@ -344,12 +360,12 @@ fun FeatsScreen(controller: CharacterController) {
         item {
             DublScreenHeader(
                 title = "Навыки",
-                subtitle = "Развитие, боевые искусства, ЦИ и спец. ветки",
+                subtitle = if (chiTabUi != null) "Развитие, боевые искусства, ${chiTabUi.label} и спец. ветки" else "Развитие, боевые искусства и спец. ветки",
             )
         }
 
         item {
-            DevelopmentBudgetCard(economy)
+            DevelopmentBudgetCard(economy, showChi = chiEconomyUi != null)
         }
 
         if (plannedDevelopmentIds.isNotEmpty()) {
@@ -389,7 +405,7 @@ fun FeatsScreen(controller: CharacterController) {
 
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
-                items(DevelopmentTab.entries) { target ->
+                items(DevelopmentTab.entries.filter { target -> target != DevelopmentTab.CHI || chiTabUi != null }) { target ->
                     FilterChip(
                         selected = tab == target,
                         onClick = {
@@ -398,7 +414,7 @@ fun FeatsScreen(controller: CharacterController) {
                             availableOnly = false
                             browserFilter = DevelopmentBrowserFilter.ALL
                         },
-                        label = { Text(target.title) },
+                        label = { Text(if (target == DevelopmentTab.CHI) chiTabUi?.label ?: target.title else target.title) },
                     )
                 }
             }
@@ -427,11 +443,12 @@ fun FeatsScreen(controller: CharacterController) {
             }
         }
 
-        if (tab == DevelopmentTab.CHI) {
+        if (tab == DevelopmentTab.CHI && chiTabUi != null) {
             val automaticAccess = character.chiAutomaticAccess
             val progressionBonus = character.chiProgressionBonus
             item {
                 ChiDevelopmentCard(
+                    label = chiTabUi.label,
                     enabled = character.chiActive,
                     automaticAccess = automaticAccess,
                     current = character.chiCurrent,
@@ -963,7 +980,7 @@ private fun DevelopmentLoadingScreen(stage: String) {
 }
 
 @Composable
-private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown) {
+private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown, showChi: Boolean) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
@@ -1021,8 +1038,14 @@ private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown) {
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f))
             Text(
-                "Характеристики ${economy.attributeXp} · Умения ${economy.skillXp} · Навыки ${economy.developmentXp} · ЦИ ${economy.chiXp} · Магия ${economy.manaXp + economy.magicSchoolXp + economy.spellXp}" +
-                    if (economy.adjustmentXp != 0) " · Поправка ${economy.adjustmentXp}" else "",
+                buildList {
+                    add("Характеристики ${economy.attributeXp}")
+                    add("Умения ${economy.skillXp}")
+                    add("Навыки ${economy.developmentXp}")
+                    if (showChi) add("ЦИ ${economy.chiXp}")
+                    add("Магия ${economy.manaXp + economy.magicSchoolXp + economy.spellXp}")
+                    if (economy.adjustmentXp != 0) add("Поправка ${economy.adjustmentXp}")
+                }.joinToString(" · "),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -1032,6 +1055,7 @@ private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown) {
 
 @Composable
 private fun ChiDevelopmentCard(
+    label: String,
     enabled: Boolean,
     automaticAccess: Boolean,
     current: Int,
@@ -1051,7 +1075,7 @@ private fun ChiDevelopmentCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(Modifier.weight(1f)) {
-                Text("ЦИ", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(label, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
                     "Внутренняя энергия для боевых приёмов",
                     style = MaterialTheme.typography.bodySmall,

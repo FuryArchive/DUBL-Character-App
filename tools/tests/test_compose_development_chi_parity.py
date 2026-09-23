@@ -11,13 +11,20 @@ def read(path: Path) -> str:
     return path.read_text(encoding='utf-8')
 
 
-def test_development_summary_uses_full_character_economy():
+def test_development_summary_uses_pack_composed_character_economy():
     text = read(DEV)
-    assert 'val developmentCatalog = remember(character) { state.developmentCatalog }' in text
-    assert 'CharacterEconomy.breakdown(character, developmentCatalog)' in text
+    assert 'remember(character, state.chiPackEnabled) { state.developmentCatalog }' in text
+    assert 'DublChiUi.CHARACTER_ECONOMY' in text
+    assert 'includeChi = showChiEconomy' in text
     assert 'economy.remainingXp' in text
     assert 'economy.abilityPointsRemaining' in text
-    assert 'economy.chiXp' in text
+    assert 'if (showChi) add("ЦИ ${economy.chiXp}")' in text
+
+
+def test_chi_tab_is_mounted_only_from_fcp_ui_contribution():
+    text = read(DEV)
+    assert 'DublChiUi.DEVELOPMENT_TABS' in text
+    assert 'target != DevelopmentTab.CHI || showChiTab' in text
 
 
 def test_chi_card_matches_android_automatic_access_semantics():

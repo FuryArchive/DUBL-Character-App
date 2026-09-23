@@ -107,6 +107,7 @@ def build_ruleset(source_or_sources: Path | dict[str, Path], repo_root: Path, ou
     _write(source_index, output_dir / "source/source_index.json")
     domains: dict[str, dict] = {}
     shared = repo_root / "shared/src/commonMain/resources/fcp/dubl-3.69/content"
+    chi_shared = repo_root / "shared/src/commonMain/resources/fcp/dubl-chi-3.69/content"
     for domain, (input_name, output_name, list_keys) in DOMAIN_FILES.items():
         if domain in {"chi", "magic_equipment", "skill_effects"} and domain_config.get(domain, {}).get("status") == "source_generated":
             continue
@@ -289,7 +290,10 @@ def build_ruleset(source_or_sources: Path | dict[str, Path], repo_root: Path, ou
 
         chi_candidate, chi_diagnostics = import_chi(melee_raw, "melee")
         runtime_development = json.loads((shared / "development_catalog.json").read_text(encoding="utf-8"))
-        runtime_chi = json.loads((shared / "chi_catalog.json").read_text(encoding="utf-8"))
+        runtime_chi_path = chi_shared / "chi_catalog.json"
+        if not runtime_chi_path.exists():
+            runtime_chi_path = shared / "chi_catalog.json"
+        runtime_chi = json.loads(runtime_chi_path.read_text(encoding="utf-8"))
         if any(entry.get("section") == "ЦИ" for entry in runtime_development.get("entries", [])):
             chi_diagnostics.extend(compare_chi_runtime(chi_candidate, runtime_development, runtime_chi))
         else:

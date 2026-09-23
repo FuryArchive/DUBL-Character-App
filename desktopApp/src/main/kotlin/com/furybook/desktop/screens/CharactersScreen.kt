@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +39,7 @@ import java.nio.file.Path
 fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
+    var contentPackStatus by remember { mutableStateOf<String?>(null) }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -91,6 +93,43 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                 )
             }
         }
+        item {
+            SectionCard(title = "Fury Content Packs") {
+                Text(
+                    "Активные FCP определяют не только правила и каталоги, но и подключаемые части интерфейса.",
+                    color = DublMuted,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                val composition = state.contentPackComposition
+                composition.available.forEach { manifest ->
+                    val required = manifest.id in composition.requiredPackIds
+                    ContentPackRow(
+                        name = manifest.name,
+                        version = manifest.version,
+                        enabled = composition.isActive(manifest.id),
+                        toggleEnabled = !required,
+                        subtitle = if (required) {
+                            "Основной ruleset · обязателен"
+                        } else if (manifest.dependencies.isEmpty()) {
+                            "Опциональный FCP"
+                        } else {
+                            "Опциональный FCP · зависит от ${manifest.dependencies.joinToString { it.id }}"
+                        },
+                        onToggle = { enabled ->
+                            contentPackStatus = runCatching {
+                                state.setContentPackActive(manifest.id, enabled)
+                                if (enabled) "${manifest.name} включён." else "${manifest.name} выключен."
+                            }.getOrElse { error ->
+                                "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                            }
+                        },
+                    )
+                }
+                contentPackStatus?.let { status ->
+                    Text(status, color = DublMuted, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        }
         items(state.snapshot.characters, key = { it.id }) { character ->
             val active = character.id == state.snapshot.activeCharacterId
             SectionCard(
@@ -125,6 +164,32 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                 }) { Text("Удалить") }
             },
             dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Отмена") } },
+        )
+    }
+}
+
+@Composable
+private fun ContentPackRow(
+    name: String,
+    version: String,
+    enabled: Boolean,
+    toggleEnabled: Boolean,
+    subtitle: String,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(name, fontWeight = FontWeight.SemiBold)
+            Text("$subtitle · v$version", color = DublMuted, style = MaterialTheme.typography.bodySmall)
+        }
+        Switch(
+            checked = enabled,
+            enabled = toggleEnabled,
+            onCheckedChange = onToggle,
         )
     }
 }

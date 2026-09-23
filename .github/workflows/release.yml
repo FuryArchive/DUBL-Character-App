@@ -69,6 +69,9 @@ jobs:
           python3 -m tools.fcp.build_fcp \
             --source shared/src/commonMain/resources/fcp/dubl-3.69 \
             --output "out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp"
+          python3 -m tools.fcp.build_fcp \
+            --source shared/src/commonMain/resources/fcp/dubl-chi-3.69 \
+            --output "out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-Chi-3.69.fcp"
 
       - name: Upload DUBL FCP release artifacts
         uses: actions/upload-artifact@v4
@@ -77,6 +80,8 @@ jobs:
           path: |
             out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp
             out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-3.69.fcp.sha256
+            out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-Chi-3.69.fcp
+            out/Fury-Book-${{ needs.validate.outputs.version }}-DUBL-Chi-3.69.fcp.sha256
           if-no-files-found: error
 
   android:

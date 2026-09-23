@@ -1,0 +1,112 @@
+package com.furybook.content
+
+class FcpComposition private constructor(
+    val available: List<FcpManifest>,
+    val active: List<FcpManifest>,
+    val requiredPackIds: Set<String>,
+) {
+    private val activeIds = active.mapTo(linkedSetOf()) { it.id }
+
+    fun isActive(packId: String): Boolean = packId in activeIds
+
+    fun activeClaims(kind: String): Set<String> = active
+        .flatMap { manifest -> manifest.claims(kind) }
+        .mapTo(linkedSetOf()) { it.id }
+
+    fun inactiveClaims(kind: String): Set<String> {
+        val activeIds = active.mapTo(hashSetOf()) { it.id }
+        return available
+            .asSequence()
+            .filter { it.id !in activeIds }
+            .flatMap { it.claims(kind).asSequence() }
+            .mapTo(linkedSetOf()) { it.id }
+    }
+
+    fun ui(surface: String): List<FcpUiContribution> = active
+        .flatMap { manifest -> manifest.ui(surface) }
+        .sortedWith(compareBy<FcpUiContribution>({ it.order }, { it.id }))
+
+    fun ui(surface: String, binding: String): List<FcpUiContribution> =
+        ui(surface).filter { it.binding == binding }
+
+    companion object {
+        fun resolve(
+            manifests: List<FcpManifest>,
+            requiredPackIds: Set<String>,
+            enabledPackIds: Set<String>,
+        ): FcpComposition {
+            val byId = linkedMapOf<String, FcpManifest>()
+            manifests.forEach { manifest ->
+                require(byId.put(manifest.id, manifest) == null) {
+                    "Duplicate FCP id in composition: ${manifest.id}"
+                }
+            }
+
+            val requested = linkedSetOf<String>()
+            requested += requiredPackIds
+            requested += enabledPackIds
+            requested.forEach { id ->
+                require(id in byId) { "Unknown FCP requested for composition: $id" }
+            }
+
+            val visiting = linkedSetOf<String>()
+            val visited = linkedSetOf<String>()
+            val ordered = mutableListOf<FcpManifest>()
+
+            fun activate(id: String) {
+                if (id in visited) return
+                require(visiting.add(id)) {
+                    "FCP dependency cycle: ${visiting.joinToString(" -> ")} -> $id"
+                }
+                val manifest = byId[id] ?: error("Missing FCP dependency: $id")
+                manifest.dependencies.forEach { dependency ->
+                    val dependencyManifest = byId[dependency.id]
+                        ?: error("FCP ${manifest.id} requires missing dependency ${dependency.id} ${dependency.version}")
+                    require(dependencyManifest.version == dependency.version) {
+                        "FCP ${manifest.id} requires ${dependency.id} ${dependency.version}, found ${dependencyManifest.version}"
+                    }
+                    activate(dependency.id)
+                }
+                visiting.remove(id)
+                visited += id
+                ordered += manifest
+            }
+
+            requested.forEach(::activate)
+
+            val claimOwners = linkedMapOf<Pair<String, String>, String>()
+            ordered.forEach { manifest ->
+                manifest.claims.forEach { claim ->
+                    val key = claim.kind to claim.id
+                    val previous = claimOwners.put(key, manifest.id)
+                    require(previous == null) {
+                        "FCP content claim conflict for ${claim.kind}:${claim.id}: $previous vs ${manifest.id}"
+                    }
+                }
+            }
+
+            val uiOwners = linkedMapOf<String, String>()
+            ordered.forEach { manifest ->
+                manifest.ui.forEach { contribution ->
+                    val previous = uiOwners.put(contribution.id, manifest.id)
+                    require(previous == null) {
+                        "FCP UI contribution conflict for ${contribution.id}: $previous vs ${manifest.id}"
+                    }
+                }
+            }
+
+            val rulesets = ordered.map {
+                Triple(it.ruleset.id, it.ruleset.version, it.ruleset.engineApi)
+            }.distinct()
+            require(rulesets.size <= 1) {
+                "Active FCPs target incompatible rulesets: ${rulesets.joinToString()}"
+            }
+
+            return FcpComposition(
+                available = manifests.toList(),
+                active = ordered,
+                requiredPackIds = requiredPackIds.toSet(),
+            )
+        }
+    }
+}

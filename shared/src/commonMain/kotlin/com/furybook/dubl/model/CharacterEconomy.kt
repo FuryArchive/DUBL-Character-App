@@ -90,12 +90,13 @@ object CharacterEconomy {
     fun breakdown(
         character: DublCharacter,
         catalog: DevelopmentCatalog,
+        includeChi: Boolean = true,
     ): CharacterEconomyBreakdown {
         val attributes = attributeXp(character)
         val skills = character.skillXpSpent()
         val development = developmentXp(character, catalog)
         val mana = MagicEquipmentRules.manaRankXp(character)
-        val chi = chiXp(character)
+        val chi = if (includeChi) chiXp(character) else 0
         val magicSchools = MagicEquipmentRules.magicSchoolPowerXp(character)
         val spells = MagicEquipmentRules.learnedSpellXp(character)
         val adjustment = character.xpAdjustment

@@ -18,17 +18,20 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.furybook.content.FcpComposition
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.CharacterTransferRejectReason
 import com.furybook.android.state.CharacterController
@@ -39,9 +42,14 @@ import java.nio.charset.StandardCharsets
 private const val TRANSFER_EXTENSION = ".dubl"
 
 @Composable
-fun CharactersScreen(controller: CharacterController) {
+fun CharactersScreen(
+    controller: CharacterController,
+    contentPackComposition: FcpComposition,
+    onContentPackActiveChange: (String, Boolean) -> Unit,
+) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
+    var contentPackStatus by remember { mutableStateOf<String?>(null) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
 
@@ -106,6 +114,46 @@ fun CharactersScreen(controller: CharacterController) {
             )
         }
 
+        DublCard(Modifier.fillMaxWidth()) {
+            Text("Fury Content Packs", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Активные FCP определяют правила, каталоги и подключаемые части интерфейса.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            contentPackComposition.available.forEach { manifest ->
+                val required = manifest.id in contentPackComposition.requiredPackIds
+                ContentPackRow(
+                    name = manifest.name,
+                    version = manifest.version,
+                    enabled = contentPackComposition.isActive(manifest.id),
+                    toggleEnabled = !required,
+                    subtitle = if (required) {
+                        "Основной ruleset · обязателен"
+                    } else if (manifest.dependencies.isEmpty()) {
+                        "Опциональный FCP"
+                    } else {
+                        "Опциональный FCP · зависит от ${manifest.dependencies.joinToString { it.id }}"
+                    },
+                    onToggle = { enabled ->
+                        contentPackStatus = runCatching {
+                            onContentPackActiveChange(manifest.id, enabled)
+                            if (enabled) "${manifest.name} включён." else "${manifest.name} выключен."
+                        }.getOrElse { error ->
+                            "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                        }
+                    },
+                )
+            }
+            contentPackStatus?.let { status ->
+                Text(
+                    status,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
         snapshot.characters.forEach { character ->
             val active = character.id == snapshot.activeCharacterId
             DublCard(Modifier.fillMaxWidth()) {
@@ -151,6 +199,28 @@ fun CharactersScreen(controller: CharacterController) {
             },
             dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Отмена") } },
         )
+    }
+}
+
+@Composable
+private fun ContentPackRow(
+    name: String,
+    version: String,
+    enabled: Boolean,
+    toggleEnabled: Boolean,
+    subtitle: String,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(name, style = MaterialTheme.typography.titleSmall)
+            Text("$subtitle · v$version", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(checked = enabled, enabled = toggleEnabled, onCheckedChange = onToggle)
     }
 }
 

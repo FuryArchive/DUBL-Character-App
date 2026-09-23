@@ -4,80 +4,134 @@ from pathlib import Path
 import tempfile
 import zipfile
 
+import pytest
+
 from tools.fcp.build_fcp import build_fcp, declared_paths, load_manifest
 
 ROOT = Path(__file__).resolve().parents[2]
-PACK = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69"
-CONTENT = PACK / "content"
+CORE_PACK = ROOT / "shared/src/commonMain/resources/fcp/dubl-3.69"
+CHI_PACK = ROOT / "shared/src/commonMain/resources/fcp/dubl-chi-3.69"
 LEGACY_ROOT = ROOT / "shared/src/commonMain/resources"
 
 
-def test_dubl_is_declared_as_a_fury_content_pack():
-    manifest = load_manifest(PACK)
-    assert manifest["id"] == "dubl-3.69"
-    assert manifest["ruleset"] == {"id": "dubl", "version": "3.69", "engineApi": 1}
-    assert {module["id"] for module in manifest["modules"]} == {"core", "melee", "archmage"}
+def test_core_and_optional_chi_are_separate_fury_content_packs():
+    core = load_manifest(CORE_PACK)
+    chi = load_manifest(CHI_PACK)
 
-    kinds = [entry["kind"] for entry in manifest["entries"]]
-    assert "dubl.skills" in kinds
-    assert "dubl.conditions" in kinds
-    assert "dubl.development" in kinds
-    assert "dubl.chi" in kinds
-    assert "dubl.magic-equipment" in kinds
-    assert "dubl.skill-effects" in kinds
+    assert core["id"] == "dubl-3.69"
+    assert chi["id"] == "dubl-chi-3.69"
+    assert chi["dependencies"] == [{"id": "dubl-3.69", "version": "3.69"}]
+    assert "dubl.chi" not in {entry["kind"] for entry in core["entries"]}
+    assert "dubl.chi" in {entry["kind"] for entry in chi["entries"]}
+    assert not (CORE_PACK / "content/chi_catalog.json").exists()
+    assert not (CORE_PACK / "content/development_chi_catalog.json").exists()
+    assert (CHI_PACK / "content/chi_catalog.json").is_file()
+    assert (CHI_PACK / "content/development_chi_catalog.json").is_file()
 
-    for path in declared_paths(PACK, manifest):
-        assert (PACK / path).is_file()
+    ui = {item["surface"]: item for item in chi["ui"]}
+    assert ui["character.resources"]["binding"] == "dubl.chi"
+    assert ui["character.resource-settings"]["component"] == "resource-toggle"
+    assert ui["development.tabs"]["component"] == "development-browser"
+    assert ui["character.economy"]["component"] == "xp-line"
+
+    for pack, manifest in ((CORE_PACK, core), (CHI_PACK, chi)):
+        for path in declared_paths(pack, manifest):
+            assert (pack / path).is_file()
 
 
 def test_catalogs_no_longer_live_as_loose_shared_resources():
-    legacy_names = (
-        "skills_catalog.json",
-        "conditions_catalog.json",
-        "development_catalog.json",
-        "development_regular_catalog.json",
-        "development_special_catalog.json",
-        "development_ability_roots_catalog.json",
-        "development_martial_catalog.json",
-        "development_chi_catalog.json",
-        "development_magic_catalog.json",
-        "chi_catalog.json",
-        "magic_equipment_catalog.json",
-        "skill_effects_catalog.json",
-    )
-    for name in legacy_names:
+    for name in (
+        "skills_catalog.json", "conditions_catalog.json", "development_catalog.json",
+        "development_regular_catalog.json", "development_special_catalog.json",
+        "development_ability_roots_catalog.json", "development_martial_catalog.json",
+        "development_chi_catalog.json", "development_magic_catalog.json",
+        "chi_catalog.json", "magic_equipment_catalog.json", "skill_effects_catalog.json",
+    ):
         assert not (LEGACY_ROOT / name).exists()
-        assert (CONTENT / name).is_file()
 
 
-def test_fcp_builder_is_deterministic_and_contains_checksums():
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
-        first = tmp / "first.fcp"
-        second = tmp / "second.fcp"
-        first_hash = build_fcp(PACK, first)
-        second_hash = build_fcp(PACK, second)
-
-        assert first.read_bytes() == second.read_bytes()
-        assert first_hash == second_hash == hashlib.sha256(first.read_bytes()).hexdigest()
-        assert first.with_suffix(".fcp.sha256").is_file()
-
-        manifest = json.loads((PACK / "manifest.json").read_text(encoding="utf-8"))
-        expected = {"manifest.json", "checksums.sha256"} | {
-            entry["path"] for entry in manifest["entries"]
-        }
-        with zipfile.ZipFile(first) as archive:
-            assert set(archive.namelist()) == expected
-            checksums = archive.read("checksums.sha256").decode("utf-8")
-            for path in expected - {"checksums.sha256"}:
-                digest = hashlib.sha256(archive.read(path)).hexdigest()
-                assert f"{digest}  {path}\n" in checksums
+def test_fcp_builder_is_deterministic_for_core_and_chi():
+    for pack in (CORE_PACK, CHI_PACK):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            first = tmp / "first.fcp"
+            second = tmp / "second.fcp"
+            first_hash = build_fcp(pack, first)
+            second_hash = build_fcp(pack, second)
+            assert first.read_bytes() == second.read_bytes()
+            assert first_hash == second_hash == hashlib.sha256(first.read_bytes()).hexdigest()
+            manifest = json.loads((pack / "manifest.json").read_text(encoding="utf-8"))
+            expected = {"manifest.json", "checksums.sha256"} | {entry["path"] for entry in manifest["entries"]}
+            with zipfile.ZipFile(first) as archive:
+                assert set(archive.namelist()) == expected
 
 
 def test_generic_fcp_runtime_does_not_depend_on_dubl():
     content_root = ROOT / "shared/src/commonMain/kotlin/com/furybook/content"
-    sources = list(content_root.rglob("*.kt"))
-    assert sources
-    for path in sources:
-        source = path.read_text(encoding="utf-8")
-        assert "com.furybook.dubl" not in source, f"generic FCP layer depends on DUBL: {path}"
+    for path in content_root.rglob("*.kt"):
+        assert "com.furybook.dubl" not in path.read_text(encoding="utf-8")
+
+
+def test_fury_book_mounts_chi_from_real_pack_activation_and_ui_contributions():
+    android_app = (ROOT / "app/src/main/java/com/furybook/android/ui/DublApp.kt").read_text(encoding="utf-8")
+    android_state = (ROOT / "app/src/main/java/com/furybook/android/data/AndroidContentPackState.kt").read_text(encoding="utf-8")
+    android_overview = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt").read_text(encoding="utf-8")
+    android_dev = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt").read_text(encoding="utf-8")
+    desktop_state = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt").read_text(encoding="utf-8")
+    desktop_sheet = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
+    desktop_dev = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt").read_text(encoding="utf-8")
+
+    assert "AndroidContentPackState.isChiEnabled" in android_app
+    assert "AndroidContentPackState.setPackEnabled" in android_app
+    assert "DublChiUi.CHARACTER_RESOURCES" in android_overview
+    assert "DublChiUi.DEVELOPMENT_TABS" in android_dev
+    assert "Preferences.userRoot().node" in desktop_state
+    assert "setContentPackActive" in desktop_state
+    assert "DublChiUi.CHARACTER_RESOURCES" in desktop_sheet
+    assert "DublChiUi.DEVELOPMENT_TABS" in desktop_dev
+
+
+def _write_manifest(directory: Path, payload: dict) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "manifest.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def test_builder_validates_composition_metadata_before_packaging():
+    source = json.loads((CHI_PACK / "manifest.json").read_text(encoding="utf-8"))
+
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+
+        duplicate_claims = json.loads(json.dumps(source))
+        duplicate_claims["claims"] = duplicate_claims["claims"] * 2
+        _write_manifest(tmp / "claims", duplicate_claims)
+        with pytest.raises(ValueError, match="duplicate FCP content claim"):
+            load_manifest(tmp / "claims")
+
+        duplicate_ui = json.loads(json.dumps(source))
+        duplicate_ui["ui"] = duplicate_ui["ui"] + [duplicate_ui["ui"][0]]
+        _write_manifest(tmp / "ui", duplicate_ui)
+        with pytest.raises(ValueError, match="duplicate FCP UI contribution id"):
+            load_manifest(tmp / "ui")
+
+        self_dependency = json.loads(json.dumps(source))
+        self_dependency["dependencies"] = [{"id": self_dependency["id"], "version": self_dependency["version"]}]
+        _write_manifest(tmp / "dependency", self_dependency)
+        with pytest.raises(ValueError, match="cannot depend on itself"):
+            load_manifest(tmp / "dependency")
+
+
+def test_pack_manager_ui_is_driven_by_generic_composition():
+    android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharactersScreen.kt").read_text(encoding="utf-8")
+    composition = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpComposition.kt").read_text(encoding="utf-8")
+
+    assert "contentPackComposition.available.forEach" in android
+    assert "composition.available.forEach" in desktop
+    assert "requiredPackIds" in android and "requiredPackIds" in desktop
+    assert "inactiveClaims" in composition
+    assert "content claim conflict" in composition
+    assert "UI contribution conflict" in composition

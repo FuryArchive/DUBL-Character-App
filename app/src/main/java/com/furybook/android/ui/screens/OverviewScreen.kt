@@ -88,9 +88,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.ConditionCatalogRepository
 import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.android.data.SkillEffectCatalogRepository
+import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.ConditionLocalOverride
@@ -197,17 +199,26 @@ private data class StatInfo(
 )
 
 @Composable
-fun OverviewScreen(controller: CharacterController) {
+fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
+    val chiResourceUi = remember(context.applicationContext, chiPackEnabled) {
+        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_RESOURCES)
+    }
+    val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
+        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_RESOURCE_SETTINGS)
+    }
+    val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
+        AndroidContentPackState.chiUi(context, chiPackEnabled, DublChiUi.CHARACTER_ECONOMY)
+    }
     val conditionCatalog = remember(context.applicationContext) {
         ConditionCatalogRepository(context.applicationContext).load()
     }
-    val developmentCatalog = remember(context.applicationContext) {
-        DevelopmentCatalogRepository(context.applicationContext).load()
+    val developmentCatalog = remember(context.applicationContext, chiPackEnabled) {
+        DevelopmentCatalogRepository(context.applicationContext).load(includeChi = chiPackEnabled)
     }
-    val economy = remember(character, developmentCatalog) {
-        CharacterEconomy.breakdown(character, developmentCatalog)
+    val economy = remember(character, developmentCatalog, chiEconomyUi) {
+        CharacterEconomy.breakdown(character, developmentCatalog, includeChi = chiEconomyUi != null)
     }
     val sheetExtras = controller.extras
     val listState = rememberLazyListState()
@@ -376,6 +387,7 @@ fun OverviewScreen(controller: CharacterController) {
                 ResourceStrip(
                     character = character,
                     hiddenResources = sheetExtras.hiddenResourceIds,
+                    chiLabel = chiResourceUi?.label,
                     onResourceClick = { selectedResource = it },
                     onCustomResourceClick = { selectedCustomResourceId = it },
                     onConfigure = { showResourceVisibility = true },
@@ -497,6 +509,7 @@ fun OverviewScreen(controller: CharacterController) {
         ExperienceEconomySheet(
             character = character,
             economy = economy,
+            showChi = chiEconomyUi != null,
             hasSelfTaught = developmentCatalog.matchingName("Самоучка").any { entry ->
                 (character.development[entry.id]?.rank ?: 0) > 0
             },
@@ -720,6 +733,7 @@ fun OverviewScreen(controller: CharacterController) {
         ResourceVisibilitySheet(
             character = character,
             hidden = sheetExtras.hiddenResourceIds,
+            chiLabel = chiResourceSettingsUi?.label,
             onToggle = { resourceId ->
                 controller.setResourceHidden(
                     resourceId,
@@ -802,7 +816,7 @@ fun OverviewScreen(controller: CharacterController) {
                 onDismiss = { selectedResource = null },
             )
             CharacterResource.CHI -> ResourceAdjustSheet(
-                title = "ЦИ",
+                title = chiResourceUi?.label ?: CharacterSheetResourceId.CHI.title,
                 current = character.chiCurrent,
                 maximum = character.chiMaximum,
                 accent = DublAccent,
@@ -814,7 +828,7 @@ fun OverviewScreen(controller: CharacterController) {
                         controller.changeChi(applied)
                         recordRecent(
                             RecentChange(
-                                text = resourceChangeText("ЦИ", applied),
+                                text = resourceChangeText(chiResourceUi?.label ?: CharacterSheetResourceId.CHI.title, applied),
                                 accent = DublAccent,
                                 undo = UndoAction.Resource(CharacterResource.CHI, applied),
                             ),
@@ -1257,6 +1271,7 @@ private fun SectionTitle(
 private fun ResourceStrip(
     character: DublCharacter,
     hiddenResources: Set<CharacterSheetResourceId>,
+    chiLabel: String?,
     onResourceClick: (CharacterResource) -> Unit,
     onCustomResourceClick: (String) -> Unit,
     onConfigure: () -> Unit,
@@ -1265,7 +1280,7 @@ private fun ResourceStrip(
         if (CharacterSheetResourceId.HEALTH !in hiddenResources) add(CharacterResource.HEALTH)
         if (CharacterSheetResourceId.ENDURANCE !in hiddenResources) add(CharacterResource.ENDURANCE)
         if (character.manaEnabled && CharacterSheetResourceId.MANA !in hiddenResources) add(CharacterResource.MANA)
-        if (character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) add(CharacterResource.CHI)
+        if (chiLabel != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) add(CharacterResource.CHI)
     }
 
     if (resources.isEmpty() && character.customResources.isEmpty()) {
@@ -1294,7 +1309,7 @@ private fun ResourceStrip(
                         CharacterResource.HEALTH -> CompactResourceCard("Здоровье", character.hpCurrent, character.healthMaximum, DublHealth, Modifier.weight(1f), healthCriticalLevel(character.hpCurrent, character.healthMaximum)) { onResourceClick(resource) }
                         CharacterResource.ENDURANCE -> CompactResourceCard("Выносливость", character.enduranceCurrent, character.enduranceMaximum, DublStamina, Modifier.weight(1f)) { onResourceClick(resource) }
                         CharacterResource.MANA -> CompactResourceCard("Мана", character.manaCurrent, character.effectiveManaMaximum, DublMana, Modifier.weight(1f)) { onResourceClick(resource) }
-                        CharacterResource.CHI -> CompactResourceCard("ЦИ", character.chiCurrent, character.chiMaximum, DublAccent, Modifier.weight(1f)) { onResourceClick(resource) }
+                        CharacterResource.CHI -> CompactResourceCard(chiLabel ?: CharacterSheetResourceId.CHI.title, character.chiCurrent, character.chiMaximum, DublAccent, Modifier.weight(1f)) { onResourceClick(resource) }
                     }
                 }
                 repeat(3 - rowResources.size) { Spacer(Modifier.weight(1f)) }
@@ -3900,6 +3915,7 @@ private fun sanitizeSignedBonus(raw: String): String {
 private fun ResourceVisibilitySheet(
     character: DublCharacter,
     hidden: Set<CharacterSheetResourceId>,
+    chiLabel: String?,
     onToggle: (CharacterSheetResourceId) -> Unit,
     onAddCustom: () -> Unit,
     onEditCustom: (String) -> Unit,
@@ -3940,13 +3956,15 @@ private fun ResourceVisibilitySheet(
                 subtitle = if (character.manaEnabled) null else "Мана отключена у персонажа",
                 onToggle = { onToggle(CharacterSheetResourceId.MANA) },
             )
-            ResourceVisibilityRow(
-                title = CharacterSheetResourceId.CHI.title,
-                visible = character.chiActive && CharacterSheetResourceId.CHI !in hidden,
-                enabled = character.chiActive,
-                subtitle = if (character.chiActive) null else "ЦИ недоступна у персонажа",
-                onToggle = { onToggle(CharacterSheetResourceId.CHI) },
-            )
+            if (chiLabel != null) {
+                ResourceVisibilityRow(
+                    title = chiLabel,
+                    visible = character.chiActive && CharacterSheetResourceId.CHI !in hidden,
+                    enabled = character.chiActive,
+                    subtitle = if (character.chiActive) null else "$chiLabel недоступна у персонажа",
+                    onToggle = { onToggle(CharacterSheetResourceId.CHI) },
+                )
+            }
             if (character.customResources.isNotEmpty()) {
                 Spacer(Modifier.height(12.dp))
                 HorizontalDivider()
@@ -4503,6 +4521,7 @@ private fun TextValueEditSheet(
 private fun ExperienceEconomySheet(
     character: DublCharacter,
     economy: CharacterEconomyBreakdown,
+    showChi: Boolean,
     hasSelfTaught: Boolean,
     onSetExperience: (Int) -> Unit,
     onSetCreationExperience: (Int) -> Unit,
@@ -4582,7 +4601,7 @@ private fun ExperienceEconomySheet(
             EconomyLine("Умения", economy.skillXp)
             EconomyLine("Навыки", economy.developmentXp)
             EconomyLine("Базовый запас маны", economy.manaXp)
-            EconomyLine("Дополнительный запас ЦИ", economy.chiXp)
+            if (showChi) EconomyLine("Дополнительный запас ЦИ", economy.chiXp)
             EconomyLine("Сила магии по школам", economy.magicSchoolXp)
             EconomyLine("Заклинания", economy.spellXp)
             EconomyLine("Ручная поправка", economy.adjustmentXp)
