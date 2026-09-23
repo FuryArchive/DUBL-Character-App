@@ -29,7 +29,6 @@ import com.furybook.dubl.data.CharacterTransferRejectReason
 import com.furybook.ui.theme.DublFocus
 import com.furybook.ui.theme.DublMuted
 import com.furybook.desktop.DesktopAppState
-import com.furybook.desktop.data.DesktopCatalogLoader
 import java.awt.FileDialog
 import java.awt.Frame
 import java.nio.charset.StandardCharsets
@@ -40,10 +39,7 @@ import java.nio.file.Path
 fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
-    var rulesImportProbeEnabled by remember { mutableStateOf(false) }
-    var rulesImportStatus by remember { mutableStateOf<String?>(null) }
-    val fcpLoader = remember { DesktopCatalogLoader() }
-    val fcpManifest = remember(fcpLoader) { fcpLoader.manifest }
+    var contentPackStatus by remember { mutableStateOf<String?>(null) }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -100,41 +96,34 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
         item {
             SectionCard(title = "Fury Content Packs") {
                 Text(
-                    "Пробный импорт правил. Сейчас Fury Book видит один встроенный FCP.",
+                    "Активные FCP определяют не только правила и каталоги, но и подключаемые части интерфейса.",
                     color = DublMuted,
                     style = MaterialTheme.typography.bodySmall,
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(fcpManifest.name, fontWeight = FontWeight.SemiBold)
-                        Text(
-                            "ruleset ${fcpManifest.ruleset.id} ${fcpManifest.ruleset.version} • FCP v${fcpManifest.formatVersion} • ${fcpManifest.modules.size} модулей",
-                            color = DublMuted,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                    Switch(
-                        checked = rulesImportProbeEnabled,
-                        onCheckedChange = { enabled ->
-                            rulesImportProbeEnabled = enabled
-                            rulesImportStatus = if (!enabled) {
-                                "Пробный импорт выключен."
-                            } else {
-                                runCatching {
-                                    fcpLoader.verifyBundledPack()
-                                    "${fcpManifest.name}: пакет прочитан, ${fcpManifest.entries.size} записей успешно разобраны."
-                                }.getOrElse { error ->
-                                    "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
-                                }
-                            }
-                        },
-                    )
-                }
-                rulesImportStatus?.let { status ->
+                ContentPackRow(
+                    name = state.corePackManifest.name,
+                    version = state.corePackManifest.version,
+                    enabled = true,
+                    toggleEnabled = false,
+                    subtitle = "Основной ruleset · обязателен",
+                    onToggle = {},
+                )
+                ContentPackRow(
+                    name = state.chiPackManifest.name,
+                    version = state.chiPackManifest.version,
+                    enabled = state.chiPackEnabled,
+                    toggleEnabled = true,
+                    subtitle = "Опциональный FCP · контент + UI ЦИ",
+                    onToggle = { enabled ->
+                        contentPackStatus = runCatching {
+                            state.setChiPackEnabled(enabled)
+                            if (enabled) "DUBL 3.69 — ЦИ включён." else "DUBL 3.69 — ЦИ выключен."
+                        }.getOrElse { error ->
+                            "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                        }
+                    },
+                )
+                contentPackStatus?.let { status ->
                     Text(status, color = DublMuted, style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -173,6 +162,32 @@ fun CharactersScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
                 }) { Text("Удалить") }
             },
             dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Отмена") } },
+        )
+    }
+}
+
+@Composable
+private fun ContentPackRow(
+    name: String,
+    version: String,
+    enabled: Boolean,
+    toggleEnabled: Boolean,
+    subtitle: String,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(name, fontWeight = FontWeight.SemiBold)
+            Text("$subtitle · v$version", color = DublMuted, style = MaterialTheme.typography.bodySmall)
+        }
+        Switch(
+            checked = enabled,
+            enabled = toggleEnabled,
+            onCheckedChange = onToggle,
         )
     }
 }

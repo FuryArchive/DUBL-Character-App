@@ -3,7 +3,10 @@ package com.furybook.desktop
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.furybook.content.FcpUiContribution
 import com.furybook.dubl.application.DublApplication
+import com.furybook.dubl.content.DublChiFcp
+import com.furybook.dubl.content.DublChiUi
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
 import com.furybook.dubl.data.DesktopCharacterStore
@@ -13,6 +16,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.UUID
+import java.util.prefs.Preferences
 
 class DesktopAppState {
     private val characterStore = DesktopCharacterStore()
@@ -23,11 +27,24 @@ class DesktopAppState {
         idFactory = { UUID.randomUUID().toString() },
     )
     private val catalogLoader = DesktopCatalogLoader()
+    private val contentPackPreferences = Preferences.userRoot().node("com/furybook/content-packs")
+
+    val corePackManifest = catalogLoader.manifest
+    val chiPackManifest = catalogLoader.chiManifest
+
+    var chiPackEnabled: Boolean by mutableStateOf(contentPackPreferences.getBoolean(DublChiFcp.PACK_ID, false))
+        private set
 
     val conditionCatalog = catalogLoader.loadConditions()
-    private val canonicalDevelopmentCatalog = catalogLoader.loadDevelopment()
-    val developmentCatalog get() = activeCharacter.effectiveDevelopmentCatalog(canonicalDevelopmentCatalog)
-    val chiCatalog = catalogLoader.loadChi()
+    private var canonicalDevelopmentCatalog: DevelopmentCatalog by mutableStateOf(catalogLoader.loadDevelopment(chiPackEnabled))
+    val developmentCatalog: DevelopmentCatalog
+        get() = activeCharacter
+            .effectiveDevelopmentCatalog(canonicalDevelopmentCatalog)
+            .let { catalog -> if (chiPackEnabled) catalog else catalog.withoutChiContent() }
+    var chiCatalog: ChiCatalog by mutableStateOf(
+        if (chiPackEnabled) catalogLoader.loadChi() else ChiCatalog("disabled", emptyList(), emptyList()),
+    )
+        private set
     val magicEquipmentCatalog = catalogLoader.loadMagicEquipment()
     val skillEffectCatalog = catalogLoader.loadSkillEffects()
 
@@ -39,7 +56,25 @@ class DesktopAppState {
     val activeCharacter: DublCharacter get() = snapshot.activeCharacter
 
     init {
+        if (chiPackEnabled && !application.snapshot.activeCharacter.chiActive) {
+            application.development.setChiEnabled(true)
+        }
         application.equipment.syncCatalogLoads(magicEquipmentCatalog.gear)
+        refresh()
+    }
+
+    fun chiUi(surface: String): FcpUiContribution? =
+        if (chiPackEnabled) DublChiUi.contribution(chiPackManifest, surface) else null
+
+    fun setChiPackEnabled(enabled: Boolean) {
+        if (enabled) catalogLoader.verifyChiPack()
+        contentPackPreferences.putBoolean(DublChiFcp.PACK_ID, enabled)
+        chiPackEnabled = enabled
+        canonicalDevelopmentCatalog = catalogLoader.loadDevelopment(includeChi = enabled)
+        chiCatalog = if (enabled) catalogLoader.loadChi() else ChiCatalog("disabled", emptyList(), emptyList())
+        if (enabled && !application.snapshot.activeCharacter.chiActive) {
+            application.development.setChiEnabled(true)
+        }
         refresh()
     }
 
@@ -158,7 +193,12 @@ class DesktopAppState {
     fun importCharacter(raw: String): CharacterTransferImportResult = sync { application.transfer.importCharacter(raw) }
 
     fun createCharacter() = sync { application.character.createCharacter() }
-    fun selectCharacter(id: String) = sync { application.character.selectCharacter(id) }
+    fun selectCharacter(id: String) = sync {
+        application.character.selectCharacter(id)
+        if (chiPackEnabled && !application.snapshot.activeCharacter.chiActive) {
+            application.development.setChiEnabled(true)
+        }
+    }
     fun deleteActive() = sync { application.character.deleteActive() }
     fun undoLast(): Boolean = sync { application.undoLast() }
 
