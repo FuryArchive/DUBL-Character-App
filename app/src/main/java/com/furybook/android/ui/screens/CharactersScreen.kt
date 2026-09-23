@@ -22,10 +22,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,15 +40,18 @@ import java.nio.charset.StandardCharsets
 private const val TRANSFER_EXTENSION = ".dubl"
 
 @Composable
-fun CharactersScreen(controller: CharacterController) {
+fun CharactersScreen(
+    controller: CharacterController,
+    chiPackEnabled: Boolean,
+    onChiPackEnabledChange: (Boolean) -> Unit,
+) {
     var confirmDelete by remember { mutableStateOf(false) }
     var transferStatus by remember { mutableStateOf<String?>(null) }
-    var rulesImportProbeEnabled by remember { mutableStateOf(false) }
-    var rulesImportStatus by remember { mutableStateOf<String?>(null) }
+    var contentPackStatus by remember { mutableStateOf<String?>(null) }
     val snapshot = controller.snapshot
     val context = LocalContext.current
-    val fcpLoader = remember(context.applicationContext) { AndroidDublFcp.loader(context) }
-    val fcpManifest = fcpLoader.pack.manifest
+    val coreManifest = remember(context.applicationContext) { AndroidDublFcp.loader(context).pack.manifest }
+    val chiManifest = remember(context.applicationContext) { AndroidDublFcp.chiLoader(context).pack.manifest }
 
     val exportLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.CreateDocument("application/json"),
@@ -116,41 +117,34 @@ fun CharactersScreen(controller: CharacterController) {
         DublCard(Modifier.fillMaxWidth()) {
             Text("Fury Content Packs", style = MaterialTheme.typography.titleMedium)
             Text(
-                "Пробный импорт правил. Сейчас Fury Book видит один встроенный FCP.",
+                "Активные FCP определяют правила, каталоги и подключаемые части интерфейса.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(Modifier.weight(1f)) {
-                    Text(fcpManifest.name, style = MaterialTheme.typography.titleSmall)
-                    Text(
-                        "ruleset ${fcpManifest.ruleset.id} ${fcpManifest.ruleset.version} • FCP v${fcpManifest.formatVersion} • ${fcpManifest.modules.size} модулей",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Switch(
-                    checked = rulesImportProbeEnabled,
-                    onCheckedChange = { enabled ->
-                        rulesImportProbeEnabled = enabled
-                        rulesImportStatus = if (!enabled) {
-                            "Пробный импорт выключен."
-                        } else {
-                            runCatching {
-                                fcpLoader.verifyContent()
-                                "${fcpManifest.name}: пакет прочитан, ${fcpManifest.entries.size} записей успешно разобраны."
-                            }.getOrElse { error ->
-                                "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
-                            }
-                        }
-                    },
-                )
-            }
-            rulesImportStatus?.let { status ->
+            ContentPackRow(
+                name = coreManifest.name,
+                version = coreManifest.version,
+                enabled = true,
+                toggleEnabled = false,
+                subtitle = "Основной ruleset · обязателен",
+                onToggle = {},
+            )
+            ContentPackRow(
+                name = chiManifest.name,
+                version = chiManifest.version,
+                enabled = chiPackEnabled,
+                toggleEnabled = true,
+                subtitle = "Опциональный FCP · контент + UI",
+                onToggle = { enabled ->
+                    contentPackStatus = runCatching {
+                        onChiPackEnabledChange(enabled)
+                        if (enabled) "Пакет включён." else "Пакет выключен."
+                    }.getOrElse { error ->
+                        "Ошибка FCP: ${error.message ?: "неизвестная ошибка"}"
+                    }
+                },
+            )
+            contentPackStatus?.let { status ->
                 Text(
                     status,
                     style = MaterialTheme.typography.bodySmall,
@@ -204,6 +198,28 @@ fun CharactersScreen(controller: CharacterController) {
             },
             dismissButton = { TextButton(onClick = { confirmDelete = false }) { Text("Отмена") } },
         )
+    }
+}
+
+@Composable
+private fun ContentPackRow(
+    name: String,
+    version: String,
+    enabled: Boolean,
+    toggleEnabled: Boolean,
+    subtitle: String,
+    onToggle: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(name, style = MaterialTheme.typography.titleSmall)
+            Text("$subtitle · v$version", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        Switch(checked = enabled, enabled = toggleEnabled, onCheckedChange = onToggle)
     }
 }
 

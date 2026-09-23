@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.furybook.android.data.AndroidContentPackState
 import com.furybook.android.data.CharacterRepository
 import com.furybook.android.data.CharacterSheetExtrasRepository
 import com.furybook.android.state.CharacterController
@@ -72,6 +73,13 @@ fun DublApp() {
     }
     var selected by rememberSaveable { mutableStateOf(AppSection.OVERVIEW) }
     var pendingSection by remember { mutableStateOf<AppSection?>(null) }
+    var chiPackEnabled by rememberSaveable { mutableStateOf(AndroidContentPackState.isChiEnabled(appContext)) }
+
+    LaunchedEffect(chiPackEnabled, controller.active.id) {
+        if (chiPackEnabled && !controller.active.chiActive) {
+            controller.setChiEnabled(true)
+        }
+    }
 
     LaunchedEffect(pendingSection) {
         if (pendingSection == AppSection.FEATS) {
@@ -109,12 +117,19 @@ fun DublApp() {
                 DevelopmentNavigationLoadingScreen()
             } else {
                 when (selected) {
-                    AppSection.OVERVIEW -> OverviewScreen(controller)
+                    AppSection.OVERVIEW -> OverviewScreen(controller, chiPackEnabled)
                     AppSection.SKILLS -> SkillsScreen(controller)
-                    AppSection.FEATS -> FeatsScreen(controller)
+                    AppSection.FEATS -> FeatsScreen(controller, chiPackEnabled)
                     AppSection.MAGIC -> MagicScreen(controller)
                     AppSection.INVENTORY -> EquipmentScreen(controller)
-                    AppSection.MORE -> CharactersScreen(controller)
+                    AppSection.MORE -> CharactersScreen(
+                        controller = controller,
+                        chiPackEnabled = chiPackEnabled,
+                        onChiPackEnabledChange = { enabled ->
+                            AndroidContentPackState.setChiEnabled(appContext, enabled)
+                            chiPackEnabled = enabled
+                        },
+                    )
                 }
             }
         }
