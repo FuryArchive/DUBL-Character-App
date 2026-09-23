@@ -92,6 +92,12 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
+## UI contribution ordering
+
+Each UI contribution's `order` now participates in real host layout ordering. Fury Book assigns stable host slots to built-in items and merges FCP contributions into the same ordered sequence. The same shared sorter is used on Android and Desktop.
+
+For the current DUBL vertical slice this applies to `development.tabs` and `character.resources`. With the bundled Chi manifest at `order=40`, the visual order remains unchanged. Changing that manifest order changes the mounted position without editing screen code. Equal orders are resolved deterministically by a stable key.
+
 ## UI presentation tokens
 
 UI contributions may provide semantic presentation tokens in `properties`. Fury Book currently recognizes `icon` and `accent` for the `resource-meter` renderer. The manifest never supplies raw Compose classes or arbitrary executable styling; each platform maps known tokens to host-owned renderers and falls back safely for unknown or missing values.
