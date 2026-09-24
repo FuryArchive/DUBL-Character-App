@@ -5,7 +5,10 @@ import com.furybook.content.FcpUiComponent
 import com.furybook.content.FcpUiPresentation
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.presentation
+import com.furybook.dubl.model.CharacterEconomy
+import com.furybook.dubl.model.CharacterEconomyBreakdown
 import com.furybook.dubl.model.CharacterSheetResourceId
+import com.furybook.dubl.model.DevelopmentCatalog
 import com.furybook.dubl.model.DublCharacter
 
 data class DublResourceMeterModel(
@@ -21,6 +24,16 @@ data class DublResourceToggleModel(
     val resourceId: CharacterSheetResourceId,
     val available: Boolean,
     val presentation: FcpUiPresentation,
+)
+
+data class DublXpLineModel(
+    val xp: Int,
+    val presentation: FcpUiPresentation,
+)
+
+data class DublEconomyRenderModel(
+    val breakdown: CharacterEconomyBreakdown,
+    val xpLines: List<DublXpLineModel>,
 )
 
 object DublUiRenderModels {
@@ -60,6 +73,29 @@ object DublUiRenderModels {
             )
         }
     }
+    fun economy(
+        composition: FcpComposition,
+        character: DublCharacter,
+        catalog: DevelopmentCatalog,
+    ): DublEconomyRenderModel {
+        val mounts = DublUiRegistry.mounts(
+            composition,
+            FcpUiSurface.CHARACTER_ECONOMY,
+            FcpUiComponent.XP_LINE,
+        )
+        val includeChi = mounts.any { it.feature == DublUiFeature.CHI }
+        val breakdown = CharacterEconomy.breakdown(character, catalog, includeChi = includeChi)
+        val lines = mounts.mapNotNull { mount ->
+            when (mount.feature) {
+                DublUiFeature.CHI -> DublXpLineModel(
+                    xp = breakdown.chiXp,
+                    presentation = mount.contribution.presentation(),
+                )
+            }
+        }.sortedWith(compareBy({ it.presentation.order }, { it.presentation.label }))
+        return DublEconomyRenderModel(breakdown, lines)
+    }
+
 }
 
 
