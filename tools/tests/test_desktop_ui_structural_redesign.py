@@ -57,10 +57,7 @@ def test_character_sheet_uses_hero_telemetry_primitives_and_collapses_conditions
 def test_character_sheet_preserves_shared_application_callbacks():
     sheet = read(SHEET)
     for token in (
-        'state.changeHp(',
-        'state.changeEndurance(',
-        'state.changeMana(',
-        'state.changeChi(',
+        'state.changeResource(',
         'state.changeAttribute(',
         'state.undoLast()',
         'state.setPortrait(',

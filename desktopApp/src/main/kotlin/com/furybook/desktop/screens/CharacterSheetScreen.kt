@@ -81,6 +81,7 @@ import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiFeature
 import com.furybook.dubl.content.forFeature
+import com.furybook.dubl.content.resourceCurrent
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.CharacterEconomy
@@ -172,24 +173,9 @@ fun CharacterSheetScreen(
     }
 
     fun changeResource(resource: CharacterSheetResourceId, delta: Int) {
-        val before = when (resource) {
-            CharacterSheetResourceId.HEALTH -> character.hpCurrent
-            CharacterSheetResourceId.ENDURANCE -> character.enduranceCurrent
-            CharacterSheetResourceId.MANA -> character.manaCurrent
-            CharacterSheetResourceId.CHI -> character.chiCurrent
-        }
-        when (resource) {
-            CharacterSheetResourceId.HEALTH -> state.changeHp(delta)
-            CharacterSheetResourceId.ENDURANCE -> state.changeEndurance(delta)
-            CharacterSheetResourceId.MANA -> state.changeMana(delta)
-            CharacterSheetResourceId.CHI -> state.changeChi(delta)
-        }
-        val after = when (resource) {
-            CharacterSheetResourceId.HEALTH -> state.activeCharacter.hpCurrent
-            CharacterSheetResourceId.ENDURANCE -> state.activeCharacter.enduranceCurrent
-            CharacterSheetResourceId.MANA -> state.activeCharacter.manaCurrent
-            CharacterSheetResourceId.CHI -> state.activeCharacter.chiCurrent
-        }
+        val before = character.resourceCurrent(resource)
+        state.changeResource(resource, delta)
+        val after = state.activeCharacter.resourceCurrent(resource)
         val applied = after - before
         if (applied != 0) recent = RecentSheetChange("${resource.title} ${signed(applied)}", SheetUndo.Resource(resource, applied))
     }
@@ -619,8 +605,7 @@ private fun HeroResources(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember(character.id) { mutableStateOf(false) }
-    val chiResourceUi = state.uiMounts(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER).forFeature(DublUiFeature.CHI)
-    val chiResourcePresentation = chiResourceUi?.presentation()
+    val mountedResources = state.resourceMeterModels(character)
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(7.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -659,19 +644,28 @@ private fun HeroResources(
                 onSecondary = { onEditMaximum(CharacterSheetResourceId.MANA) },
             )
         }
-        if (chiResourcePresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in extras.hiddenResourceIds) tileItems += FcpOrderedUiItem(chiResourcePresentation.order, "chi") { tileModifier ->
-            DesktopResourceTile(
-                fcpDesktopIcon(chiResourcePresentation.icon),
-                chiResourcePresentation.label,
-                character.chiCurrent,
-                character.chiMaximum,
-                fcpDesktopAccent(chiResourcePresentation.accent),
-                { onResourceDelta(CharacterSheetResourceId.CHI, -1) },
-                { onResourceDelta(CharacterSheetResourceId.CHI, 1) },
-                tileModifier,
-                onSecondary = { state.restoreChi() },
-            )
-        }
+        mountedResources
+            .filter { model -> model.available && model.resourceId !in extras.hiddenResourceIds }
+            .forEach { model ->
+                val presentation = model.presentation
+                tileItems += FcpOrderedUiItem(presentation.order, "fcp:${model.resourceId.name}") { tileModifier ->
+                    DesktopResourceTile(
+                        fcpDesktopIcon(presentation.icon),
+                        presentation.label,
+                        model.current,
+                        model.maximum,
+                        fcpDesktopAccent(presentation.accent),
+                        { onResourceDelta(model.resourceId, -1) },
+                        { onResourceDelta(model.resourceId, 1) },
+                        tileModifier,
+                        onSecondary = if (model.restoreable) {
+                            { state.restoreMountedResource(model.resourceId) }
+                        } else {
+                            null
+                        },
+                    )
+                }
+            }
         character.customResources.forEachIndexed { index, resource ->
             tileItems += FcpOrderedUiItem(FcpUiHostOrder.CUSTOM + index, "custom:${resource.uid}") { tileModifier ->
                 DesktopResourceTile(
@@ -1686,19 +1680,37 @@ private fun MaximumDialog(state: DesktopAppState, resource: CharacterSheetResour
         CharacterSheetResourceId.HEALTH -> character.healthMaximumOverride ?: character.healthMaximum
         CharacterSheetResourceId.ENDURANCE -> character.enduranceMaximumOverride ?: character.enduranceMaximum
         CharacterSheetResourceId.MANA -> character.manaMaximumOverride ?: character.effectiveManaMaximum
-        CharacterSheetResourceId.CHI -> character.chiMaximum
+        else -> return
     }
     var text by remember(resource) { mutableStateOf(current.toString()) }
     FuryDialog(
         onDismissRequest = onDismiss,
         title = { Text("Максимум: ${resource.title}") },
         text = { OutlinedTextField(text, { text = it.filter(Char::isDigit).take(5) }, label = { Text("Ручной максимум") }) },
-        confirmButton = { TextButton(enabled = resource != CharacterSheetResourceId.CHI, onClick = {
+        confirmButton = { TextButton(onClick = {
             val value = text.toIntOrNull()?.coerceAtLeast(0) ?: 0
-            when (resource) { CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(value); CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(value); CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(value); CharacterSheetResourceId.CHI -> Unit }
+            when (resource) {
+                CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(value)
+                CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(value)
+                CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(value)
+                else -> Unit
+            }
             onDismiss()
         }) { Text("Сохранить") } },
-        dismissButton = { Row { if (resource != CharacterSheetResourceId.CHI) TextButton(onClick = { when (resource) { CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(null); CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(null); CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(null); CharacterSheetResourceId.CHI -> Unit }; onDismiss() }) { Text("По формуле") }; TextButton(onClick = onDismiss) { Text("Отмена") } } },
+        dismissButton = {
+            Row {
+                TextButton(onClick = {
+                    when (resource) {
+                        CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(null)
+                        CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(null)
+                        CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(null)
+                        else -> Unit
+                    }
+                    onDismiss()
+                }) { Text("По формуле") }
+                TextButton(onClick = onDismiss) { Text("Отмена") }
+            }
+        },
     )
 }
 
@@ -1938,36 +1950,42 @@ private fun CustomConditionDialog(
 
 @Composable
 private fun ResourceVisibilityDialog(state: DesktopAppState, onDismiss: () -> Unit) {
-    val chiTogglePresentation = state
-        .uiMounts(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE).forFeature(DublUiFeature.CHI)
-        ?.presentation()
+    val mountedToggles = state.resourceToggleModels()
     FuryDialog(
         onDismissRequest = onDismiss,
         title = { Text("Видимость ресурсов") },
         text = {
             Column {
-                CharacterSheetResourceId.entries
-                    .filter { resource -> resource != CharacterSheetResourceId.CHI || chiTogglePresentation != null }
-                    .forEach { resource ->
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            val hidden = resource in state.extras.hiddenResourceIds
-                            Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) })
-                            if (resource == CharacterSheetResourceId.CHI && chiTogglePresentation?.icon != null) {
-                                DesktopIcon(
-                                    kind = fcpDesktopIcon(chiTogglePresentation.icon),
-                                    tint = DesktopAccent,
-                                    size = 16.dp,
-                                )
-                            }
-                            Text(
-                                if (resource == CharacterSheetResourceId.CHI) {
-                                    chiTogglePresentation?.label ?: resource.title
-                                } else {
-                                    resource.title
-                                },
+                listOf(
+                    CharacterSheetResourceId.HEALTH,
+                    CharacterSheetResourceId.ENDURANCE,
+                    CharacterSheetResourceId.MANA,
+                ).forEach { resource ->
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        val hidden = resource in state.extras.hiddenResourceIds
+                        Checkbox(!hidden, { visible -> state.setResourceHidden(resource, !visible) })
+                        Text(resource.title)
+                    }
+                }
+                mountedToggles.forEach { model ->
+                    val presentation = model.presentation
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        val hidden = model.resourceId in state.extras.hiddenResourceIds
+                        Checkbox(
+                            checked = model.available && !hidden,
+                            onCheckedChange = { visible -> state.setResourceHidden(model.resourceId, !visible) },
+                            enabled = model.available,
+                        )
+                        presentation.icon?.let { token ->
+                            DesktopIcon(
+                                kind = fcpDesktopIcon(token),
+                                tint = DesktopAccent,
+                                size = 16.dp,
                             )
                         }
+                        Text(presentation.label)
                     }
+                }
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text("Готово") } },

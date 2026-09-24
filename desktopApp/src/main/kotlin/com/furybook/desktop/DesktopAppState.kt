@@ -10,8 +10,11 @@ import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublResourceMeterModel
+import com.furybook.dubl.content.DublResourceToggleModel
 import com.furybook.dubl.content.DublUiMount
 import com.furybook.dubl.content.DublUiRegistry
+import com.furybook.dubl.content.DublUiRenderModels
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
@@ -103,6 +106,12 @@ class DesktopAppState {
 
     fun uiMounts(surface: String, component: String): List<DublUiMount> =
         DublUiRegistry.mounts(contentPackComposition, surface, component)
+
+    fun resourceMeterModels(character: DublCharacter = activeCharacter): List<DublResourceMeterModel> =
+        DublUiRenderModels.resourceMeters(contentPackComposition, character)
+
+    fun resourceToggleModels(character: DublCharacter = activeCharacter): List<DublResourceToggleModel> =
+        DublUiRenderModels.resourceToggles(contentPackComposition, character)
 
     fun canActivateContentPack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
@@ -209,9 +218,19 @@ class DesktopAppState {
     fun changeEndurance(delta: Int) = sync { application.character.changeEndurance(delta) }
     fun changeMana(delta: Int) = sync { application.magic.changeMana(delta) }
     fun changeChi(delta: Int) = sync { application.development.changeChi(delta) }
+    fun changeResource(resource: CharacterSheetResourceId, delta: Int) = when (resource) {
+        CharacterSheetResourceId.HEALTH -> changeHp(delta)
+        CharacterSheetResourceId.ENDURANCE -> changeEndurance(delta)
+        CharacterSheetResourceId.MANA -> changeMana(delta)
+        CharacterSheetResourceId.CHI -> changeChi(delta)
+    }
     fun setChiEnabled(enabled: Boolean) = sync { application.development.setChiEnabled(enabled) }
     fun setChiBonusRanks(rank: Int) = sync { application.development.setChiBonusRanks(rank) }
     fun restoreChi() = sync { application.development.restoreChi() }
+    fun restoreMountedResource(resource: CharacterSheetResourceId) = when (resource) {
+        CharacterSheetResourceId.CHI -> restoreChi()
+        else -> Unit
+    }
     fun setHealthMaximumOverride(value: Int?) = sync { application.character.setHealthMaximumOverride(value) }
     fun setEnduranceMaximumOverride(value: Int?) = sync { application.character.setEnduranceMaximumOverride(value) }
     fun setManaMaximumOverride(value: Int?) = sync { application.character.setManaMaximumOverride(value) }

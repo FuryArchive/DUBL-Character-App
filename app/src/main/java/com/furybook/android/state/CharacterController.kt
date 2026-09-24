@@ -81,9 +81,19 @@ class CharacterController(
     fun changeEndurance(delta: Int) = sync { application.character.changeEndurance(delta) }
     fun changeMana(delta: Int) = sync { application.magic.changeMana(delta) }
     fun changeChi(delta: Int) = sync { application.development.changeChi(delta) }
+    fun changeResource(resource: CharacterSheetResourceId, delta: Int) = when (resource) {
+        CharacterSheetResourceId.HEALTH -> changeHp(delta)
+        CharacterSheetResourceId.ENDURANCE -> changeEndurance(delta)
+        CharacterSheetResourceId.MANA -> changeMana(delta)
+        CharacterSheetResourceId.CHI -> changeChi(delta)
+    }
     fun setChiEnabled(enabled: Boolean) = sync { application.development.setChiEnabled(enabled) }
     fun setChiBonusRanks(rank: Int) = sync { application.development.setChiBonusRanks(rank) }
     fun restoreChi() = sync { application.development.restoreChi() }
+    fun restoreMountedResource(resource: CharacterSheetResourceId) = when (resource) {
+        CharacterSheetResourceId.CHI -> restoreChi()
+        else -> Unit
+    }
     fun setHealthMaximumOverride(value: Int?) = sync { application.character.setHealthMaximumOverride(value) }
     fun setEnduranceMaximumOverride(value: Int?) = sync { application.character.setEnduranceMaximumOverride(value) }
     fun setManaMaximumOverride(value: Int?) = sync { application.character.setManaMaximumOverride(value) }
