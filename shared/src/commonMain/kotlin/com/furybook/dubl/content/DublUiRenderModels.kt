@@ -61,3 +61,18 @@ object DublUiRenderModels {
         }
     }
 }
+
+
+fun DublCharacter.resourceCurrent(resourceId: CharacterSheetResourceId): Int = when (resourceId) {
+    CharacterSheetResourceId.HEALTH -> hpCurrent
+    CharacterSheetResourceId.ENDURANCE -> enduranceCurrent
+    CharacterSheetResourceId.MANA -> manaCurrent
+    CharacterSheetResourceId.CHI -> chiCurrent
+}
+
+fun DublCharacter.resourceMaximum(resourceId: CharacterSheetResourceId): Int = when (resourceId) {
+    CharacterSheetResourceId.HEALTH -> healthMaximum
+    CharacterSheetResourceId.ENDURANCE -> enduranceMaximum
+    CharacterSheetResourceId.MANA -> effectiveManaMaximum
+    CharacterSheetResourceId.CHI -> chiMaximum
+}
