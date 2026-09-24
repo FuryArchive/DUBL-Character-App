@@ -58,6 +58,7 @@ import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
 import com.furybook.dubl.content.DublUiFeature
+import com.furybook.dubl.content.DublXpLineModel
 import com.furybook.dubl.content.forFeature
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
@@ -131,6 +132,7 @@ private data class DevelopmentScreenPreparation(
     val catalog: DevelopmentCatalog,
     val chiCatalog: ChiCatalog,
     val economy: CharacterEconomyBreakdown,
+    val xpLines: List<DublXpLineModel>,
     val availabilityById: RetainedPreparationCache<String, DevelopmentAvailability>,
     val rules: DevelopmentRules,
     val index: DevelopmentScreenIndex,
@@ -153,9 +155,6 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER).forFeature(DublUiFeature.CHI)
     }
     val chiTabPresentation = chiTabUi?.presentation()
-    val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI)
-    }
     val developmentTabs = remember(chiTabUi) {
         orderedUiItems(
             buildList {
@@ -196,10 +195,17 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                     .let { catalog -> if (chiTabUi != null) catalog else catalog.withoutChiContent() }
                 val preparationProgress = DevelopmentProgress(character.development)
                 val preparationRules = DevelopmentRules(character, effectiveCatalog, preparationProgress)
+                val economyModel = AndroidContentPackState.economyModel(
+                    context,
+                    chiPackEnabled,
+                    character,
+                    effectiveCatalog,
+                )
                 DevelopmentScreenPreparation(
                     catalog = effectiveCatalog,
                     chiCatalog = loadedCatalogs.second,
-                    economy = CharacterEconomy.breakdown(character, effectiveCatalog, includeChi = chiEconomyUi != null),
+                    economy = economyModel.breakdown,
+                    xpLines = economyModel.xpLines,
                     availabilityById = RetainedPreparationCache(maximumEntries = effectiveCatalog.entries.size),
                     rules = preparationRules,
                     index = DevelopmentScreenIndex(effectiveCatalog),
@@ -387,7 +393,7 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         }
 
         item {
-            DevelopmentBudgetCard(economy, showChi = chiEconomyUi != null)
+            DevelopmentBudgetCard(economy, preparation!!.xpLines)
         }
 
         if (plannedDevelopmentIds.isNotEmpty()) {
@@ -1005,7 +1011,7 @@ private fun DevelopmentLoadingScreen(stage: String) {
 }
 
 @Composable
-private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown, showChi: Boolean) {
+private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown, xpLines: List<DublXpLineModel>) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
@@ -1067,7 +1073,7 @@ private fun DevelopmentBudgetCard(economy: CharacterEconomyBreakdown, showChi: B
                     add("Характеристики ${economy.attributeXp}")
                     add("Умения ${economy.skillXp}")
                     add("Навыки ${economy.developmentXp}")
-                    if (showChi) add("ЦИ ${economy.chiXp}")
+                    xpLines.forEach { line -> add("${line.presentation.label} ${line.xp}") }
                     add("Магия ${economy.manaXp + economy.magicSchoolXp + economy.spellXp}")
                     if (economy.adjustmentXp != 0) add("Поправка ${economy.adjustmentXp}")
                 }.joinToString(" · "),
