@@ -94,15 +94,12 @@ import com.furybook.android.data.DevelopmentCatalogRepository
 import com.furybook.android.data.SkillEffectCatalogRepository
 import com.furybook.content.FcpOrderedUiItem
 import com.furybook.content.FcpUiAccentToken
-import com.furybook.content.FcpUiComponent
 import com.furybook.content.FcpUiHostOrder
 import com.furybook.content.FcpUiIconToken
-import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.dubl.content.DublResourceMeterModel
 import com.furybook.dubl.content.DublResourceToggleModel
-import com.furybook.dubl.content.DublUiFeature
-import com.furybook.dubl.content.forFeature
+import com.furybook.dubl.content.DublXpLineModel
 import com.furybook.dubl.content.resourceCurrent
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
@@ -212,18 +209,16 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val mountedResourceToggles = remember(context.applicationContext, chiPackEnabled, character) {
         AndroidContentPackState.resourceToggleModels(context, chiPackEnabled, character)
     }
-    val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI)
-    }
     val conditionCatalog = remember(context.applicationContext) {
         ConditionCatalogRepository(context.applicationContext).load()
     }
     val developmentCatalog = remember(context.applicationContext, chiPackEnabled) {
         DevelopmentCatalogRepository(context.applicationContext).load(includeChi = chiPackEnabled)
     }
-    val economy = remember(character, developmentCatalog, chiEconomyUi) {
-        CharacterEconomy.breakdown(character, developmentCatalog, includeChi = chiEconomyUi != null)
+    val economyModel = remember(character, developmentCatalog, chiPackEnabled) {
+        AndroidContentPackState.economyModel(context, chiPackEnabled, character, developmentCatalog)
     }
+    val economy = economyModel.breakdown
     val sheetExtras = controller.extras
     val listState = rememberLazyListState()
     val compactHeroVisible by remember {
@@ -513,7 +508,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         ExperienceEconomySheet(
             character = character,
             economy = economy,
-            showChi = chiEconomyUi != null,
+            xpLines = economyModel.xpLines,
             hasSelfTaught = developmentCatalog.matchingName("Самоучка").any { entry ->
                 (character.development[entry.id]?.rank ?: 0) > 0
             },
@@ -4598,7 +4593,7 @@ private fun TextValueEditSheet(
 private fun ExperienceEconomySheet(
     character: DublCharacter,
     economy: CharacterEconomyBreakdown,
-    showChi: Boolean,
+    xpLines: List<DublXpLineModel>,
     hasSelfTaught: Boolean,
     onSetExperience: (Int) -> Unit,
     onSetCreationExperience: (Int) -> Unit,
@@ -4678,7 +4673,7 @@ private fun ExperienceEconomySheet(
             EconomyLine("Умения", economy.skillXp)
             EconomyLine("Навыки", economy.developmentXp)
             EconomyLine("Базовый запас маны", economy.manaXp)
-            if (showChi) EconomyLine("Дополнительный запас ЦИ", economy.chiXp)
+            xpLines.forEach { line -> EconomyLine(line.presentation.label, line.xp) }
             EconomyLine("Сила магии по школам", economy.magicSchoolXp)
             EconomyLine("Заклинания", economy.spellXp)
             EconomyLine("Ручная поправка", economy.adjustmentXp)
