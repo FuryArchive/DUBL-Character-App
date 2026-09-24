@@ -6,12 +6,12 @@ import androidx.compose.runtime.setValue
 import com.furybook.content.DesktopFcpInstaller
 import com.furybook.content.FcpComposition
 import com.furybook.content.FcpManifest
-import com.furybook.content.FcpUiContribution
-import com.furybook.content.firstUi
 import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublUiMount
+import com.furybook.dubl.content.DublUiRegistry
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
@@ -101,8 +101,8 @@ class DesktopAppState {
             )
         }
 
-    fun ui(surface: String, component: String, binding: String): FcpUiContribution? =
-        contentPackComposition.firstUi(surface, component, binding)
+    fun uiMounts(surface: String, component: String): List<DublUiMount> =
+        DublUiRegistry.mounts(contentPackComposition, surface, component)
 
     fun canActivateContentPack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
