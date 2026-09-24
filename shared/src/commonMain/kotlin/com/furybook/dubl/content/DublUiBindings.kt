@@ -34,3 +34,7 @@ object DublUiRegistry {
         }
         .toList()
 }
+
+
+fun Iterable<DublUiMount>.forFeature(feature: DublUiFeature): FcpUiContribution? =
+    firstOrNull { it.feature == feature }?.contribution
