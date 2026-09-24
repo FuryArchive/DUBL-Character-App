@@ -101,8 +101,11 @@ import com.furybook.content.FcpUiPresentation
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
+import com.furybook.dubl.content.DublResourceMeterModel
+import com.furybook.dubl.content.DublResourceToggleModel
 import com.furybook.dubl.content.DublUiFeature
 import com.furybook.dubl.content.forFeature
+import com.furybook.dubl.content.resourceCurrent
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.ConditionLocalOverride
@@ -205,14 +208,12 @@ private data class StatInfo(
 fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
-    val chiResourceUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER).forFeature(DublUiFeature.CHI)
+    val mountedResourceMeters = remember(context.applicationContext, chiPackEnabled, character) {
+        AndroidContentPackState.resourceMeterModels(context, chiPackEnabled, character)
     }
-    val chiResourcePresentation = chiResourceUi?.presentation()
-    val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE).forFeature(DublUiFeature.CHI)
+    val mountedResourceToggles = remember(context.applicationContext, chiPackEnabled, character) {
+        AndroidContentPackState.resourceToggleModels(context, chiPackEnabled, character)
     }
-    val chiResourceSettingsPresentation = chiResourceSettingsUi?.presentation()
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
         AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI)
     }
@@ -271,7 +272,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         recordRecent(
             RecentChange(
                 text = if (enabled) "Добавлено состояние: ${condition.title}" else "Убрано состояние: ${condition.title}",
-                accent = fcpAccentColor(chiResourcePresentation?.accent),
+                accent = DublAccent,
                 undo = UndoAction.Conditions(previous),
             ),
         )
@@ -738,7 +739,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
         ResourceVisibilitySheet(
             character = character,
             hidden = sheetExtras.hiddenResourceIds,
-            chiPresentation = chiResourceSettingsPresentation,
+            mountedToggles = mountedResourceToggles,
             onToggle = { resourceId ->
                 controller.setResourceHidden(
                     resourceId,
@@ -752,90 +753,25 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     }
 
     selectedResource?.let { resource ->
-        when (resource) {
-            CharacterSheetResourceId.HEALTH -> HealthControlSheet(
-                current = character.hpCurrent,
-                maximum = character.healthMaximum,
+        val mounted = mountedResourceMeters.firstOrNull { model -> model.resourceId == resource }
+        if (mounted != null) {
+            val presentation = mounted.presentation
+            ResourceAdjustSheet(
+                title = presentation.label,
+                current = mounted.current,
+                maximum = mounted.maximum,
+                accent = fcpAccentColor(presentation.accent),
                 onChange = { requestedDelta ->
-                    val before = character.hpCurrent
-                    val after = (before + requestedDelta).coerceAtMost(character.healthMaximum)
+                    val before = character.resourceCurrent(resource)
+                    val after = (before + requestedDelta).coerceIn(0, mounted.maximum)
                     val applied = after - before
                     if (applied != 0) {
-                        controller.changeHp(applied)
+                        controller.changeResource(resource, applied)
                         recordRecent(
                             RecentChange(
-                                text = resourceChangeText("здоровья", applied),
-                                accent = DublHealth,
-                                undo = UndoAction.Resource(CharacterSheetResourceId.HEALTH, applied),
-                            ),
-                        )
-                    }
-                },
-                onEditMaximum = { selectedResource = null; editMaximumResource = CharacterSheetResourceId.HEALTH },
-                onDismiss = { selectedResource = null },
-            )
-            CharacterSheetResourceId.ENDURANCE -> ResourceAdjustSheet(
-                title = "Выносливость",
-                current = character.enduranceCurrent,
-                maximum = character.enduranceMaximum,
-                accent = DublStamina,
-                onChange = { requestedDelta ->
-                    val before = character.enduranceCurrent
-                    val after = (before + requestedDelta).coerceIn(0, character.enduranceMaximum)
-                    val applied = after - before
-                    if (applied != 0) {
-                        controller.changeEndurance(applied)
-                        recordRecent(
-                            RecentChange(
-                                text = resourceChangeText("выносливости", applied),
-                                accent = DublStamina,
-                                undo = UndoAction.Resource(CharacterSheetResourceId.ENDURANCE, applied),
-                            ),
-                        )
-                    }
-                },
-                onEditMaximum = { selectedResource = null; editMaximumResource = CharacterSheetResourceId.ENDURANCE },
-                onDismiss = { selectedResource = null },
-            )
-            CharacterSheetResourceId.MANA -> ResourceAdjustSheet(
-                title = "Мана",
-                current = character.manaCurrent,
-                maximum = character.effectiveManaMaximum,
-                accent = DublMana,
-                onChange = { requestedDelta ->
-                    val before = character.manaCurrent
-                    val after = (before + requestedDelta).coerceIn(0, character.effectiveManaMaximum)
-                    val applied = after - before
-                    if (applied != 0) {
-                        controller.changeMana(applied)
-                        recordRecent(
-                            RecentChange(
-                                text = resourceChangeText("маны", applied),
-                                accent = DublMana,
-                                undo = UndoAction.Resource(CharacterSheetResourceId.MANA, applied),
-                            ),
-                        )
-                    }
-                },
-                onEditMaximum = { selectedResource = null; editMaximumResource = CharacterSheetResourceId.MANA },
-                onDismiss = { selectedResource = null },
-            )
-            CharacterSheetResourceId.CHI -> ResourceAdjustSheet(
-                title = chiResourcePresentation?.label ?: CharacterSheetResourceId.CHI.title,
-                current = character.chiCurrent,
-                maximum = character.chiMaximum,
-                accent = fcpAccentColor(chiResourcePresentation?.accent),
-                onChange = { requestedDelta ->
-                    val before = character.chiCurrent
-                    val after = (before + requestedDelta).coerceIn(0, character.chiMaximum)
-                    val applied = after - before
-                    if (applied != 0) {
-                        controller.changeChi(applied)
-                        recordRecent(
-                            RecentChange(
-                                text = resourceChangeText(chiResourceUi?.label ?: CharacterSheetResourceId.CHI.title, applied),
-                                accent = fcpAccentColor(chiResourcePresentation?.accent),
-                                undo = UndoAction.Resource(CharacterSheetResourceId.CHI, applied),
+                                text = resourceChangeText(presentation.label, applied),
+                                accent = fcpAccentColor(presentation.accent),
+                                undo = UndoAction.Resource(resource, applied),
                             ),
                         )
                     }
@@ -843,6 +779,77 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                 onEditMaximum = null,
                 onDismiss = { selectedResource = null },
             )
+        } else {
+            when (resource) {
+                CharacterSheetResourceId.HEALTH -> HealthControlSheet(
+                    current = character.hpCurrent,
+                    maximum = character.healthMaximum,
+                    onChange = { requestedDelta ->
+                        val before = character.hpCurrent
+                        val after = (before + requestedDelta).coerceAtMost(character.healthMaximum)
+                        val applied = after - before
+                        if (applied != 0) {
+                            controller.changeResource(resource, applied)
+                            recordRecent(
+                                RecentChange(
+                                    text = resourceChangeText("здоровья", applied),
+                                    accent = DublHealth,
+                                    undo = UndoAction.Resource(resource, applied),
+                                ),
+                            )
+                        }
+                    },
+                    onEditMaximum = { selectedResource = null; editMaximumResource = resource },
+                    onDismiss = { selectedResource = null },
+                )
+                CharacterSheetResourceId.ENDURANCE -> ResourceAdjustSheet(
+                    title = "Выносливость",
+                    current = character.enduranceCurrent,
+                    maximum = character.enduranceMaximum,
+                    accent = DublStamina,
+                    onChange = { requestedDelta ->
+                        val before = character.enduranceCurrent
+                        val after = (before + requestedDelta).coerceIn(0, character.enduranceMaximum)
+                        val applied = after - before
+                        if (applied != 0) {
+                            controller.changeResource(resource, applied)
+                            recordRecent(
+                                RecentChange(
+                                    text = resourceChangeText("выносливости", applied),
+                                    accent = DublStamina,
+                                    undo = UndoAction.Resource(resource, applied),
+                                ),
+                            )
+                        }
+                    },
+                    onEditMaximum = { selectedResource = null; editMaximumResource = resource },
+                    onDismiss = { selectedResource = null },
+                )
+                CharacterSheetResourceId.MANA -> ResourceAdjustSheet(
+                    title = "Мана",
+                    current = character.manaCurrent,
+                    maximum = character.effectiveManaMaximum,
+                    accent = DublMana,
+                    onChange = { requestedDelta ->
+                        val before = character.manaCurrent
+                        val after = (before + requestedDelta).coerceIn(0, character.effectiveManaMaximum)
+                        val applied = after - before
+                        if (applied != 0) {
+                            controller.changeResource(resource, applied)
+                            recordRecent(
+                                RecentChange(
+                                    text = resourceChangeText("маны", applied),
+                                    accent = DublMana,
+                                    undo = UndoAction.Resource(resource, applied),
+                                ),
+                            )
+                        }
+                    },
+                    onEditMaximum = { selectedResource = null; editMaximumResource = resource },
+                    onDismiss = { selectedResource = null },
+                )
+                else -> selectedResource = null
+            }
         }
     }
 
@@ -887,20 +894,20 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
             CharacterSheetResourceId.HEALTH -> character.calculatedHealthMaximum
             CharacterSheetResourceId.ENDURANCE -> 3
             CharacterSheetResourceId.MANA -> if (character.magic.manaRank > 0) MagicEquipmentRules.manaMaximum(character) else character.manaMaximum
-            CharacterSheetResourceId.CHI -> character.chiMaximum
+            else -> return@let
         }
         val override = when (resource) {
             CharacterSheetResourceId.HEALTH -> character.healthMaximumOverride
             CharacterSheetResourceId.ENDURANCE -> character.enduranceMaximumOverride
             CharacterSheetResourceId.MANA -> character.manaMaximumOverride
-            CharacterSheetResourceId.CHI -> null
+            else -> null
         }
         MaximumResourceDialog(
             title = when (resource) {
                 CharacterSheetResourceId.HEALTH -> "Максимум здоровья"
                 CharacterSheetResourceId.ENDURANCE -> "Максимум выносливости"
                 CharacterSheetResourceId.MANA -> "Максимум маны"
-                CharacterSheetResourceId.CHI -> "Максимум ЦИ"
+                else -> resource.title
             },
             calculated = calculated,
             override = override,
@@ -909,7 +916,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                     CharacterSheetResourceId.HEALTH -> controller.setHealthMaximumOverride(value)
                     CharacterSheetResourceId.ENDURANCE -> controller.setEnduranceMaximumOverride(value)
                     CharacterSheetResourceId.MANA -> controller.setManaMaximumOverride(value)
-                    CharacterSheetResourceId.CHI -> Unit
+                    else -> Unit
                 }
                 editMaximumResource = null
             },
