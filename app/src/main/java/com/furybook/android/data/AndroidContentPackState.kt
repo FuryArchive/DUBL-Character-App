@@ -6,11 +6,13 @@ import com.furybook.content.FcpManifest
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublEconomyRenderModel
 import com.furybook.dubl.content.DublResourceMeterModel
 import com.furybook.dubl.content.DublResourceToggleModel
 import com.furybook.dubl.content.DublUiMount
 import com.furybook.dubl.content.DublUiRegistry
 import com.furybook.dubl.content.DublUiRenderModels
+import com.furybook.dubl.model.DevelopmentCatalog
 import com.furybook.dubl.model.DublCharacter
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
 object AndroidContentPackState {
@@ -85,6 +87,14 @@ object AndroidContentPackState {
         character: DublCharacter,
     ): List<DublResourceToggleModel> =
         DublUiRenderModels.resourceToggles(composition(context, enabled), character)
+
+    fun economyModel(
+        context: Context,
+        enabled: Boolean,
+        character: DublCharacter,
+        catalog: DevelopmentCatalog,
+    ): DublEconomyRenderModel =
+        DublUiRenderModels.economy(composition(context, enabled), character, catalog)
 
     fun canActivatePack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
