@@ -12,6 +12,7 @@ fun validateFcpArchive(
     val manifestBytes = files["manifest.json"] ?: error("FCP archive is missing manifest.json")
     val checksumBytes = files["checksums.sha256"] ?: error("FCP archive is missing checksums.sha256")
     val manifest = parseFcpManifest(manifestBytes.decodeToString())
+    FcpUiHostCapabilities.requireSupported(manifest)
 
     require(manifest.id.matches(Regex("[A-Za-z0-9][A-Za-z0-9._-]{0,127}"))) {
         "FCP id is not safe for installation: ${manifest.id}"
