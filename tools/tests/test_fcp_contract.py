@@ -303,3 +303,30 @@ def test_runtime_and_builder_declare_same_current_ui_capability_boundary():
 
     assert "FcpUiHostCapabilities.requireSupported(manifest)" in archive
     assert "FcpUiHostCapabilities.requireSupported(pack.manifest)" in chi_loader
+
+
+def test_resource_surfaces_render_from_typed_dubl_models_without_chi_special_cases():
+    models = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublUiRenderModels.kt").read_text(encoding="utf-8")
+    android_state = (ROOT / "app/src/main/java/com/furybook/android/data/AndroidContentPackState.kt").read_text(encoding="utf-8")
+    desktop_state = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt").read_text(encoding="utf-8")
+    android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt").read_text(encoding="utf-8")
+    desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
+
+    assert "data class DublResourceMeterModel" in models
+    assert "data class DublResourceToggleModel" in models
+    assert "DublUiRenderModels.resourceMeters" in android_state
+    assert "DublUiRenderModels.resourceToggles" in android_state
+    assert "DublUiRenderModels.resourceMeters" in desktop_state
+    assert "DublUiRenderModels.resourceToggles" in desktop_state
+
+    assert "resourceMeterModels" in android
+    assert "resourceToggleModels" in android
+    assert "CharacterSheetResourceId.CHI" not in android
+    assert "chiResourcePresentation" not in android
+    assert "chiResourceSettingsPresentation" not in android
+
+    assert "resourceMeterModels" in desktop
+    assert "resourceToggleModels" in desktop
+    assert "CharacterSheetResourceId.CHI" not in desktop
+    assert "chiResourcePresentation" not in desktop
+    assert "chiTogglePresentation" not in desktop

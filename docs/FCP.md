@@ -92,6 +92,12 @@ Ruleset adapters interpret typed entry kinds. DUBL uses `DublFcpCatalogLoader`; 
 
 Platform code supplies bytes/text only. Android reads bundled resources through assets; Desktop reads through the classloader. Neither platform owns catalog filenames or parsing semantics.
 
+## Typed resource render models
+
+`resource-meter` and `resource-toggle` no longer require platform screens to identify the Chi feature or its resource ID. The shared DUBL adapter resolves active FCP UI mounts into typed `DublResourceMeterModel` and `DublResourceToggleModel` values containing the resource ID, availability, current/maximum values, presentation, order, and supported secondary behavior.
+
+Android Overview and Desktop Character Sheet now render those models generically alongside host-owned health/endurance/mana resources. Resource mutations use the shared `CharacterSheetResourceId` path, so the platform renderer no longer contains a Chi-specific resource branch. The raw mapping from `dubl.chi` to `CharacterSheetResourceId.CHI` remains inside the shared DUBL adapter.
+
 ## Control presentation from FCP
 
 The `resource-toggle` and `development-browser` renderers now use the same manifest-driven presentation contract as `resource-meter`. Their visible label and semantic icon come from the active FCP contribution, with host-owned rendering and safe fallback behavior on Android and Desktop.

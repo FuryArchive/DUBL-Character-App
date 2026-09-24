@@ -29,6 +29,7 @@ class DublUiRenderModelsTest {
         assertEquals(2, meter.current)
         assertEquals(character.chiMaximum, meter.maximum)
         assertTrue(meter.available)
+        assertTrue(meter.restoreable)
         assertEquals("Internal Energy", meter.presentation.label)
         assertEquals(FcpUiIconToken.CHI, meter.presentation.icon)
         assertEquals(FcpUiAccentToken.FURY_ACCENT, meter.presentation.accent)
