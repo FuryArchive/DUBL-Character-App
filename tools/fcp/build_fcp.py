@@ -10,6 +10,15 @@ FORMAT = "fury.content-pack"
 FORMAT_VERSION = 1
 ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 
+UI_CAPABILITIES = {
+    ("character.resources", "resource-meter"): {"icon", "accent"},
+    ("character.resource-settings", "resource-toggle"): {"icon"},
+    ("development.tabs", "development-browser"): {"icon"},
+    ("character.economy", "xp-line"): set(),
+}
+UI_ICON_TOKENS = {"chi"}
+UI_ACCENT_TOKENS = {"fury.accent"}
+
 
 def load_manifest(source: Path) -> dict:
     manifest_path = source / "manifest.json"
@@ -99,6 +108,31 @@ def load_manifest(source: Path) -> dict:
         for key in ("surface", "component", "binding", "label"):
             if not str(contribution.get(key, "")).strip():
                 raise ValueError(f"FCP UI contribution {ui_id} has blank {key}")
+
+        surface = str(contribution["surface"]).strip()
+        component = str(contribution["component"]).strip()
+        allowed_properties = UI_CAPABILITIES.get((surface, component))
+        if allowed_properties is None:
+            raise ValueError(
+                f"unsupported FCP UI surface/component for {ui_id}: {surface} / {component}"
+            )
+
+        properties = contribution.get("properties", {})
+        if not isinstance(properties, dict):
+            raise ValueError(f"FCP UI contribution {ui_id} properties must be an object")
+        unsupported_properties = set(properties) - allowed_properties
+        if unsupported_properties:
+            raise ValueError(
+                f"unsupported FCP UI properties for {ui_id}: "
+                + ", ".join(sorted(unsupported_properties))
+            )
+
+        icon = properties.get("icon")
+        if icon is not None and icon not in UI_ICON_TOKENS:
+            raise ValueError(f"unsupported FCP UI icon token for {ui_id}: {icon}")
+        accent = properties.get("accent")
+        if accent is not None and accent not in UI_ACCENT_TOKENS:
+            raise ValueError(f"unsupported FCP UI accent token for {ui_id}: {accent}")
 
     return manifest
 
