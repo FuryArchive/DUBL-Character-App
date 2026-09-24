@@ -1680,19 +1680,37 @@ private fun MaximumDialog(state: DesktopAppState, resource: CharacterSheetResour
         CharacterSheetResourceId.HEALTH -> character.healthMaximumOverride ?: character.healthMaximum
         CharacterSheetResourceId.ENDURANCE -> character.enduranceMaximumOverride ?: character.enduranceMaximum
         CharacterSheetResourceId.MANA -> character.manaMaximumOverride ?: character.effectiveManaMaximum
-        CharacterSheetResourceId.CHI -> character.chiMaximum
+        else -> return
     }
     var text by remember(resource) { mutableStateOf(current.toString()) }
     FuryDialog(
         onDismissRequest = onDismiss,
         title = { Text("Максимум: ${resource.title}") },
         text = { OutlinedTextField(text, { text = it.filter(Char::isDigit).take(5) }, label = { Text("Ручной максимум") }) },
-        confirmButton = { TextButton(enabled = resource != CharacterSheetResourceId.CHI, onClick = {
+        confirmButton = { TextButton(onClick = {
             val value = text.toIntOrNull()?.coerceAtLeast(0) ?: 0
-            when (resource) { CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(value); CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(value); CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(value); CharacterSheetResourceId.CHI -> Unit }
+            when (resource) {
+                CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(value)
+                CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(value)
+                CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(value)
+                else -> Unit
+            }
             onDismiss()
         }) { Text("Сохранить") } },
-        dismissButton = { Row { if (resource != CharacterSheetResourceId.CHI) TextButton(onClick = { when (resource) { CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(null); CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(null); CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(null); CharacterSheetResourceId.CHI -> Unit }; onDismiss() }) { Text("По формуле") }; TextButton(onClick = onDismiss) { Text("Отмена") } } },
+        dismissButton = {
+            Row {
+                TextButton(onClick = {
+                    when (resource) {
+                        CharacterSheetResourceId.HEALTH -> state.setHealthMaximumOverride(null)
+                        CharacterSheetResourceId.ENDURANCE -> state.setEnduranceMaximumOverride(null)
+                        CharacterSheetResourceId.MANA -> state.setManaMaximumOverride(null)
+                        else -> Unit
+                    }
+                    onDismiss()
+                }) { Text("По формуле") }
+                TextButton(onClick = onDismiss) { Text("Отмена") }
+            }
+        },
     )
 }
 
