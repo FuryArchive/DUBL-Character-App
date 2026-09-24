@@ -10,6 +10,7 @@ import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublEconomyRenderModel
 import com.furybook.dubl.content.DublResourceMeterModel
 import com.furybook.dubl.content.DublResourceToggleModel
 import com.furybook.dubl.content.DublUiMount
@@ -112,6 +113,12 @@ class DesktopAppState {
 
     fun resourceToggleModels(character: DublCharacter = activeCharacter): List<DublResourceToggleModel> =
         DublUiRenderModels.resourceToggles(contentPackComposition, character)
+
+    fun economyModel(
+        character: DublCharacter = activeCharacter,
+        catalog: DevelopmentCatalog = developmentCatalog,
+    ): DublEconomyRenderModel =
+        DublUiRenderModels.economy(contentPackComposition, character, catalog)
 
     fun canActivateContentPack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
