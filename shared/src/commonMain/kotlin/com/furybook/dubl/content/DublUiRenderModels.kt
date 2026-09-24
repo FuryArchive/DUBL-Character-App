@@ -13,6 +13,7 @@ data class DublResourceMeterModel(
     val current: Int,
     val maximum: Int,
     val available: Boolean,
+    val restoreable: Boolean,
     val presentation: FcpUiPresentation,
 )
 
@@ -37,6 +38,7 @@ object DublUiRenderModels {
                 current = character.chiCurrent,
                 maximum = character.chiMaximum,
                 available = character.chiActive,
+                restoreable = true,
                 presentation = mount.contribution.presentation(),
             )
         }
