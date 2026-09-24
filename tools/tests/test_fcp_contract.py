@@ -127,6 +127,25 @@ def test_builder_validates_composition_metadata_before_packaging():
         with pytest.raises(ValueError, match="cannot depend on itself"):
             load_manifest(tmp / "dependency")
 
+        unknown_renderer = json.loads(json.dumps(source))
+        unknown_renderer["ui"][0]["surface"] = "future.surface"
+        unknown_renderer["ui"][0]["component"] = "future-widget"
+        _write_manifest(tmp / "unknown-renderer", unknown_renderer)
+        with pytest.raises(ValueError, match="unsupported FCP UI surface/component"):
+            load_manifest(tmp / "unknown-renderer")
+
+        unknown_property = json.loads(json.dumps(source))
+        unknown_property["ui"][1]["properties"]["accent"] = "fury.accent"
+        _write_manifest(tmp / "unknown-property", unknown_property)
+        with pytest.raises(ValueError, match="unsupported FCP UI properties"):
+            load_manifest(tmp / "unknown-property")
+
+        unknown_token = json.loads(json.dumps(source))
+        unknown_token["ui"][0]["properties"]["icon"] = "future-icon"
+        _write_manifest(tmp / "unknown-token", unknown_token)
+        with pytest.raises(ValueError, match="unsupported FCP UI icon token"):
+            load_manifest(tmp / "unknown-token")
+
 
 def test_pack_manager_ui_is_driven_by_generic_composition():
     android = (ROOT / "app/src/main/java/com/furybook/android/ui/screens/CharactersScreen.kt").read_text(encoding="utf-8")
@@ -264,3 +283,23 @@ def test_raw_fcp_binding_is_confined_to_shared_dubl_registry():
         text = path.read_text(encoding="utf-8")
         assert '"dubl.chi"' not in text
         assert "DublUiBinding" not in text
+
+
+def test_runtime_and_builder_declare_same_current_ui_capability_boundary():
+    runtime = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpUiContract.kt").read_text(encoding="utf-8")
+    builder = (ROOT / "tools/fcp/build_fcp.py").read_text(encoding="utf-8")
+    archive = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpArchive.kt").read_text(encoding="utf-8")
+    chi_loader = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublChiFcpCatalogLoader.kt").read_text(encoding="utf-8")
+
+    for token in (
+        "character.resources", "resource-meter",
+        "character.resource-settings", "resource-toggle",
+        "development.tabs", "development-browser",
+        "character.economy", "xp-line",
+        "fury.accent", "chi",
+    ):
+        assert token in runtime
+        assert token in builder
+
+    assert "FcpUiHostCapabilities.requireSupported(manifest)" in archive
+    assert "FcpUiHostCapabilities.requireSupported(pack.manifest)" in chi_loader

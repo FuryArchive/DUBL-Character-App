@@ -3,6 +3,7 @@ package com.furybook.content
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class FcpUiContractTest {
     @Test
@@ -59,4 +60,57 @@ class FcpUiContractTest {
 
         assertEquals(listOf("health", "addon", "addon-b", "endurance", "mana"), ordered)
     }
+    @Test
+    fun hostCapabilitiesAcceptSupportedRendererAndSemanticTokens() {
+        val contribution = FcpUiContribution(
+            id = "demo.resource",
+            surface = FcpUiSurface.CHARACTER_RESOURCES,
+            component = FcpUiComponent.RESOURCE_METER,
+            binding = "demo.energy",
+            label = "Energy",
+            order = 10,
+            properties = mapOf(
+                FcpUiProperty.ICON to FcpUiIconToken.CHI,
+                FcpUiProperty.ACCENT to FcpUiAccentToken.FURY_ACCENT,
+            ),
+        )
+
+        assertTrue(FcpUiHostCapabilities.problems(contribution).isEmpty())
+    }
+
+    @Test
+    fun hostCapabilitiesRejectUnknownRendererPropertiesAndTokens() {
+        val unknownRenderer = FcpUiContribution(
+            id = "unknown.renderer",
+            surface = "character.unknown",
+            component = "mystery-widget",
+            binding = "demo",
+            label = "Mystery",
+            order = 10,
+            properties = emptyMap(),
+        )
+        val unknownProperty = FcpUiContribution(
+            id = "unknown.property",
+            surface = FcpUiSurface.CHARACTER_RESOURCE_SETTINGS,
+            component = FcpUiComponent.RESOURCE_TOGGLE,
+            binding = "demo",
+            label = "Toggle",
+            order = 10,
+            properties = mapOf(FcpUiProperty.ACCENT to FcpUiAccentToken.FURY_ACCENT),
+        )
+        val unknownToken = FcpUiContribution(
+            id = "unknown.token",
+            surface = FcpUiSurface.CHARACTER_RESOURCES,
+            component = FcpUiComponent.RESOURCE_METER,
+            binding = "demo",
+            label = "Resource",
+            order = 10,
+            properties = mapOf(FcpUiProperty.ICON to "future-icon"),
+        )
+
+        assertTrue(FcpUiHostCapabilities.problems(unknownRenderer).single().contains("surface/component"))
+        assertTrue(FcpUiHostCapabilities.problems(unknownProperty).single().contains("properties"))
+        assertTrue(FcpUiHostCapabilities.problems(unknownToken).single().contains("icon token"))
+    }
+
 }

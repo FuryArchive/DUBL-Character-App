@@ -84,3 +84,73 @@ data class FcpOrderedUiItem<T>(
 fun <T> orderedUiItems(items: Iterable<FcpOrderedUiItem<T>>): List<T> = items
     .sortedWith(compareBy<FcpOrderedUiItem<T>>({ it.order }, { it.stableKey }))
     .map { it.value }
+
+
+data class FcpUiHostCapability(
+    val surface: String,
+    val component: String,
+    val allowedProperties: Set<String>,
+)
+
+object FcpUiHostCapabilities {
+    private val capabilities = listOf(
+        FcpUiHostCapability(
+            FcpUiSurface.CHARACTER_RESOURCES,
+            FcpUiComponent.RESOURCE_METER,
+            setOf(FcpUiProperty.ICON, FcpUiProperty.ACCENT),
+        ),
+        FcpUiHostCapability(
+            FcpUiSurface.CHARACTER_RESOURCE_SETTINGS,
+            FcpUiComponent.RESOURCE_TOGGLE,
+            setOf(FcpUiProperty.ICON),
+        ),
+        FcpUiHostCapability(
+            FcpUiSurface.DEVELOPMENT_TABS,
+            FcpUiComponent.DEVELOPMENT_BROWSER,
+            setOf(FcpUiProperty.ICON),
+        ),
+        FcpUiHostCapability(
+            FcpUiSurface.CHARACTER_ECONOMY,
+            FcpUiComponent.XP_LINE,
+            emptySet(),
+        ),
+    ).associateBy { it.surface to it.component }
+
+    private val iconTokens = setOf(FcpUiIconToken.CHI)
+    private val accentTokens = setOf(FcpUiAccentToken.FURY_ACCENT)
+
+    fun problems(manifest: FcpManifest): List<String> = manifest.ui.flatMap(::problems)
+
+    fun problems(contribution: FcpUiContribution): List<String> {
+        val capability = capabilities[contribution.surface to contribution.component]
+            ?: return listOf(
+                "Unsupported FCP UI surface/component for ${contribution.id}: " +
+                    "${contribution.surface} / ${contribution.component}",
+            )
+
+        val problems = mutableListOf<String>()
+        val unsupportedProperties = contribution.properties.keys - capability.allowedProperties
+        if (unsupportedProperties.isNotEmpty()) {
+            problems += "Unsupported FCP UI properties for ${contribution.id}: ${unsupportedProperties.sorted().joinToString()}"
+        }
+
+        contribution.properties[FcpUiProperty.ICON]?.let { token ->
+            if (token !in iconTokens) {
+                problems += "Unsupported FCP UI icon token for ${contribution.id}: $token"
+            }
+        }
+        contribution.properties[FcpUiProperty.ACCENT]?.let { token ->
+            if (token !in accentTokens) {
+                problems += "Unsupported FCP UI accent token for ${contribution.id}: $token"
+            }
+        }
+        return problems
+    }
+
+    fun requireSupported(manifest: FcpManifest) {
+        val problems = problems(manifest)
+        require(problems.isEmpty()) {
+            "FCP UI is not supported by this Fury Book host: ${problems.joinToString("; ")}"
+        }
+    }
+}

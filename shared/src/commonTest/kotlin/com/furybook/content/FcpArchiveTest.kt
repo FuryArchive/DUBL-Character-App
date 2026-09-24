@@ -57,4 +57,19 @@ class FcpArchiveTest {
         val files = validFiles().toMutableMap().also { it["manifest.json"] = unsafe.encodeToByteArray() }
         assertFailsWith<IllegalArgumentException> { validateFcpArchive(files) { digest } }
     }
+    @Test
+    fun rejectsUiUnsupportedByCurrentHostBeforeInstallation() {
+        val unsupportedManifest = manifest.replace(
+            "\"ui\":[]",
+            "\"ui\":[{\"id\":\"future.ui\",\"surface\":\"future.surface\",\"component\":\"future-widget\",\"binding\":\"demo\",\"label\":\"Future\",\"order\":10,\"properties\":{}}]",
+        )
+        val files = validFiles().toMutableMap().also {
+            it["manifest.json"] = unsupportedManifest.encodeToByteArray()
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            validateFcpArchive(files) { digest }
+        }
+    }
+
 }

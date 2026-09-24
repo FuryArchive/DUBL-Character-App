@@ -3,6 +3,7 @@ package com.furybook.dubl.content
 import com.furybook.content.FcpContentPack
 import com.furybook.content.FcpTextSource
 import com.furybook.content.FcpUiComponent
+import com.furybook.content.FcpUiHostCapabilities
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.firstUi
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
@@ -24,6 +25,7 @@ class DublChiFcpCatalogLoader(
     val pack: FcpContentPack,
 ) {
     init {
+        FcpUiHostCapabilities.requireSupported(pack.manifest)
         require(pack.manifest.id == DublChiFcp.PACK_ID) {
             "Unexpected bundled DUBL Chi FCP id: ${pack.manifest.id}"
         }

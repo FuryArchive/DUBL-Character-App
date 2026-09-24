@@ -104,6 +104,12 @@ Each UI contribution's `order` now participates in real host layout ordering. Fu
 
 For the current DUBL vertical slice this applies to `development.tabs` and `character.resources`. With the bundled Chi manifest at `order=40`, the visual order remains unchanged. Changing that manifest order changes the mounted position without editing screen code. Equal orders are resolved deterministically by a stable key.
 
+## Host UI capability validation
+
+The FCP file format and the current Fury Book renderer capabilities are deliberately separate. A manifest can be parsed as valid FCP syntax even if it targets UI that a future host version may introduce, but the current installer, bundled-pack verification, and `.fcp` builder enforce the renderer capabilities that this Fury Book build actually supports.
+
+The current host accepts four surface/component pairs: `character.resources/resource-meter`, `character.resource-settings/resource-toggle`, `development.tabs/development-browser`, and `character.economy/xp-line`. Each renderer has its own allowed property set, and semantic `icon`/`accent` tokens must be known to the host. Unsupported renderer pairs, properties, or tokens fail explicitly instead of being silently ignored.
+
 ## UI presentation tokens
 
 UI contributions may provide semantic presentation tokens in `properties`. Fury Book currently recognizes `icon` and `accent` for the `resource-meter` renderer. The manifest never supplies raw Compose classes or arbitrary executable styling; each platform maps known tokens to host-owned renderers and falls back safely for unknown or missing values.
