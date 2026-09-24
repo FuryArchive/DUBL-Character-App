@@ -173,13 +173,18 @@ def test_chi_ui_mounts_use_generic_fcp_surface_contract():
 
     assert "object FcpUiSurface" in ui_contract
     assert "object FcpUiComponent" in ui_contract
-    assert "fun FcpComposition.firstUi" in ui_contract
+    assert "fun FcpComposition.ui(" in ui_contract
     assert 'const val CHI = "dubl.chi"' in bindings
+    assert "object DublUiRegistry" in bindings
+    assert "enum class DublUiFeature" in bindings
     assert "DublChiUi" not in chi_loader
     for path in screens:
         text = path.read_text(encoding="utf-8")
         assert "DublChiUi" not in text
-        assert "DublUiBinding.CHI" in text
+        assert "DublUiBinding" not in text
+        assert "DublUiFeature.CHI" in text
+        assert "uiMounts(" in text
+        assert ".forFeature(" in text
 
 
 def test_resource_meter_uses_manifest_presentation_tokens_on_both_platforms():
@@ -239,3 +244,23 @@ def test_resource_toggle_and_development_browser_use_fcp_presentation():
     assert "chiTabPresentation = chiTabUi?.presentation()" in desktop_dev
     assert "chiTabPresentation?.label" in desktop_dev
     assert "fcpDevelopmentIcon(chiTabPresentation?.icon)" in desktop_dev
+
+
+def test_raw_fcp_binding_is_confined_to_shared_dubl_registry():
+    binding_registry = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublUiBindings.kt").read_text(encoding="utf-8")
+    platform_files = [
+        ROOT / "app/src/main/java/com/furybook/android/data/AndroidContentPackState.kt",
+        ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/DesktopAppState.kt",
+        ROOT / "app/src/main/java/com/furybook/android/ui/screens/OverviewScreen.kt",
+        ROOT / "app/src/main/java/com/furybook/android/ui/screens/FeatsScreen.kt",
+        ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt",
+        ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt",
+    ]
+
+    assert '"dubl.chi"' in binding_registry
+    assert "DublUiRegistry.mounts" not in binding_registry
+    assert "DublUiBinding.CHI" in binding_registry
+    for path in platform_files:
+        text = path.read_text(encoding="utf-8")
+        assert '"dubl.chi"' not in text
+        assert "DublUiBinding" not in text

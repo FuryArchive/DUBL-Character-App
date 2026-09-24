@@ -114,7 +114,7 @@ The bundled Chi FCP demonstrates this with `icon=chi` and `accent=fury.accent`. 
 
 FCP UI is mounted through host-defined surface/component contracts rather than pack-specific screen hooks. `FcpUiSurface` names stable host attachment points, `FcpUiComponent` names supported renderer families, and the manifest supplies the concrete `binding`, label, order, and properties.
 
-For DUBL Chi, the adapter only defines the semantic data binding `dubl.chi`. Android and Desktop resolve the active composition for a surface/component/binding tuple; they no longer call a Chi-specific UI registry. This keeps pack identity out of screen code while preserving a typed host renderer boundary.
+For DUBL Chi, the manifest still declares the semantic binding `dubl.chi`, but that raw string is interpreted only inside the shared DUBL adapter. `DublUiRegistry` converts active surface/component contributions into typed `DublUiMount` values such as `DublUiFeature.CHI`. Android and Desktop screens consume those typed mounts and no longer reference manifest binding strings directly. This keeps pack protocol details out of platform UI while preserving a typed renderer boundary.
 
 ## Optional pack composition
 
