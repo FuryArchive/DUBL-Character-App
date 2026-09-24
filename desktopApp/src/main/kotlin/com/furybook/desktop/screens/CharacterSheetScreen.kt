@@ -659,7 +659,7 @@ private fun HeroResources(
                         { onResourceDelta(model.resourceId, 1) },
                         tileModifier,
                         onSecondary = if (model.restoreable) {
-                            { { state.restoreMountedResource(model.resourceId) } }
+                            { state.restoreMountedResource(model.resourceId) }
                         } else {
                             null
                         },
