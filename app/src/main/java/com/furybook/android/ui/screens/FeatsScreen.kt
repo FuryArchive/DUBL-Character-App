@@ -57,7 +57,8 @@ import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
-import com.furybook.dubl.content.DublUiBinding
+import com.furybook.dubl.content.DublUiFeature
+import com.furybook.dubl.content.forFeature
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.ChiCatalog
 import com.furybook.dubl.model.effectiveDevelopmentCatalog
@@ -149,11 +150,11 @@ fun FeatsScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
     val chiTabUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
+        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER).forFeature(DublUiFeature.CHI)
     }
     val chiTabPresentation = chiTabUi?.presentation()
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
+        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI)
     }
     val developmentTabs = remember(chiTabUi) {
         orderedUiItems(

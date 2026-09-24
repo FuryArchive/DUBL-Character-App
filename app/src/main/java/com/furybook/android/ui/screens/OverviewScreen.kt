@@ -101,7 +101,8 @@ import com.furybook.content.FcpUiPresentation
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
-import com.furybook.dubl.content.DublUiBinding
+import com.furybook.dubl.content.DublUiFeature
+import com.furybook.dubl.content.forFeature
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.ConditionLocalOverride
@@ -212,15 +213,15 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
     val character = controller.active
     val context = LocalContext.current
     val chiResourceUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI)
+        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER).forFeature(DublUiFeature.CHI)
     }
     val chiResourcePresentation = chiResourceUi?.presentation()
     val chiResourceSettingsUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
+        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE).forFeature(DublUiFeature.CHI)
     }
     val chiResourceSettingsPresentation = chiResourceSettingsUi?.presentation()
     val chiEconomyUi = remember(context.applicationContext, chiPackEnabled) {
-        AndroidContentPackState.ui(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI)
+        AndroidContentPackState.uiMounts(context, chiPackEnabled, FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI)
     }
     val conditionCatalog = remember(context.applicationContext) {
         ConditionCatalogRepository(context.applicationContext).load()
