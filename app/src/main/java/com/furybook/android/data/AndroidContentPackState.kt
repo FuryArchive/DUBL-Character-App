@@ -3,11 +3,11 @@ package com.furybook.android.data
 import android.content.Context
 import com.furybook.content.FcpComposition
 import com.furybook.content.FcpManifest
-import com.furybook.content.FcpUiContribution
-import com.furybook.content.firstUi
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublUiMount
+import com.furybook.dubl.content.DublUiRegistry
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
 object AndroidContentPackState {
     private const val PREFS = "fury-content-packs"
@@ -61,13 +61,12 @@ object AndroidContentPackState {
         )
     }
 
-    fun ui(
+    fun uiMounts(
         context: Context,
         enabled: Boolean,
         surface: String,
         component: String,
-        binding: String,
-    ): FcpUiContribution? = composition(context, enabled).firstUi(surface, component, binding)
+    ): List<DublUiMount> = DublUiRegistry.mounts(composition(context, enabled), surface, component)
 
     fun canActivatePack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
