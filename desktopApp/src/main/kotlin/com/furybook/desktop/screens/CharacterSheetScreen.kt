@@ -79,7 +79,8 @@ import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
-import com.furybook.dubl.content.DublUiBinding
+import com.furybook.dubl.content.DublUiFeature
+import com.furybook.dubl.content.forFeature
 import com.furybook.dubl.model.AttributeId
 import com.furybook.dubl.model.CharacterConditionId
 import com.furybook.dubl.model.CharacterEconomy
@@ -137,7 +138,7 @@ fun CharacterSheetScreen(
     val economy = CharacterEconomy.breakdown(
         character,
         state.developmentCatalog,
-        includeChi = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null,
+        includeChi = state.uiMounts(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI) != null,
     )
     var showIdentity by remember(character.id) { mutableStateOf(false) }
     var showEconomy by remember(character.id) { mutableStateOf(false) }
@@ -618,7 +619,7 @@ private fun HeroResources(
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember(character.id) { mutableStateOf(false) }
-    val chiResourceUi = state.ui(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER, DublUiBinding.CHI)
+    val chiResourceUi = state.uiMounts(FcpUiSurface.CHARACTER_RESOURCES, FcpUiComponent.RESOURCE_METER).forFeature(DublUiFeature.CHI)
     val chiResourcePresentation = chiResourceUi?.presentation()
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(7.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -1938,7 +1939,7 @@ private fun CustomConditionDialog(
 @Composable
 private fun ResourceVisibilityDialog(state: DesktopAppState, onDismiss: () -> Unit) {
     val chiTogglePresentation = state
-        .ui(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE, DublUiBinding.CHI)
+        .uiMounts(FcpUiSurface.CHARACTER_RESOURCE_SETTINGS, FcpUiComponent.RESOURCE_TOGGLE).forFeature(DublUiFeature.CHI)
         ?.presentation()
     FuryDialog(
         onDismissRequest = onDismiss,

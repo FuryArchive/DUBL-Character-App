@@ -49,7 +49,8 @@ import com.furybook.content.FcpUiIconToken
 import com.furybook.content.FcpUiSurface
 import com.furybook.content.orderedUiItems
 import com.furybook.content.presentation
-import com.furybook.dubl.content.DublUiBinding
+import com.furybook.dubl.content.DublUiFeature
+import com.furybook.dubl.content.forFeature
 import com.furybook.dubl.model.AbilityOption
 import com.furybook.dubl.model.CharacterEconomy
 import com.furybook.dubl.model.CharacterEconomyBreakdown
@@ -98,7 +99,7 @@ private data class DevelopmentGridSection(
 @Composable
 fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
     val character = state.activeCharacter
-    val chiTabUi = state.ui(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER, DublUiBinding.CHI)
+    val chiTabUi = state.uiMounts(FcpUiSurface.DEVELOPMENT_TABS, FcpUiComponent.DEVELOPMENT_BROWSER).forFeature(DublUiFeature.CHI)
     val chiTabPresentation = chiTabUi?.presentation()
     val showChiTab = chiTabUi != null
     val developmentTabs = remember(chiTabUi) {
@@ -114,7 +115,7 @@ fun DevelopmentScreen(state: DesktopAppState, modifier: Modifier = Modifier) {
             },
         )
     }
-    val showChiEconomy = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null
+    val showChiEconomy = state.uiMounts(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI) != null
     val developmentCatalog = remember(character, state.chiPackEnabled) { state.developmentCatalog }
     var tab by remember(character.id) { mutableStateOf(DevelopmentTab.REGULAR) }
     var availableOnly by remember(character.id) { mutableStateOf(false) }
