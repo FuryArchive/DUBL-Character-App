@@ -21,6 +21,11 @@ fun FcpUiContribution.matchesUi(
 ): Boolean = this.surface == surface && this.component == component &&
     (binding == null || this.binding == binding)
 
+fun FcpComposition.ui(
+    surface: String,
+    component: String,
+): List<FcpUiContribution> = ui(surface).filter { it.matchesUi(surface, component) }
+
 fun FcpComposition.firstUi(
     surface: String,
     component: String,
