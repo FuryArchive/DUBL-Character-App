@@ -10,8 +10,11 @@ import com.furybook.dubl.application.DublApplication
 import com.furybook.dubl.content.DublChiFcp
 import com.furybook.dubl.content.DublDevelopmentAddon
 import com.furybook.dubl.content.DublFcp
+import com.furybook.dubl.content.DublResourceMeterModel
+import com.furybook.dubl.content.DublResourceToggleModel
 import com.furybook.dubl.content.DublUiMount
 import com.furybook.dubl.content.DublUiRegistry
+import com.furybook.dubl.content.DublUiRenderModels
 import com.furybook.dubl.application.CharacterTransferImportResult
 import com.furybook.dubl.data.DesktopCharacterExtrasStore
 import com.furybook.dubl.data.mergeDevelopmentCatalogs
@@ -103,6 +106,12 @@ class DesktopAppState {
 
     fun uiMounts(surface: String, component: String): List<DublUiMount> =
         DublUiRegistry.mounts(contentPackComposition, surface, component)
+
+    fun resourceMeterModels(character: DublCharacter = activeCharacter): List<DublResourceMeterModel> =
+        DublUiRenderModels.resourceMeters(contentPackComposition, character)
+
+    fun resourceToggleModels(character: DublCharacter = activeCharacter): List<DublResourceToggleModel> =
+        DublUiRenderModels.resourceToggles(contentPackComposition, character)
 
     fun canActivateContentPack(manifest: FcpManifest): Boolean =
         manifest.id == DublFcp.PACK_ID ||
