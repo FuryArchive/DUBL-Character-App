@@ -1563,7 +1563,7 @@ private fun EconomySummaryCard(
 @Composable
 private fun EconomyDialog(state: DesktopAppState, onDismiss: () -> Unit) {
     val character = state.activeCharacter
-    val showChiEconomy = state.ui(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE, DublUiBinding.CHI) != null
+    val showChiEconomy = state.uiMounts(FcpUiSurface.CHARACTER_ECONOMY, FcpUiComponent.XP_LINE).forFeature(DublUiFeature.CHI) != null
     val economy = CharacterEconomy.breakdown(character, state.developmentCatalog, includeChi = showChiEconomy)
     var total by remember(character.id) { mutableStateOf(character.experience.toString()) }
     var creation by remember(character.id) { mutableStateOf(character.effectiveCreationExperience.toString()) }
