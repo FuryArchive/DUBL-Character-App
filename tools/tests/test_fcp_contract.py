@@ -83,14 +83,14 @@ def test_fury_book_mounts_chi_from_real_pack_activation_and_ui_contributions():
 
     assert "AndroidContentPackState.isChiEnabled" in android_app
     assert "AndroidContentPackState.setPackEnabled" in android_app
-    assert "FcpUiSurface.CHARACTER_RESOURCES" in android_overview
-    assert "FcpUiComponent.RESOURCE_METER" in android_overview
+    assert "resourceMeterModels" in android_overview
+    assert "resourceToggleModels" in android_overview
     assert "FcpUiSurface.DEVELOPMENT_TABS" in android_dev
     assert "FcpUiComponent.DEVELOPMENT_BROWSER" in android_dev
     assert "Preferences.userRoot().node" in desktop_state
     assert "setContentPackActive" in desktop_state
-    assert "FcpUiSurface.CHARACTER_RESOURCES" in desktop_sheet
-    assert "FcpUiComponent.RESOURCE_METER" in desktop_sheet
+    assert "resourceMeterModels" in desktop_sheet
+    assert "resourceToggleModels" in desktop_sheet
     assert "FcpUiSurface.DEVELOPMENT_TABS" in desktop_dev
     assert "FcpUiComponent.DEVELOPMENT_BROWSER" in desktop_dev
 
@@ -211,13 +211,16 @@ def test_resource_meter_uses_manifest_presentation_tokens_on_both_platforms():
     desktop = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
     contract = (ROOT / "shared/src/commonMain/kotlin/com/furybook/content/FcpUiContract.kt").read_text(encoding="utf-8")
 
+    models = (ROOT / "shared/src/commonMain/kotlin/com/furybook/dubl/content/DublUiRenderModels.kt").read_text(encoding="utf-8")
+
     assert "FcpUiProperty" in contract
     assert "FcpUiIconToken" in contract
     assert "FcpUiAccentToken" in contract
-    assert ".presentation()" in android
+    assert ".presentation()" in models
+    assert "model.presentation" in android
     assert "fcpIconGlyph" in android
     assert "fcpAccentColor" in android
-    assert ".presentation()" in desktop
+    assert "model.presentation" in desktop
     assert "fcpDesktopIcon" in desktop
     assert "fcpDesktopAccent" in desktop
 
@@ -231,11 +234,11 @@ def test_fcp_ui_order_controls_host_tab_and_resource_positions():
 
     assert "object FcpUiHostOrder" in contract
     assert "fun <T> orderedUiItems" in contract
-    assert "chiPresentation.order" in android_overview
+    assert "model.presentation.order" in android_overview
     assert "orderedUiItems(" in android_overview
     assert "chiTabUi.order" in android_dev
     assert "items(developmentTabs)" in android_dev
-    assert "chiResourcePresentation.order" in desktop_sheet
+    assert "FcpOrderedUiItem(presentation.order" in desktop_sheet
     assert "orderedUiItems(tileItems)" in desktop_sheet
     assert "chiTabUi.order" in desktop_dev
     assert "developmentTabs.forEach" in desktop_dev
@@ -247,18 +250,20 @@ def test_resource_toggle_and_development_browser_use_fcp_presentation():
     desktop_sheet = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/CharacterSheetScreen.kt").read_text(encoding="utf-8")
     desktop_dev = (ROOT / "desktopApp/src/main/kotlin/com/furybook/desktop/screens/DevelopmentScreen.kt").read_text(encoding="utf-8")
 
-    assert "chiResourceSettingsPresentation = chiResourceSettingsUi?.presentation()" in android_overview
-    assert "title = chiPresentation.label" in android_overview
-    assert "fcpIconGlyph(chiPresentation.icon)" in android_overview
+    assert "mountedResourceToggles" in android_overview
+    assert "mountedToggles.forEach" in android_overview
+    assert "val presentation = model.presentation" in android_overview
+    assert "fcpIconGlyph(presentation.icon)" in android_overview
 
     assert "chiTabPresentation = chiTabUi?.presentation()" in android_dev
     assert "chiTabPresentation?.label" in android_dev
     assert "fcpDevelopmentIcon(chiTabPresentation?.icon)" in android_dev
     assert 'properties?.get("icon")' not in android_dev
 
-    assert "chiTogglePresentation" in desktop_sheet
-    assert "chiTogglePresentation?.label" in desktop_sheet
-    assert "fcpDesktopIcon(chiTogglePresentation.icon)" in desktop_sheet
+    assert "mountedToggles = state.resourceToggleModels()" in desktop_sheet
+    assert "mountedToggles.forEach" in desktop_sheet
+    assert "val presentation = model.presentation" in desktop_sheet
+    assert "fcpDesktopIcon(token)" in desktop_sheet
 
     assert "chiTabPresentation = chiTabUi?.presentation()" in desktop_dev
     assert "chiTabPresentation?.label" in desktop_dev
