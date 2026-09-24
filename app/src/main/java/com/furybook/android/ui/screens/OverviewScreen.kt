@@ -393,7 +393,7 @@ fun OverviewScreen(controller: CharacterController, chiPackEnabled: Boolean) {
                 ResourceStrip(
                     character = character,
                     hiddenResources = sheetExtras.hiddenResourceIds,
-                    chiPresentation = chiResourcePresentation,
+                    mountedResources = mountedResourceMeters,
                     onResourceClick = { selectedResource = it },
                     onCustomResourceClick = { selectedCustomResourceId = it },
                     onConfigure = { showResourceVisibility = true },
@@ -1283,11 +1283,12 @@ private fun SectionTitle(
 private fun ResourceStrip(
     character: DublCharacter,
     hiddenResources: Set<CharacterSheetResourceId>,
-    chiPresentation: FcpUiPresentation?,
+    mountedResources: List<DublResourceMeterModel>,
     onResourceClick: (CharacterSheetResourceId) -> Unit,
     onCustomResourceClick: (String) -> Unit,
     onConfigure: () -> Unit,
 ) {
+    val mountedById = mountedResources.associateBy { it.resourceId }
     val resources = orderedUiItems(
         buildList {
             if (CharacterSheetResourceId.HEALTH !in hiddenResources) {
@@ -1299,9 +1300,17 @@ private fun ResourceStrip(
             if (character.manaEnabled && CharacterSheetResourceId.MANA !in hiddenResources) {
                 add(FcpOrderedUiItem(FcpUiHostOrder.TERTIARY, CharacterSheetResourceId.MANA.name, CharacterSheetResourceId.MANA))
             }
-            if (chiPresentation != null && character.chiActive && CharacterSheetResourceId.CHI !in hiddenResources) {
-                add(FcpOrderedUiItem(chiPresentation.order, CharacterSheetResourceId.CHI.name, CharacterSheetResourceId.CHI))
-            }
+            mountedResources
+                .filter { model -> model.available && model.resourceId !in hiddenResources }
+                .forEach { model ->
+                    add(
+                        FcpOrderedUiItem(
+                            model.presentation.order,
+                            "fcp:${model.resourceId.name}",
+                            model.resourceId,
+                        ),
+                    )
+                }
         },
     )
 
@@ -1327,18 +1336,42 @@ private fun ResourceStrip(
         resources.chunked(3).forEach { rowResources ->
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 rowResources.forEach { resource ->
-                    when (resource) {
-                        CharacterSheetResourceId.HEALTH -> CompactResourceCard("Здоровье", character.hpCurrent, character.healthMaximum, DublHealth, Modifier.weight(1f), healthCriticalLevel(character.hpCurrent, character.healthMaximum)) { onResourceClick(resource) }
-                        CharacterSheetResourceId.ENDURANCE -> CompactResourceCard("Выносливость", character.enduranceCurrent, character.enduranceMaximum, DublStamina, Modifier.weight(1f)) { onResourceClick(resource) }
-                        CharacterSheetResourceId.MANA -> CompactResourceCard("Мана", character.manaCurrent, character.effectiveManaMaximum, DublMana, Modifier.weight(1f)) { onResourceClick(resource) }
-                        CharacterSheetResourceId.CHI -> CompactResourceCard(
-                            title = chiPresentation?.label ?: CharacterSheetResourceId.CHI.title,
-                            current = character.chiCurrent,
-                            maximum = character.chiMaximum,
-                            accent = fcpAccentColor(chiPresentation?.accent),
-                            modifier = Modifier.weight(1f),
-                            icon = fcpIconGlyph(chiPresentation?.icon),
+                    val mounted = mountedById[resource]
+                    when {
+                        mounted != null -> {
+                            val presentation = mounted.presentation
+                            CompactResourceCard(
+                                title = presentation.label,
+                                current = mounted.current,
+                                maximum = mounted.maximum,
+                                accent = fcpAccentColor(presentation.accent),
+                                modifier = Modifier.weight(1f),
+                                icon = fcpIconGlyph(presentation.icon),
+                            ) { onResourceClick(resource) }
+                        }
+                        resource == CharacterSheetResourceId.HEALTH -> CompactResourceCard(
+                            "Здоровье",
+                            character.hpCurrent,
+                            character.healthMaximum,
+                            DublHealth,
+                            Modifier.weight(1f),
+                            healthCriticalLevel(character.hpCurrent, character.healthMaximum),
                         ) { onResourceClick(resource) }
+                        resource == CharacterSheetResourceId.ENDURANCE -> CompactResourceCard(
+                            "Выносливость",
+                            character.enduranceCurrent,
+                            character.enduranceMaximum,
+                            DublStamina,
+                            Modifier.weight(1f),
+                        ) { onResourceClick(resource) }
+                        resource == CharacterSheetResourceId.MANA -> CompactResourceCard(
+                            "Мана",
+                            character.manaCurrent,
+                            character.effectiveManaMaximum,
+                            DublMana,
+                            Modifier.weight(1f),
+                        ) { onResourceClick(resource) }
+                        else -> Spacer(Modifier.weight(1f))
                     }
                 }
                 repeat(3 - rowResources.size) { Spacer(Modifier.weight(1f)) }
@@ -1353,10 +1386,9 @@ private fun ResourceStrip(
                         maximum = resource.maximum,
                         accent = DublGold,
                         modifier = Modifier.weight(1f),
-                        onClick = { onCustomResourceClick(resource.uid) },
-                    )
+                    ) { onCustomResourceClick(resource.uid) }
                 }
-                if (rowResources.size == 1) Spacer(Modifier.weight(1f))
+                if (rowResources.size < 2) Spacer(Modifier.weight(1f))
             }
         }
     }
@@ -3954,7 +3986,7 @@ private fun sanitizeSignedBonus(raw: String): String {
 private fun ResourceVisibilitySheet(
     character: DublCharacter,
     hidden: Set<CharacterSheetResourceId>,
-    chiPresentation: FcpUiPresentation?,
+    mountedToggles: List<DublResourceToggleModel>,
     onToggle: (CharacterSheetResourceId) -> Unit,
     onAddCustom: () -> Unit,
     onEditCustom: (String) -> Unit,
@@ -3995,14 +4027,15 @@ private fun ResourceVisibilitySheet(
                 subtitle = if (character.manaEnabled) null else "Мана отключена у персонажа",
                 onToggle = { onToggle(CharacterSheetResourceId.MANA) },
             )
-            if (chiPresentation != null) {
+            mountedToggles.forEach { model ->
+                val presentation = model.presentation
                 ResourceVisibilityRow(
-                    title = chiPresentation.label,
-                    icon = fcpIconGlyph(chiPresentation.icon),
-                    visible = character.chiActive && CharacterSheetResourceId.CHI !in hidden,
-                    enabled = character.chiActive,
-                    subtitle = if (character.chiActive) null else "${chiPresentation.label} недоступна у персонажа",
-                    onToggle = { onToggle(CharacterSheetResourceId.CHI) },
+                    title = presentation.label,
+                    icon = fcpIconGlyph(presentation.icon),
+                    visible = model.available && model.resourceId !in hidden,
+                    enabled = model.available,
+                    subtitle = if (model.available) null else "${presentation.label} недоступен у персонажа",
+                    onToggle = { onToggle(model.resourceId) },
                 )
             }
             if (character.customResources.isNotEmpty()) {
